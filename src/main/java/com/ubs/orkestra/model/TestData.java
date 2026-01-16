@@ -23,8 +23,7 @@ public class TestData {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    @NotNull
-    @Column(name = "application_name", nullable = false)
+    @Column(name = "application_name")
     private String applicationName;
 
     @NotNull
