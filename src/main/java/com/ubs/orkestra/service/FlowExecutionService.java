@@ -278,7 +278,8 @@ public class FlowExecutionService {
         // Create flow execution record
         FlowExecution flowExecution = new FlowExecution(flowId, new HashMap<>());
         if (flowGroupId != null) {
-            flowExecution.setFlowGroupId(flowGroupId);
+            FlowGroup flowGroup = flowGroupRepository.findById(flowGroupId).orElseThrow(()-> new IllegalArgumentException("FlowGroup not found with ID: " + flowGroupId));
+            flowExecution.setFlowGroup(flowGroup);
         }
         if (iteration != null) {
             flowExecution.setIteration(iteration);
@@ -332,8 +333,7 @@ public class FlowExecutionService {
      */
     private PipelineExecution triggerPipelineAsynchronously(FlowExecution flowExecution, FlowStep step, PipelineExecution pipelineExecution) {
         try {
-            Application application = applicationRepository.findById(step.getApplicationId())
-                    .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + step.getApplicationId()));
+            Application application = step.getApplication();
 
             // Prepare variables for the first pipeline
             Map<String, String> pipelineVariables = new HashMap<>();
@@ -481,8 +481,7 @@ public class FlowExecutionService {
                 FlowStep step = flowStepRepository.findById(stepId)
                         .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + stepId));
 
-                Application application = applicationRepository.findById(step.getApplicationId())
-                        .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + stepId));
+                Application application = step.getApplication();
 
                 // Check if this pipeline step is already running or completed (from createFlowExecution trigger)
                 PipelineExecution existingPipelineExecution = pipelineExecutionRepository
@@ -751,8 +750,7 @@ public class FlowExecutionService {
                 FlowStep scheduledStep = flowStepRepository.findById(completedStepId)
                         .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + completedStepId));
 
-                Application application = applicationRepository.findById(scheduledStep.getApplicationId())
-                        .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + scheduledStep.getApplicationId()));
+                Application application = scheduledStep.getApplication();
 
                 // Prepare variables for this scheduled step
                 Map<String, String> pipelineVariables = new HashMap<>();
@@ -793,8 +791,7 @@ public class FlowExecutionService {
                 FlowStep step = flowStepRepository.findById(stepId)
                         .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + stepId));
 
-                Application application = applicationRepository.findById(step.getApplicationId())
-                        .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + stepId));
+                Application application = step.getApplication();
 
                 // Check if this pipeline step is already running or completed
                 PipelineExecution existingPipelineExecution = pipelineExecutionRepository
@@ -1023,8 +1020,7 @@ public class FlowExecutionService {
                 FlowStep step = flowStepRepository.findById(stepId)
                         .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + stepId));
 
-                Application application = applicationRepository.findById(step.getApplicationId())
-                        .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + step.getApplicationId()));
+                Application application = step.getApplication();
 
                 // Only execute pipeline steps from failed step onwards - skip successful steps
                 if (i < failedStepIndex) {
@@ -1547,11 +1543,13 @@ public class FlowExecutionService {
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setIsReplay(entity.getIsReplay());
         dto.setCategory(entity.getCategory());
-        dto.setFlowGroupId(entity.getFlowGroupId());
+        if (entity.getFlowGroup() != null) {
+            dto.setFlowGroupId(entity.getFlowGroup().getId());
+        }
         
         // Populate flowGroupName if flowGroupId is present
-        if (entity.getFlowGroupId() != null) {
-            flowGroupRepository.findById(entity.getFlowGroupId()).ifPresent(flowGroup -> {
+        if (entity.getFlowGroup() != null) {
+            flowGroupRepository.findById(entity.getFlowGroup().getId()).ifPresent(flowGroup -> {
                 dto.setFlowGroupName(flowGroup.getFlowGroupName());
             });
         }
@@ -1573,7 +1571,7 @@ public class FlowExecutionService {
             dto.setFlowSteps(flowSteps.stream().map(this::convertFlowStepToDto).collect(Collectors.toList()));
 
             // Load applications
-            List<Long> applicationIds = flowSteps.stream().map(FlowStep::getApplicationId).distinct().collect(Collectors.toList());
+            List<Long> applicationIds = flowSteps.stream().map(step -> step.getApplication().getId()).distinct().collect(Collectors.toList());
             List<Application> applications = applicationRepository.findAllById(applicationIds);
             dto.setApplications(applications.stream().map(this::convertApplicationToDto).collect(Collectors.toList()));
 
@@ -1647,7 +1645,7 @@ public class FlowExecutionService {
     private FlowStepDto convertFlowStepToDto(FlowStep entity) {
         FlowStepDto dto = new FlowStepDto();
         dto.setId(entity.getId());
-        dto.setApplicationId(entity.getApplicationId());
+        dto.setApplicationId(entity.getApplication().getId());
         dto.setBranch(entity.getBranch());
         dto.setTestTag(entity.getTestTag());
         dto.setTestStage(entity.getTestStage());
@@ -1708,7 +1706,7 @@ public class FlowExecutionService {
         try {
             FlowStep flowStep = flowStepRepository.findById(entity.getFlowStepId()).orElse(null);
             if (flowStep != null) {
-                Application application = applicationRepository.findById(flowStep.getApplicationId()).orElse(null);
+                Application application = flowStep.getApplication();
                 if (application != null) {
                     applicationName = application.getApplicationName();
                 }

@@ -58,7 +58,7 @@ public class CombinedFlowService {
         for (FlowStepCreateDto stepDto : flowCreateDto.getFlowSteps()) {
             // Create flow step
             FlowStep flowStep = new FlowStep();
-            flowStep.setApplicationId(stepDto.getApplicationId());
+            applicationRepository.findById(stepDto.getApplicationId()).ifPresent(flowStep::setApplication);
             flowStep.setBranch(stepDto.getBranch());
             flowStep.setTestTag(stepDto.getTestTag());
             flowStep.setTestStage(stepDto.getTestStage());
@@ -107,7 +107,7 @@ public class CombinedFlowService {
         for (FlowStepCreateDto stepDto : flowCreateDto.getFlowSteps()) {
             // Create flow step
             FlowStep flowStep = new FlowStep();
-            flowStep.setApplicationId(stepDto.getApplicationId());
+            applicationRepository.findById(stepDto.getApplicationId()).ifPresent(flowStep::setApplication);
             flowStep.setBranch(stepDto.getBranch());
             flowStep.setTestTag(stepDto.getTestTag());
             flowStep.setTestStage(stepDto.getTestStage());
@@ -147,7 +147,7 @@ public class CombinedFlowService {
             
             // Create flow step
             FlowStep flowStep = new FlowStep();
-            flowStep.setApplicationId(stepDto.getApplicationId());
+            applicationRepository.findById(stepDto.getApplicationId()).ifPresent(flowStep::setApplication);
             flowStep.setBranch(stepDto.getBranch());
             flowStep.setTestTag(stepDto.getTestTag());
             flowStep.setTestStage(stepDto.getTestStage());
@@ -257,7 +257,7 @@ public class CombinedFlowService {
             
             // Create flow step
             FlowStep flowStep = new FlowStep();
-            flowStep.setApplicationId(stepDto.getApplicationId());
+            applicationRepository.findById(stepDto.getApplicationId()).ifPresent(flowStep::setApplication);
             flowStep.setBranch(stepDto.getBranch());
             flowStep.setTestTag(stepDto.getTestTag());
             flowStep.setTestStage(stepDto.getTestStage());
@@ -386,7 +386,9 @@ public class CombinedFlowService {
     private CombinedFlowStepDto convertFlowStepToDto(FlowStep flowStep) {
         CombinedFlowStepDto dto = new CombinedFlowStepDto();
         dto.setId(flowStep.getId());
-        dto.setApplicationId(flowStep.getApplicationId());
+        if (flowStep.getApplication() != null) {
+            dto.setApplicationId(flowStep.getApplication().getId());
+        }
         dto.setBranch(flowStep.getBranch());
         dto.setTestTag(flowStep.getTestTag());
         dto.setTestStage(flowStep.getTestStage());

@@ -159,7 +159,13 @@ public class FlowExecution {
         this.category = category;
     }
 
+    public FlowGroup getFlowGroup() {
+        return flowGroup;
+    }
 
+    public void setFlowGroup(FlowGroup flowGroup) {
+        this.flowGroup = flowGroup;
+    }
 
     public Integer getIteration() {
         return iteration;

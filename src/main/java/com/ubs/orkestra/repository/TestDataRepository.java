@@ -1,5 +1,6 @@
 package com.ubs.orkestra.repository;
 
+import com.ubs.orkestra.model.Application;
 import com.ubs.orkestra.model.TestData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +16,9 @@ public interface TestDataRepository extends JpaRepository<TestData, Long> {
 
     List<TestData> findByDataIdIn(List<Long> dataIds);
 
-    List<TestData> findByApplicationId(Long applicationId);
+    List<TestData> findByApplication(Application application);
 
-    Page<TestData> findByApplicationId(Long applicationId, Pageable pageable);
+    Page<TestData> findByApplication(Application application, Pageable pageable);
 
     void deleteByDataIdIn(List<Long> dataIds);
 

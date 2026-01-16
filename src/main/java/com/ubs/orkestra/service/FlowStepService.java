@@ -64,10 +64,12 @@ public class FlowStepService {
     @Transactional(readOnly = true)
     public List<FlowStepDto> getFlowStepsByApplicationId(Long applicationId) {
         logger.debug("Fetching flow steps for application ID: {}", applicationId);
-        return flowStepRepository.findByApplicationId(applicationId)
-                .stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        return applicationRepository.findById(applicationId)
+                .map(application -> flowStepRepository.findByApplication(application)
+                        .stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()))
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + applicationId));
     }
 
     @Transactional(readOnly = true)
@@ -86,12 +88,12 @@ public class FlowStepService {
                 .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + id));
         
         // Validate that the application exists if it's being changed
-        if (!existingFlowStep.getApplicationId().equals(flowStepDto.getApplicationId()) &&
+        if (existingFlowStep.getApplication() != null && !existingFlowStep.getApplication().getId().equals(flowStepDto.getApplicationId()) &&
             !applicationRepository.existsById(flowStepDto.getApplicationId())) {
             throw new IllegalArgumentException("Application not found with ID: " + flowStepDto.getApplicationId());
         }
         
-        existingFlowStep.setApplicationId(flowStepDto.getApplicationId());
+        applicationRepository.findById(flowStepDto.getApplicationId()).ifPresent(existingFlowStep::setApplication);
         existingFlowStep.setBranch(flowStepDto.getBranch());
         existingFlowStep.setTestTag(flowStepDto.getTestTag());
         existingFlowStep.setTestStage(flowStepDto.getTestStage());
@@ -124,7 +126,7 @@ public class FlowStepService {
 
     private FlowStep convertToEntity(FlowStepDto dto) {
         FlowStep flowStep = new FlowStep();
-        flowStep.setApplicationId(dto.getApplicationId());
+        applicationRepository.findById(dto.getApplicationId()).ifPresent(flowStep::setApplication);
         flowStep.setBranch(dto.getBranch());
         flowStep.setTestTag(dto.getTestTag());
         flowStep.setTestStage(dto.getTestStage());
@@ -142,7 +144,9 @@ public class FlowStepService {
     private FlowStepDto convertToDto(FlowStep entity) {
         FlowStepDto dto = new FlowStepDto();
         dto.setId(entity.getId());
-        dto.setApplicationId(entity.getApplicationId());
+        if (entity.getApplication() != null) {
+            dto.setApplicationId(entity.getApplication().getId());
+        }
         dto.setBranch(entity.getBranch());
         dto.setTestTag(entity.getTestTag());
         dto.setTestStage(entity.getTestStage());

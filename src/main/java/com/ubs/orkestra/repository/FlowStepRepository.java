@@ -1,5 +1,6 @@
 package com.ubs.orkestra.repository;
 
+import com.ubs.orkestra.model.Application;
 import com.ubs.orkestra.model.FlowStep;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,9 +14,9 @@ import java.util.List;
 @Repository
 public interface FlowStepRepository extends JpaRepository<FlowStep, Long> {
 
-    List<FlowStep> findByApplicationId(Long applicationId);
+    List<FlowStep> findByApplication(Application application);
 
-    Page<FlowStep> findByApplicationId(Long applicationId, Pageable pageable);
+    Page<FlowStep> findByApplication(Application application, Pageable pageable);
 
     List<FlowStep> findByIdIn(List<Long> ids);
 

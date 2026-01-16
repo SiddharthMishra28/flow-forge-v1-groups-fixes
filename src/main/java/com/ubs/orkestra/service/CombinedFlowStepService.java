@@ -61,7 +61,7 @@ public class CombinedFlowStepService {
         
         // Create flow step
         FlowStep flowStep = new FlowStep();
-        flowStep.setApplicationId(flowStepCreateDto.getApplicationId());
+        applicationRepository.findById(flowStepCreateDto.getApplicationId()).ifPresent(flowStep::setApplication);
         flowStep.setBranch(flowStepCreateDto.getBranch());
         flowStep.setTestTag(flowStepCreateDto.getTestTag());
         flowStep.setTestStage(flowStepCreateDto.getTestStage());
@@ -87,7 +87,7 @@ public class CombinedFlowStepService {
                 .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + id));
         
         // Validate that the application exists if it's being changed
-        if (!existingFlowStep.getApplicationId().equals(flowStepCreateDto.getApplicationId()) &&
+        if (!existingFlowStep.getApplication().getId().equals(flowStepCreateDto.getApplicationId()) &&
             !applicationRepository.existsById(flowStepCreateDto.getApplicationId())) {
             throw new IllegalArgumentException("Application not found with ID: " + flowStepCreateDto.getApplicationId());
         }
@@ -102,7 +102,7 @@ public class CombinedFlowStepService {
         }
         
         // Update flow step (don't delete test data - just unlink)
-        existingFlowStep.setApplicationId(flowStepCreateDto.getApplicationId());
+        applicationRepository.findById(flowStepCreateDto.getApplicationId()).ifPresent(existingFlowStep::setApplication);
         existingFlowStep.setBranch(flowStepCreateDto.getBranch());
         existingFlowStep.setTestTag(flowStepCreateDto.getTestTag());
         existingFlowStep.setTestStage(flowStepCreateDto.getTestStage());
@@ -136,7 +136,7 @@ public class CombinedFlowStepService {
         
         // Create flow step
         FlowStep flowStep = new FlowStep();
-        flowStep.setApplicationId(flowStepDto.getApplicationId());
+        applicationRepository.findById(flowStepDto.getApplicationId()).ifPresent(flowStep::setApplication);
         flowStep.setBranch(flowStepDto.getBranch());
         flowStep.setTestTag(flowStepDto.getTestTag());
         flowStep.setTestStage(flowStepDto.getTestStage());
@@ -181,17 +181,21 @@ public class CombinedFlowStepService {
     @Transactional(readOnly = true)
     public List<CombinedFlowStepDto> getFlowStepsByApplicationId(Long applicationId) {
         logger.debug("Fetching flow steps for application ID: {}", applicationId);
-        return flowStepRepository.findByApplicationId(applicationId)
-                .stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        return applicationRepository.findById(applicationId)
+                .map(application -> flowStepRepository.findByApplication(application)
+                        .stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()))
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + applicationId));
     }
 
     @Transactional(readOnly = true)
     public Page<CombinedFlowStepDto> getFlowStepsByApplicationId(Long applicationId, Pageable pageable) {
         logger.debug("Fetching flow steps for application ID: {} with pagination: {}", applicationId, pageable);
-        return flowStepRepository.findByApplicationId(applicationId, pageable)
-                .map(this::convertToDto);
+        return applicationRepository.findById(applicationId)
+                .map(application -> flowStepRepository.findByApplication(application, pageable)
+                        .map(this::convertToDto))
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + applicationId));
     }
 
     public CombinedFlowStepDto updateFlowStep(Long id, CombinedFlowStepDto flowStepDto) {
@@ -201,7 +205,7 @@ public class CombinedFlowStepService {
                 .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + id));
         
         // Validate that the application exists if it's being changed
-        if (!existingFlowStep.getApplicationId().equals(flowStepDto.getApplicationId()) &&
+        if (!existingFlowStep.getApplication().getId().equals(flowStepDto.getApplicationId()) &&
             !applicationRepository.existsById(flowStepDto.getApplicationId())) {
             throw new IllegalArgumentException("Application not found with ID: " + flowStepDto.getApplicationId());
         }
@@ -215,7 +219,7 @@ public class CombinedFlowStepService {
         List<Long> newTestDataIds = createTestDataEntries(flowStepDto.getTestData());
         
         // Update flow step
-        existingFlowStep.setApplicationId(flowStepDto.getApplicationId());
+        applicationRepository.findById(flowStepDto.getApplicationId()).ifPresent(existingFlowStep::setApplication);
         existingFlowStep.setBranch(flowStepDto.getBranch());
         existingFlowStep.setTestTag(flowStepDto.getTestTag());
         existingFlowStep.setTestStage(flowStepDto.getTestStage());
@@ -261,7 +265,9 @@ public class CombinedFlowStepService {
     private CombinedFlowStepDto convertToDto(FlowStep flowStep) {
         CombinedFlowStepDto dto = new CombinedFlowStepDto();
         dto.setId(flowStep.getId());
-        dto.setApplicationId(flowStep.getApplicationId());
+        if (flowStep.getApplication() != null) {
+            dto.setApplicationId(flowStep.getApplication().getId());
+        }
         dto.setBranch(flowStep.getBranch());
         dto.setTestTag(flowStep.getTestTag());
         dto.setTestStage(flowStep.getTestStage());

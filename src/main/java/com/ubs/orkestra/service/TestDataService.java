@@ -32,11 +32,11 @@ public class TestDataService {
     private FlowStepRepository flowStepRepository;
 
     public TestDataDto createTestData(TestDataDto testDataDto) {
-        if (testDataDto.getApplicationId() == null || !applicationRepository.existsById(testDataDto.getApplicationId())) {
+        if (testDataDto.getApplicationId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or missing applicationId");
         }
         TestData testData = new TestData();
-        testData.setApplicationId(testDataDto.getApplicationId());
+        applicationRepository.findById(testDataDto.getApplicationId()).ifPresent(testData::setApplication);
         testData.setApplicationName(testDataDto.getApplicationName());
         testData.setCategory(testDataDto.getCategory());
         testData.setDescription(testDataDto.getDescription());
@@ -60,12 +60,11 @@ public class TestDataService {
 
     public List<TestDataDto> getAllTestData(Long applicationId) {
         if (applicationId != null) {
-            if (!applicationRepository.existsById(applicationId)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid applicationId: " + applicationId);
-            }
-            return testDataRepository.findByApplicationId(applicationId).stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
+            return applicationRepository.findById(applicationId)
+                    .map(application -> testDataRepository.findByApplication(application).stream()
+                            .map(this::convertToDto)
+                            .collect(Collectors.toList()))
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid applicationId: " + applicationId));
         } else {
             return getAllTestData();
         }
@@ -78,11 +77,10 @@ public class TestDataService {
 
     public Page<TestDataDto> getAllTestData(Pageable pageable, Long applicationId) {
         if (applicationId != null) {
-            if (!applicationRepository.existsById(applicationId)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid applicationId: " + applicationId);
-            }
-            return testDataRepository.findByApplicationId(applicationId, pageable)
-                    .map(this::convertToDto);
+            return applicationRepository.findById(applicationId)
+                    .map(application -> testDataRepository.findByApplication(application, pageable)
+                            .map(this::convertToDto))
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid applicationId: " + applicationId));
         } else {
             return getAllTestData(pageable);
         }
@@ -96,7 +94,7 @@ public class TestDataService {
             if (!applicationRepository.existsById(testDataDto.getApplicationId())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid applicationId");
             }
-            testData.setApplicationId(testDataDto.getApplicationId());
+            applicationRepository.findById(testDataDto.getApplicationId()).ifPresent(testData::setApplication);
         }
 
         if (testDataDto.getApplicationName() != null) {
@@ -131,12 +129,14 @@ public class TestDataService {
     }
 
     public List<TestDataDto> getTestDataByApplicationId(Long applicationId) {
-        if (applicationId == null || !applicationRepository.existsById(applicationId)) {
+        if (applicationId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or missing applicationId");
         }
-        return testDataRepository.findByApplicationId(applicationId).stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        return applicationRepository.findById(applicationId)
+                .map(application -> testDataRepository.findByApplication(application).stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid applicationId: " + applicationId));
     }
 
     public List<TestDataDto> searchTestData(String applicationName, String category, String description) {
@@ -175,7 +175,9 @@ public class TestDataService {
     private TestDataDto convertToDto(TestData testData) {
         TestDataDto dto = new TestDataDto();
         dto.setDataId(testData.getDataId());
-        dto.setApplicationId(testData.getApplicationId());
+        if (testData.getApplication() != null) {
+            dto.setApplicationId(testData.getApplication().getId());
+        }
         dto.setApplicationName(testData.getApplicationName());
         dto.setCategory(testData.getCategory());
         dto.setDescription(testData.getDescription());
