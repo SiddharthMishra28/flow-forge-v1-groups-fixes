@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class PipelineExecutionDto {
 
-    private Long id;
+    private long id;
     private Long flowId;
     private UUID flowExecutionId;
     private Long flowStepId;
@@ -35,11 +35,11 @@ public class PipelineExecutionDto {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

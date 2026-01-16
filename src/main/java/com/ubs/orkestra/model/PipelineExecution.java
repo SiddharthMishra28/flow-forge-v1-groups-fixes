@@ -17,7 +17,7 @@ public class PipelineExecution {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @NotNull
     @Column(name = "flow_id", nullable = false)
@@ -86,11 +86,11 @@ public class PipelineExecution {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -1609,7 +1609,7 @@ public class FlowExecutionService {
             } else {
                 // Create placeholder PipelineExecutionDto for FlowSteps not yet executed
                 PipelineExecutionDto placeholder = new PipelineExecutionDto();
-                placeholder.setId(null); // No database record yet
+                 // No database record yet
                 placeholder.setFlowId(flow.getId());
                 placeholder.setFlowExecutionId(flowExecutionId);
                 placeholder.setFlowStepId(stepId);
