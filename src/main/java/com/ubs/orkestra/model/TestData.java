@@ -15,7 +15,7 @@ import java.util.Map;
 public class TestData {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "data_id")
     private Long dataId;
 
