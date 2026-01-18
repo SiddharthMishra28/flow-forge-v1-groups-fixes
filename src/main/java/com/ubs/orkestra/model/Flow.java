@@ -16,7 +16,8 @@ import java.util.Map;
 public class Flow {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "flows_seq")
+    @SequenceGenerator(name = "flows_seq", sequenceName = "flows_seq", allocationSize = 1)
     private Long id;
 
     @JdbcTypeCode(SqlTypes.JSON)

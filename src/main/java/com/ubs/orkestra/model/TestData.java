@@ -15,7 +15,8 @@ import java.util.Map;
 public class TestData {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "test_data_seq")
+    @SequenceGenerator(name = "test_data_seq", sequenceName = "test_data_seq", allocationSize = 1)
     @Column(name = "data_id")
     private Long dataId;
 

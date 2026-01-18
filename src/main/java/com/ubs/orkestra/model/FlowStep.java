@@ -16,7 +16,8 @@ import java.util.List;
 public class FlowStep {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "flow_steps_seq")
+    @SequenceGenerator(name = "flow_steps_seq", sequenceName = "flow_steps_seq", allocationSize = 1)
     private Long id;
 
     @NotNull
