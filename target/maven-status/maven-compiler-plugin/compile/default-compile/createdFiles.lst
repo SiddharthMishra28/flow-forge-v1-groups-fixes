@@ -42,6 +42,7 @@ com\ubs\orkestra\config\OpenApiConfig.class
 com\ubs\orkestra\dto\analytics\TrendDataDto.class
 com\ubs\orkestra\repository\FlowStepRepository.class
 com\ubs\orkestra\config\GitLabConfig.class
+com\ubs\orkestra\dto\FlowExecutionRequestDto.class
 com\ubs\orkestra\repository\PipelineExecutionRepository.class
 com\ubs\orkestra\exception\GitLabValidationException.class
 com\ubs\orkestra\dto\FlowGroupDetailsDto.class

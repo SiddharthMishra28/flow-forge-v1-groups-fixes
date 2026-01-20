@@ -1,6 +1,7 @@
 package com.ubs.orkestra.controller;
 
 import com.ubs.orkestra.dto.FlowExecutionDto;
+import com.ubs.orkestra.dto.FlowExecutionRequestDto;
 import com.ubs.orkestra.service.FlowExecutionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,19 +66,23 @@ public class FlowExecutionController {
     }
 
     @PostMapping("/flows/execute")
-    @Operation(summary = "Execute multiple flows", description = "Trigger execution of multiple flows asynchronously with immediate response. Returns FlowExecutionDto objects for accepted flows, just like single flow execution.")
+    @Operation(summary = "Execute multiple flows", description = "Trigger execution of multiple flows asynchronously with immediate response. Accepts optional category payload to associate flows with a FlowGroup. Returns FlowExecutionDto objects for accepted flows, just like single flow execution.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Flow executions started successfully (all or partial) - returns FlowExecutionDto objects for accepted flows with RUNNING status"),
-            @ApiResponse(responseCode = "400", description = "Invalid flow IDs provided"),
+            @ApiResponse(responseCode = "400", description = "Invalid flow IDs provided or invalid category"),
             @ApiResponse(responseCode = "503", description = "Thread pool at capacity - some flows rejected")
     })
     public ResponseEntity<?> executeMultipleFlows(
-            @Parameter(description = "Comma-separated flow IDs to execute", example = "1,2,3") 
-            @RequestParam("trigger") String flowIds) {
-        logger.info("Starting execution of multiple flows: {}", flowIds);
-        
+            @Parameter(description = "Comma-separated flow IDs to execute", example = "1,2,3")
+            @RequestParam("trigger") String flowIds,
+            @Parameter(description = "Optional payload with category to associate flows with a FlowGroup")
+            @RequestBody(required = false) FlowExecutionRequestDto requestDto) {
+        logger.info("Starting execution of multiple flows: {} with category: {}", flowIds,
+                   requestDto != null ? requestDto.getCategory() : "uncategorized");
+
         try {
-            Map<String, Object> result = flowExecutionService.executeMultipleFlows(flowIds);
+            String category = requestDto != null ? requestDto.getCategory() : null;
+            Map<String, Object> result = flowExecutionService.executeMultipleFlows(flowIds, category);
             
             // Start async execution for all accepted flows - this happens after we have the response ready
             @SuppressWarnings("unchecked")

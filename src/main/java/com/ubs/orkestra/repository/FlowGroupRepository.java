@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FlowGroupRepository extends JpaRepository<FlowGroup, Long> {
+
+    java.util.Optional<FlowGroup> findByFlowGroupName(String flowGroupName);
 }

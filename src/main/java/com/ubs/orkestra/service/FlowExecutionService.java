@@ -84,6 +84,38 @@ public class FlowExecutionService {
         return executeMultipleFlows(flowIdsParam, null, null, null, null);
     }
 
+    public Map<String, Object> executeMultipleFlows(String flowIdsParam, String category) {
+        logger.info("Processing multiple flow execution request with category: {}", category);
+
+        final Long flowGroupId;
+        final Integer iteration;
+        final Integer revolutions;
+        final String finalCategory;
+
+        if (category != null && !category.trim().isEmpty()) {
+            // Validate that the category exists as a FlowGroup
+            String trimmedCategory = category.trim();
+            FlowGroup flowGroup = flowGroupRepository.findByFlowGroupName(trimmedCategory)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid category: FlowGroup with name '" + trimmedCategory + "' not found"));
+
+            flowGroupId = flowGroup.getId();
+            iteration = flowGroup.getCurrentIteration();
+            revolutions = flowGroup.getRevolutions();
+            finalCategory = trimmedCategory;
+
+            logger.info("Validated category '{}' - FlowGroup ID: {}, Current Iteration: {}, Revolutions: {}",
+                       finalCategory, flowGroupId, iteration, revolutions);
+        } else {
+            logger.info("No category provided, using 'uncategorized' for flow executions");
+            flowGroupId = null;
+            iteration = null;
+            revolutions = null;
+            finalCategory = "uncategorized";
+        }
+
+        return executeMultipleFlows(flowIdsParam, flowGroupId, iteration, revolutions, finalCategory);
+    }
+
     public Map<String, Object> executeMultipleFlows(String flowIdsParam, Long flowGroupId, Integer iteration, Integer revolutions, String category) {
         logger.info("Processing multiple flow execution request: {}", flowIdsParam);
 
