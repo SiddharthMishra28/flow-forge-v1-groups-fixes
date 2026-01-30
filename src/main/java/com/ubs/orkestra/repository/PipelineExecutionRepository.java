@@ -22,6 +22,8 @@ public interface PipelineExecutionRepository extends JpaRepository<PipelineExecu
 
     Page<PipelineExecution> findByFlowExecutionId(UUID flowExecutionId, Pageable pageable);
 
+    void deleteByFlowExecutionId(UUID flowExecutionId);
+
     java.util.Optional<PipelineExecution> findByFlowExecutionIdAndFlowStepId(UUID flowExecutionId, Long flowStepId);
     
     List<PipelineExecution> findByFlowId(Long flowId);

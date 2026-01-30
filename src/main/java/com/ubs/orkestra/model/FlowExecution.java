@@ -44,6 +44,9 @@ public class FlowExecution {
     @Column(name = "original_flow_execution_id", columnDefinition = "uuid")
     private UUID originalFlowExecutionId;
 
+    @Column(name = "replay_count")
+    private Integer replayCount = 0;
+
     @Column(name = "category")
     private String category;
 
@@ -149,6 +152,14 @@ public class FlowExecution {
 
     public void setOriginalFlowExecutionId(UUID originalFlowExecutionId) {
         this.originalFlowExecutionId = originalFlowExecutionId;
+    }
+
+    public Integer getReplayCount() {
+        return replayCount;
+    }
+
+    public void setReplayCount(Integer replayCount) {
+        this.replayCount = replayCount;
     }
 
     public String getCategory() {

@@ -664,10 +664,20 @@ public class FlowExecutionService {
         // Get all successful pipeline executions up to the failed step to extract runtime variables
         Map<String, String> accumulatedRuntimeVariables = extractRuntimeVariablesUpToStep(originalFlowExecutionId, failedFlowStepId, flow);
 
-        // Create new flow execution record for replay
-        FlowExecution replayExecution = new FlowExecution(originalExecution.getFlowId(), accumulatedRuntimeVariables);
-        replayExecution.setIsReplay(true);
-        replayExecution = flowExecutionRepository.save(replayExecution);
+        // CHANGED: Reuse the same flow execution instead of creating a new one
+        // Increment replay count
+        Integer currentReplayCount = originalExecution.getReplayCount();
+        if (currentReplayCount == null) {
+            currentReplayCount = 0;
+        }
+        originalExecution.setReplayCount(currentReplayCount + 1);
+        
+        // Reset the execution for replay
+        originalExecution.setStatus(ExecutionStatus.RUNNING);
+        originalExecution.setStartTime(LocalDateTime.now());
+        originalExecution.setEndTime(null);
+        originalExecution.setRuntimeVariables(accumulatedRuntimeVariables);
+        originalExecution = flowExecutionRepository.save(originalExecution);
 
         // Build a map of original successful pipelines before the failed step (by flowStepId)
         int failedStepIndex = flow.getFlowStepIds().indexOf(failedFlowStepId);
@@ -677,6 +687,9 @@ public class FlowExecutionService {
                 .filter(pe -> pe.getStatus() == ExecutionStatus.PASSED)
                 .collect(Collectors.toMap(PipelineExecution::getFlowStepId, pe -> pe, (a, b) -> a));
 
+        // Delete all existing pipeline executions for this flow execution to recreate them
+        pipelineExecutionRepository.deleteByFlowExecutionId(originalFlowExecutionId);
+
         // 1) Pre-create "carried" entries for steps BEFORE the failed step, mark PASSED and reference original pipeline/job
         for (int i = 0; i < failedStepIndex; i++) {
             Long stepId = flow.getFlowStepIds().get(i);
@@ -685,8 +698,8 @@ public class FlowExecutionService {
 
             PipelineExecution originalPe = originalPassedByStep.get(stepId);
             PipelineExecution carried = new PipelineExecution();
-            carried.setFlowId(replayExecution.getFlowId());
-            carried.setFlowExecutionId(replayExecution.getId());
+            carried.setFlowId(originalExecution.getFlowId());
+            carried.setFlowExecutionId(originalExecution.getId());
             carried.setFlowStepId(stepId);
             // preserve inputs/outputs from original successful step
             if (originalPe != null) {
@@ -714,8 +727,8 @@ public class FlowExecutionService {
             FlowStep step = flowStepRepository.findById(stepId)
                     .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + stepId));
             PipelineExecution placeholder = new PipelineExecution();
-            placeholder.setFlowId(replayExecution.getFlowId());
-            placeholder.setFlowExecutionId(replayExecution.getId());
+            placeholder.setFlowId(originalExecution.getFlowId());
+            placeholder.setFlowExecutionId(originalExecution.getId());
             placeholder.setFlowStepId(stepId);
             placeholder.setConfiguredTestData(testDataService.mergeTestDataByIds(step.getTestDataIds()));
             // Seed with accumulated variables present at replay start
@@ -726,8 +739,8 @@ public class FlowExecutionService {
             pipelineExecutionTxService.saveNew(placeholder);
         }
 
-        logger.info("Created replay flow execution with ID: {} for original execution: {} and pre-created placeholders from step {} onward", replayExecution.getId(), originalFlowExecutionId, failedFlowStepId);
-        return convertToDto(replayExecution);
+        logger.info("Updated flow execution with ID: {} (replayCount: {}) to replay from failed step: {}", originalExecution.getId(), originalExecution.getReplayCount(), failedFlowStepId);
+        return convertToDto(originalExecution);
     }
 
     /**
@@ -1574,6 +1587,7 @@ public class FlowExecutionService {
         dto.setStatus(entity.getStatus());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setIsReplay(entity.getIsReplay());
+        dto.setReplayCount(entity.getReplayCount());
         dto.setCategory(entity.getCategory());
         if (entity.getFlowGroup() != null) {
             dto.setFlowGroupId(entity.getFlowGroup().getId());

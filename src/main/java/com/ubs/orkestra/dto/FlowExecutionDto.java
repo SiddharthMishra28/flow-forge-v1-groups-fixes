@@ -17,7 +17,7 @@ public class FlowExecutionDto {
     private ExecutionStatus status;
     private LocalDateTime createdAt;
     private Boolean isReplay;
-    private UUID originalFlowExecutionId;
+    private Integer replayCount;
     private String category;
     private Long flowGroupId;
     private String flowGroupName;
@@ -105,12 +105,12 @@ public class FlowExecutionDto {
         this.isReplay = isReplay;
     }
 
-    public UUID getOriginalFlowExecutionId() {
-        return originalFlowExecutionId;
+    public Integer getReplayCount() {
+        return replayCount;
     }
 
-    public void setOriginalFlowExecutionId(UUID originalFlowExecutionId) {
-        this.originalFlowExecutionId = originalFlowExecutionId;
+    public void setReplayCount(Integer replayCount) {
+        this.replayCount = replayCount;
     }
 
     public FlowDto getFlow() {
