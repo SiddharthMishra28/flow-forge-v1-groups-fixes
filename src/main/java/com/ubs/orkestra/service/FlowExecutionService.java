@@ -653,8 +653,9 @@ public class FlowExecutionService {
             throw new IllegalArgumentException("Can only replay failed flow executions");
         }
 
-        Flow flow = flowRepository.findById(originalExecution.getFlowId())
-                .orElseThrow(() -> new IllegalArgumentException("Flow not found with ID: " + originalExecution.getFlowId()));
+        final Long flowId = originalExecution.getFlowId();
+        Flow flow = flowRepository.findById(flowId)
+                .orElseThrow(() -> new IllegalArgumentException("Flow not found with ID: " + flowId));
 
         // Validate that the failed step exists in the flow
         if (!flow.getFlowStepIds().contains(failedFlowStepId)) {
