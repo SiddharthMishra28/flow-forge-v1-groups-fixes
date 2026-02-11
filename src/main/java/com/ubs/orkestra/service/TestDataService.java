@@ -1,6 +1,7 @@
 package com.ubs.orkestra.service;
 
 import com.ubs.orkestra.dto.TestDataDto;
+import com.ubs.orkestra.model.FlowStep;
 import com.ubs.orkestra.model.TestData;
 import com.ubs.orkestra.repository.ApplicationRepository;
 import com.ubs.orkestra.repository.FlowStepRepository;
@@ -119,8 +120,14 @@ public class TestDataService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "TestData not found with id: " + dataId);
         }
 
-        // Check if TestData is being used by any FlowStep
-        if (flowStepRepository.existsByTestDataId(dataId.toString())) {
+        // Check if TestData is being used by any FlowStep by checking the JSON array properly
+        // The existsByTestDataId uses LIKE which can have false positives (e.g., searching for "1" matches "10", "21", etc.)
+        // We need to check if the dataId exists as a complete element in the JSON array
+        List<FlowStep> allFlowSteps = flowStepRepository.findAll();
+        boolean isReferenced = allFlowSteps.stream()
+                .anyMatch(step -> step.getTestDataIds() != null && step.getTestDataIds().contains(dataId));
+        
+        if (isReferenced) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                 "Cannot delete TestData with id: " + dataId + ". It is currently referenced by one or more FlowSteps.");
         }

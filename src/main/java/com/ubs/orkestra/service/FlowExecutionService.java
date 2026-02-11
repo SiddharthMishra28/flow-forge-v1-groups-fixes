@@ -342,10 +342,30 @@ public class FlowExecutionService {
             placeholder.setRuntimeTestData(null);
 
             if (i == 0) {
-                // Trigger the first pipeline asynchronously (return immediately after getting pipelineId/pipelineUrl)
-                logger.info("Triggering first pipeline asynchronously for step: {}", stepId);
-                PipelineExecution firstPipeline = triggerPipelineAsynchronously(flowExecution, step, placeholder);
-                pipelineExecutions.add(firstPipeline);
+                // Check if the first step has a scheduler/delay
+                if (step.getInvokeScheduler() != null) {
+                    // First step is scheduled or delayed - calculate resume time and schedule it
+                    LocalDateTime previousStepEndTime = flowExecution.getStartTime() != null ? flowExecution.getStartTime() : LocalDateTime.now();
+                    LocalDateTime resumeTime = schedulingService.calculateResumeTime(previousStepEndTime, step.getInvokeScheduler());
+                    
+                    if (resumeTime != null) {
+                        logger.info("First step {} has invokeScheduler, scheduling for execution at: {}", stepId, resumeTime);
+                        placeholder.setStatus(ExecutionStatus.SCHEDULED);
+                        placeholder.setResumeTime(resumeTime);
+                        placeholder.setStartTime(null);
+                        pipelineExecutionTxService.saveNew(placeholder);
+                        pipelineExecutions.add(placeholder);
+                    } else {
+                        logger.warn("Failed to calculate resume time for first step {} with invokeScheduler, executing immediately", stepId);
+                        PipelineExecution firstPipeline = triggerPipelineAsynchronously(flowExecution, step, placeholder);
+                        pipelineExecutions.add(firstPipeline);
+                    }
+                } else {
+                    // First step has no scheduler - trigger immediately
+                    logger.info("Triggering first pipeline asynchronously for step: {}", stepId);
+                    PipelineExecution firstPipeline = triggerPipelineAsynchronously(flowExecution, step, placeholder);
+                    pipelineExecutions.add(firstPipeline);
+                }
             } else {
                 // Create placeholder for subsequent steps
                 placeholder.setStatus(ExecutionStatus.SCHEDULED);
@@ -467,10 +487,9 @@ public class FlowExecutionService {
                     pipelineExecution.setStatus(status.isSuccessful() ? ExecutionStatus.PASSED : ExecutionStatus.FAILED);
                     pipelineExecution.setEndTime(LocalDateTime.now());
 
-                    // Download artifacts if successful
-                    if (status.isSuccessful()) {
-                        downloadAndParseArtifacts(pipelineExecution, application, gitlabBaseUrl, step);
-                    }
+                    // Download artifacts regardless of success or failure
+                    // This allows failed steps to also export runtime variables via output.env
+                    downloadAndParseArtifacts(pipelineExecution, application, gitlabBaseUrl, step);
 
                     pipelineExecutionRepository.save(pipelineExecution);
                     logger.info("First pipeline {} completed with status: {}", pipelineExecution.getPipelineId(), pipelineExecution.getStatus());
@@ -1495,10 +1514,9 @@ public class FlowExecutionService {
                     pipelineExecution.setStatus(status.isSuccessful() ? ExecutionStatus.PASSED : ExecutionStatus.FAILED);
                     pipelineExecution.setEndTime(LocalDateTime.now());
 
-                    // Download artifacts if successful
-                    if (status.isSuccessful()) {
-                        downloadAndParseArtifacts(pipelineExecution, application, gitLabConfig.getBaseUrl(), step);
-                    }
+                    // Download artifacts regardless of success or failure
+                    // This allows failed steps to also export runtime variables via output.env
+                    downloadAndParseArtifacts(pipelineExecution, application, gitLabConfig.getBaseUrl(), step);
 
                     pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
                     logger.info("Pipeline {} completed with status: {}", pipelineExecution.getPipelineId(), pipelineExecution.getStatus());
@@ -1534,10 +1552,9 @@ public class FlowExecutionService {
                     pipelineExecution.setStatus(status.isSuccessful() ? ExecutionStatus.PASSED : ExecutionStatus.FAILED);
                     pipelineExecution.setEndTime(LocalDateTime.now());
 
-                    // Download artifacts if successful
-                    if (status.isSuccessful()) {
-                        downloadAndParseArtifacts(pipelineExecution, application, gitlabBaseUrl, step);
-                    }
+                    // Download artifacts regardless of success or failure
+                    // This allows failed steps to also export runtime variables via output.env
+                    downloadAndParseArtifacts(pipelineExecution, application, gitlabBaseUrl, step);
 
                     pipelineExecutionRepository.save(pipelineExecution);
                     logger.info("Pipeline {} completed with status: {}", pipelineExecution.getPipelineId(), pipelineExecution.getStatus());
