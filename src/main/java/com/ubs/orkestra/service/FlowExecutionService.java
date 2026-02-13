@@ -1399,25 +1399,27 @@ public class FlowExecutionService {
                     .block();
             
             if (jobs != null && jobs.length > 0) {
-                // Find job for the specified test stage
+                // Find job for the specified test stage (regardless of success/failure)
+                // This allows us to parse output.env even from failed steps
                 GitLabApiClient.GitLabJobsResponse targetJob = null;
                 for (GitLabApiClient.GitLabJobsResponse job : jobs) {
-                    if (step.getTestStage().equals(job.getStage()) && job.isSuccessful()) {
+                    if (step.getTestStage().equals(job.getStage())) {
+                        // If we find a job in this stage, use it (prefer the last one if multiple exist)
                         targetJob = job;
-                        break;
+                        // Don't break - continue to find the last job in this stage
                     }
                 }
                 
                 if (targetJob != null) {
-                    logger.info("Found target job {} in stage {} for pipeline {}",
-                               targetJob.getId(), targetJob.getStage(), pipelineExecution.getPipelineId());
+                    logger.info("Found target job {} (status: {}) in stage {} for pipeline {}",
+                               targetJob.getId(), targetJob.getStatus(), targetJob.getStage(), pipelineExecution.getPipelineId());
 
                     // Set job information
                     pipelineExecution.setJobId(targetJob.getId());
                     pipelineExecution.setJobUrl(targetJob.getWebUrl());
                     pipelineExecutionRepository.save(pipelineExecution);
 
-                    // Download output.env from target/output.env
+                    // Download output.env from target/output.env (even if job failed)
                     String artifactContent = gitLabApiClient
                             .downloadJobArtifact(gitlabBaseUrl, application.getGitlabProjectId(),
                                                targetJob.getId(), applicationService.getDecryptedPersonalAccessToken(application.getId()), "target/output.env")
@@ -1435,8 +1437,8 @@ public class FlowExecutionService {
 
                         pipelineExecution.setRuntimeTestData(runtimeTestData);
                         pipelineExecutionRepository.save(pipelineExecution);
-                        logger.info("Successfully downloaded and parsed artifacts from job {}: {} variables (total runtime: {})",
-                                   targetJob.getId(), parsedVariables.size(), runtimeTestData.size());
+                        logger.info("Successfully downloaded and parsed artifacts from job {} (status: {}): {} variables (total runtime: {})",
+                                   targetJob.getId(), targetJob.getStatus(), parsedVariables.size(), runtimeTestData.size());
                     } else {
                         logger.info("No artifact content found in job {}, runtime data will remain as configured data",
                                    targetJob.getId());
@@ -1445,7 +1447,7 @@ public class FlowExecutionService {
                         pipelineExecutionRepository.save(pipelineExecution);
                     }
                 } else {
-                    logger.info("No successful job found for stage '{}' in pipeline {}",
+                    logger.info("No job found for stage '{}' in pipeline {}",
                                step.getTestStage(), pipelineExecution.getPipelineId());
                 }
             } else {
