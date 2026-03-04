@@ -588,8 +588,17 @@ public class FlowExecutionService {
                                 .findByFlowExecutionIdAndFlowStepId(flowExecution.getId(), stepId)
                                 .orElseThrow(() -> new IllegalStateException("Pipeline execution record not found for step: " + stepId));
 
+                        // CRITICAL FIX: Store accumulated runtime variables in the pipeline execution
+                        // so they are available when the scheduled step resumes
+                        pipelineExecution.setRuntimeTestData(new HashMap<>(accumulatedRuntimeVariables));
+                        
                         // Schedule the pipeline execution
                         schedulingService.schedulePipelineExecution(pipelineExecution, resumeTime);
+
+                        // CRITICAL FIX: Save accumulated runtime variables to FlowExecution
+                        // before pausing so they persist across the scheduling gap
+                        flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
+                        flowExecutionRepository.save(flowExecution);
 
                         // STOP execution here - don't continue to next steps
                         // The scheduler will handle resuming execution when this step completes
