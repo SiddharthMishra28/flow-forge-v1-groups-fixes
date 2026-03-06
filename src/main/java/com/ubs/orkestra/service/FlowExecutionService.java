@@ -367,11 +367,25 @@ public class FlowExecutionService {
                     pipelineExecutions.add(firstPipeline);
                 }
             } else {
-                // Create placeholder for subsequent steps
-                placeholder.setStatus(ExecutionStatus.SCHEDULED);
-                placeholder.setStartTime(null);
-                pipelineExecutionTxService.saveNew(placeholder);
-                pipelineExecutions.add(placeholder);
+                // Check if this subsequent step has a scheduler/delay
+                if (step.getInvokeScheduler() != null) {
+                    // For subsequent scheduled steps, we can't calculate exact resumeTime yet
+                    // because we don't know when the previous step will complete.
+                    // We'll set status=PENDING (not SCHEDULED) so the scheduler won't pick it up yet.
+                    // executeFlowAsync will calculate the actual resumeTime when it reaches this step.
+                    logger.info("Subsequent step {} has invokeScheduler, will be scheduled when execution reaches it", stepId);
+                    placeholder.setStatus(ExecutionStatus.PENDING);
+                    placeholder.setResumeTime(null);
+                    placeholder.setStartTime(null);
+                    pipelineExecutionTxService.saveNew(placeholder);
+                    pipelineExecutions.add(placeholder);
+                } else {
+                    // Create placeholder for subsequent steps without scheduler
+                    placeholder.setStatus(ExecutionStatus.SCHEDULED);
+                    placeholder.setStartTime(null);
+                    pipelineExecutionTxService.saveNew(placeholder);
+                    pipelineExecutions.add(placeholder);
+                }
             }
         }
 
@@ -578,6 +592,7 @@ public class FlowExecutionService {
                 }
 
                 // Check if step has invokeScheduler - if so, schedule it and stop execution here
+                // This handles both SCHEDULED (first step) and PENDING (subsequent steps) statuses
                 if (step.getInvokeScheduler() != null) {
                     LocalDateTime resumeTime = schedulingService.calculateResumeTime(previousStepEndTime, step.getInvokeScheduler());
                     if (resumeTime != null) {
@@ -999,8 +1014,17 @@ public class FlowExecutionService {
                                 .findByFlowExecutionIdAndFlowStepId(flowExecution.getId(), stepId)
                                 .orElseThrow(() -> new IllegalStateException("Pipeline execution record not found for step: " + stepId));
 
+                        // CRITICAL FIX: Store accumulated runtime variables in the pipeline execution
+                        // so they are available when the scheduled step resumes
+                        pipelineExecution.setRuntimeTestData(new HashMap<>(accumulatedRuntimeVariables));
+                        
                         // Schedule the pipeline execution
                         schedulingService.schedulePipelineExecution(pipelineExecution, resumeTime);
+
+                        // CRITICAL FIX: Save accumulated runtime variables to FlowExecution
+                        // before pausing so they persist across the scheduling gap
+                        flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
+                        flowExecutionRepository.save(flowExecution);
 
                         // STOP execution here - don't continue to next steps
                         logger.info("Flow execution paused at scheduled step {}, will resume after completion", stepId);
