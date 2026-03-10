@@ -18,6 +18,8 @@
 - **Flexible Database Support**: Out-of-the-box support for H2 (development) and PostgreSQL (production).
 - **Smart Scheduling System**: Memory-optimized timer-based execution with configurable delays (days, hours, minutes) using database persistence.
 - **Automatic Failure Handling**: Flow execution stops immediately when any step fails, preventing resource waste on subsequent steps.
+- **Persistent Queue System**: Database-backed queue for flow executions that survives server restarts, ensuring no flows are lost during capacity constraints.
+- **Intelligent Capacity Management**: Automatically queues flows when thread pool is at capacity and resumes them as resources become available.
 
 ## 🏗️ System Architecture
 
@@ -32,21 +34,33 @@ Orkestra is built on a modular, scalable architecture designed for high performa
 5.  **FlowGroup**: A collection of `Flow`s that can be executed in parallel, with iteration tracking and revolution counting for execution metrics.
 6.  **FlowExecution**: A runtime instance of a `Flow`, capturing its state (`RUNNING`, `PASSED`, `FAILED`, `SCHEDULED`), start/end times, the aggregated runtime variables, and metadata including category (FlowGroup name or "uncategorized"), flow group association, and execution counters.
 7.  **PipelineExecution**: Represents the execution of a single GitLab pipeline within a `FlowExecution`, tracking its status, scheduled resume time, and associated logs.
-8.  **SchedulingService**: Memory-optimized background service that manages delayed step executions using database persistence instead of active polling.
+8.  **QueuedFlowExecution**: Database entity that persists flow executions waiting for thread pool capacity, ensuring flows survive server restarts and are executed in FIFO order with priority support.
+9.  **SchedulingService**: Memory-optimized background service that manages delayed step executions using database persistence instead of active polling.
+10. **FlowExecutionQueueService**: Service that manages the persistent queue, automatically processing queued flows when thread pool capacity becomes available (configurable polling interval).
 
 ### Execution Workflow
 
 1.  A user triggers a `Flow` execution via the `/api/flows/{id}/execute` endpoint.
-2.  The `FlowExecutionService` creates a `FlowExecution` record and begins processing the `FlowSteps` sequentially.
-3.  For each `FlowStep`, the service merges the configured `TestData` (including `applicationName`) to create a set of runtime variables.
-4.  **Timer Check**: If the step has an `invokeTimer` configuration, the system calculates the resume time and schedules the step for later execution with `SCHEDULED` status.
-5.  **Immediate Execution**: For steps without timers, the `GitLabApiClient` triggers the corresponding GitLab pipeline, passing the runtime variables as environment variables.
-6.  The application continuously polls the GitLab API to monitor the pipeline status.
-7.  If the pipeline generates an `output.env` file as an artifact, the system downloads, parses, and merges it into the `FlowExecution`'s runtime variables for subsequent steps to use.
-8.  **Failure Handling**: If any step fails, the flow execution is immediately marked as `FAILED` and **all subsequent steps are skipped** to prevent resource waste.
-9.  **Scheduled Execution**: The `SchedulingService` background process checks every minute for `SCHEDULED` steps that are ready to resume and automatically triggers their execution.
-10. Logs are streamed in real-time via WebSockets and can be viewed at `http://localhost:8080/logs.html`.
-11. Failed flows can be replayed from the failed step using the replay endpoint, with all runtime variables from successful steps automatically restored.
+2.  **Capacity Check**: The system checks thread pool availability:
+    - If capacity is available, the flow is accepted for immediate execution.
+    - If at capacity, the flow is persisted to the `queued_flow_executions` table for later execution.
+3.  The `FlowExecutionService` creates a `FlowExecution` record and begins processing the `FlowSteps` sequentially.
+4.  For each `FlowStep`, the service merges the configured `TestData` (including `applicationName`) to create a set of runtime variables.
+5.  **Timer Check**: If the step has an `invokeScheduler` configuration, the system calculates the resume time based on the scheduler type:
+    - **"delayed"**: Adds specified days/hours/minutes to previous step's end time (or current time for first step).
+    - **"scheduled"**: Schedules execution at specific clock time after specified days from previous step's end time.
+    - The step is marked with `SCHEDULED` status and persisted to the database.
+6.  **Immediate Execution**: For steps without timers, the `GitLabApiClient` triggers the corresponding GitLab pipeline, passing the runtime variables as environment variables.
+7.  The application continuously polls the GitLab API to monitor the pipeline status.
+8.  If the pipeline generates an `output.env` file as an artifact, the system downloads, parses, and merges it into the `FlowExecution`'s runtime variables for subsequent steps to use.
+9.  **Failure Handling**: If any step fails, the flow execution is immediately marked as `FAILED` and **all subsequent steps are skipped** to prevent resource waste.
+10. **Scheduled Execution**: The `SchedulingService` background process checks periodically (default: every 60 seconds) for `SCHEDULED` steps that are ready to resume and automatically triggers their execution.
+11. **Queue Processing**: The `FlowExecutionQueueService` polls periodically (default: every 30 seconds) for queued flows and executes them based on available thread pool capacity.
+12. **Server Restart Recovery**: On startup, the system automatically resumes:
+    - Queued flows from the `queued_flow_executions` table (up to available capacity).
+    - Scheduled flows that are ready to execute based on their resume time.
+13. Logs are streamed in real-time via WebSockets and can be viewed at `http://localhost:8080/logs.html`.
+14. Failed flows can be replayed from the failed step using the replay endpoint, with all runtime variables from successful steps automatically restored.
 
 ## 💻 System Requirements
 
@@ -819,12 +833,38 @@ Orkestra includes a sophisticated, memory-optimized scheduling system that allow
 
 ### How It Works
 
+#### Scheduling Configuration
+
 1. **Scheduler Configuration**: Define scheduling using the `invokeScheduler` object with `type` and `timer` fields:
    - **Delayed Execution**: Use `type: "delayed"` with timer values having "+" prefix (e.g., `"+10"` minutes after previous step completion)
    - **Scheduled Execution**: Use `type: "scheduled"` with absolute timer values (e.g., `"14"` for 2 PM, `"30"` for 30 minutes past the hour)
 2. **Database Persistence**: When a step needs to be scheduled/delayed, the system calculates the resume time and stores it in the database with `SCHEDULED` status.
 3. **Background Processing**: A configurable background service (default: every 60 seconds) checks for scheduled executions that are ready to resume.
-4. **Automatic Resumption**: When the scheduled time arrives, the execution status changes to `IN_PROGRESS` to prevent replay delays and automatically resumes from the next step.
+4. **Automatic Resumption**: When the scheduled time arrives, the execution status changes to `IN_PROGRESS` and automatically resumes execution.
+
+#### Queue Configuration
+
+The persistent queue system can be configured via `application.yml`:
+
+```yaml
+scheduling:
+  queue-processing:
+    polling-interval: 30000      # Poll every 30 seconds (default)
+    initial-delay: 10000         # Wait 10 seconds after startup (default)
+    max-retry-count: 3           # Maximum retry attempts for queue processing failures (default)
+```
+
+**Environment Variables:**
+- `QUEUE_PROCESSING_POLLING_INTERVAL`: Override polling interval in milliseconds
+- `QUEUE_PROCESSING_INITIAL_DELAY`: Override initial delay in milliseconds
+- `QUEUE_PROCESSING_MAX_RETRY`: Override maximum retry count
+
+**How Queue Processing Works:**
+1. When thread pool is at capacity, new flow executions are saved to `queued_flow_executions` table
+2. Background service polls periodically (configurable) to check for available thread pool capacity
+3. Queued flows are processed in FIFO order (with priority support) up to available capacity
+4. On server restart, queued flows are automatically resumed based on available capacity
+5. If queue processing fails (e.g., thread pool submission error), the system retries up to configured max retry count
 
 ### New Test Data Endpoint
 

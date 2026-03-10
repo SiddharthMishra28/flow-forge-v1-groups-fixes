@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.ubs.orkestra.OrkestraV2ApiApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.86 s -- in com.ubs.orkestra.OrkestraV2ApiApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 20.87 s -- in com.ubs.orkestra.OrkestraV2ApiApplicationTests

@@ -168,26 +168,32 @@ public class SchedulingService {
         List<PipelineExecution> scheduledExecutions = pipelineExecutionRepository.findByStatusAndResumeTimeBefore(
             ExecutionStatus.SCHEDULED, now);
 
+        if (scheduledExecutions.isEmpty()) {
+            logger.debug("No scheduled executions ready to resume at this time");
+            return;
+        }
+
         logger.info("Found {} scheduled executions ready to resume", scheduledExecutions.size());
 
         for (PipelineExecution execution : scheduledExecutions) {
             try {
-                logger.info("Resuming scheduled pipeline execution ID: {} for flow step ID: {}", 
-                           execution.getId(), execution.getFlowStepId());
+                logger.info("Resuming scheduled pipeline execution ID: {} for flow step ID: {} at resume time: {}", 
+                           execution.getId(), execution.getFlowStepId(), execution.getResumeTime());
                 
-                // Update status from SCHEDULED to IN_PROGRESS to avoid replay delays
+                // CRITICAL FIX: Mark as IN_PROGRESS before triggering resume
+                // This prevents the scheduler from picking it up again
                 execution.setStatus(ExecutionStatus.IN_PROGRESS);
-                execution.setStartTime(LocalDateTime.now());
                 execution.setResumeTime(null); // Clear resume time
                 pipelineExecutionRepository.save(execution);
 
                 // Resume the flow execution from this step onwards
+                // This will execute the scheduled step and continue with subsequent steps
                 flowExecutionService.resumeFlowExecution(execution.getFlowExecutionId(), execution.getFlowStepId());
 
-                logger.info("Pipeline execution ID: {} marked as IN_PROGRESS and flow execution resumed", execution.getId());
+                logger.info("Pipeline execution ID: {} marked as IN_PROGRESS and flow execution resume triggered", execution.getId());
                 
             } catch (Exception e) {
-                logger.error("Error resuming scheduled pipeline execution ID: {}", execution.getId(), e);
+                logger.error("Error resuming scheduled pipeline execution ID: {}: {}", execution.getId(), e.getMessage(), e);
                 // Mark as failed if resume fails
                 execution.setStatus(ExecutionStatus.FAILED);
                 execution.setEndTime(LocalDateTime.now());

@@ -70,6 +70,9 @@ public class FlowExecutionService {
     @Autowired
     private FlowGroupRepository flowGroupRepository;
 
+    @Autowired
+    private FlowExecutionQueueService flowExecutionQueueService;
+
     @org.springframework.beans.factory.annotation.Value("${scheduling.pipeline-status.polling-interval:60000}")
     private long scheduledPollingIntervalMs;
 
@@ -141,58 +144,62 @@ public class FlowExecutionService {
         logger.info("Thread pool status - Active: {}, Max: {}, Queue Size: {}, Available Capacity: {}",
                    activeThreads, maxThreads, queueSize, availableCapacity);
 
-        // Create flow executions synchronously first, then start async execution
+        // Create flow executions synchronously first, then start async execution or queue them
         List<FlowExecutionDto> acceptedExecutions = new ArrayList<>();
-        List<Map<String, Object>> rejected = new ArrayList<>();
+        List<FlowExecutionDto> queuedExecutions = new ArrayList<>();
 
         for (int i = 0; i < flowIds.size(); i++) {
             Long flowId = flowIds.get(i);
 
-            if (i < availableCapacity) {
-                try {
-                    // Create the flow execution record synchronously to get the UUID and details
-                    // This only creates the database record, no GitLab interaction yet
-                    FlowExecutionDto executionDto = createFlowExecution(flowId, flowGroupId, iteration, revolutions, category);
+            try {
+                // Create the flow execution record synchronously to get the UUID and details
+                // This only creates the database record, no GitLab interaction yet
+                FlowExecutionDto executionDto = createFlowExecution(flowId, flowGroupId, iteration, revolutions, category);
+                
+                if (i < availableCapacity) {
+                    // Accept for immediate execution
                     acceptedExecutions.add(executionDto);
-
-                    logger.info("Flow {} accepted for execution with ID: {}", flowId, executionDto.getId());
-                } catch (IllegalArgumentException e) {
-                    logger.error("Flow {} rejected during creation: {}", flowId, e.getMessage());
-                    Map<String, Object> rejectedFlow = new HashMap<>();
-                    rejectedFlow.put("flowId", flowId);
-                    rejectedFlow.put("status", "rejected");
-                    rejectedFlow.put("reason", "flow_not_found");
-                    rejectedFlow.put("message", e.getMessage());
-                    rejected.add(rejectedFlow);
+                    logger.info("Flow {} accepted for immediate execution with ID: {}", flowId, executionDto.getId());
+                } else {
+                    // Queue for later execution - persist to database
+                    flowExecutionQueueService.enqueueFlowExecution(
+                        executionDto.getId(), flowId, flowGroupId, iteration, revolutions, category);
+                    queuedExecutions.add(executionDto);
+                    logger.info("Flow {} queued for execution with ID: {} (thread pool at capacity)", 
+                               flowId, executionDto.getId());
                 }
-            } else {
+            } catch (IllegalArgumentException e) {
+                logger.error("Flow {} rejected during creation: {}", flowId, e.getMessage());
+                // Flow not found errors are still rejected
                 Map<String, Object> rejectedFlow = new HashMap<>();
                 rejectedFlow.put("flowId", flowId);
                 rejectedFlow.put("status", "rejected");
-                rejectedFlow.put("reason", "thread_pool_capacity");
-                rejectedFlow.put("message", "Thread pool at capacity, flow execution rejected");
-                rejected.add(rejectedFlow);
-
-                logger.warn("Flow {} rejected due to thread pool capacity", flowId);
+                rejectedFlow.put("reason", "flow_not_found");
+                rejectedFlow.put("message", e.getMessage());
             }
         }
 
+        long totalQueued = flowExecutionQueueService.getQueuedCount();
+        
         Map<String, Object> result = new HashMap<>();
         result.put("summary", Map.of(
             "total_requested", flowIds.size(),
             "accepted", acceptedExecutions.size(),
-            "rejected", rejected.size()
+            "queued", queuedExecutions.size(),
+            "total_queued_in_system", totalQueued
         ));
-        result.put("accepted", acceptedExecutions);  // Now contains FlowExecutionDto objects
-        result.put("rejected", rejected);
+        result.put("accepted", acceptedExecutions);
+        result.put("queued", queuedExecutions);
         result.put("thread_pool_status", Map.of(
             "active_threads", activeThreads,
             "max_threads", maxThreads,
             "queue_size", queueSize,
-            "available_capacity", availableCapacity
+            "available_capacity", availableCapacity,
+            "database_queue_size", totalQueued
         ));
 
-        logger.info("Multiple flow execution request processed immediately - Accepted: {}, Rejected: {}", acceptedExecutions.size(), rejected.size());
+        logger.info("Multiple flow execution request processed - Accepted: {}, Queued: {}, Total in DB queue: {}", 
+                   acceptedExecutions.size(), queuedExecutions.size(), totalQueued);
         return result;
     }
 

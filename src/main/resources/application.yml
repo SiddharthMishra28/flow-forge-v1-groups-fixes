@@ -60,6 +60,13 @@ scheduling:
   pipeline-status:
     # Scheduled pipeline status polling interval in milliseconds (default: 60 seconds)
     polling-interval: ${PIPELINE_STATUS_POLLING_INTERVAL:60000}
+  queue-processing:
+    # Queued flow execution polling interval in milliseconds (default: 30 seconds)
+    polling-interval: ${QUEUE_PROCESSING_POLLING_INTERVAL:30000}
+    # Initial delay before first queue processing after startup in milliseconds (default: 10 seconds)
+    initial-delay: ${QUEUE_PROCESSING_INITIAL_DELAY:10000}
+    # Maximum retry attempts for queue processing failures (default: 3)
+    max-retry-count: ${QUEUE_PROCESSING_MAX_RETRY:3}
 
 ---
 spring:

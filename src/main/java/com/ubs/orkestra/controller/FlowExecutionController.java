@@ -95,15 +95,15 @@ public class FlowExecutionController {
                 }
             }
             
-            // Check if any flows were rejected due to capacity
+            // Check if any flows were queued
             @SuppressWarnings("unchecked")
-            List<Map<String, Object>> rejected = (List<Map<String, Object>>) result.get("rejected");
+            List<FlowExecutionDto> queuedExecutions = (List<FlowExecutionDto>) result.get("queued");
             
-            if (rejected != null && !rejected.isEmpty()) {
-                // Some flows were rejected due to thread pool capacity or other reasons
-                return new ResponseEntity<>(result, HttpStatus.SERVICE_UNAVAILABLE);
+            if (queuedExecutions != null && !queuedExecutions.isEmpty()) {
+                // Some flows were queued due to thread pool capacity - still accepted but queued
+                return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
             } else {
-                // All flows accepted for execution
+                // All flows accepted for immediate execution
                 return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
             }
         } catch (IllegalArgumentException e) {

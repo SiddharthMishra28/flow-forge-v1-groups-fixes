@@ -76,6 +76,7 @@ com\ubs\orkestra\model\FlowGroup.class
 com\ubs\orkestra\model\FlowStep.class
 com\ubs\orkestra\service\TokenValidationScheduler.class
 com\ubs\orkestra\validator\InvokeSchedulerValidator.class
+com\ubs\orkestra\service\FlowExecutionQueueService.class
 com\ubs\orkestra\dto\FlowGroupPatchDto.class
 com\ubs\orkestra\dto\FlowDto.class
 com\ubs\orkestra\service\FlowGroupService.class
@@ -85,6 +86,7 @@ com\ubs\orkestra\dto\analytics\MetricsSummaryDto.class
 com\ubs\orkestra\validator\InvokeTimerValidator.class
 com\ubs\orkestra\dto\FlowExecutionDto.class
 com\ubs\orkestra\controller\AnalyticsController.class
+com\ubs\orkestra\repository\QueuedFlowExecutionRepository.class
 com\ubs\orkestra\service\ApplicationService.class
 com\ubs\orkestra\dto\DelayDto.class
 com\ubs\orkestra\controller\PipelineExecutionController.class
@@ -93,6 +95,7 @@ com\ubs\orkestra\service\EncryptionService.class
 com\ubs\orkestra\controller\ApplicationController.class
 com\ubs\orkestra\util\GitLabApiClient$GitLabJobsResponse.class
 com\ubs\orkestra\config\WebSocketConfig.class
+com\ubs\orkestra\model\QueuedFlowExecution.class
 com\ubs\orkestra\util\OutputEnvParser.class
 com\ubs\orkestra\service\FlowService.class
 com\ubs\orkestra\controller\FlowExecutionController.class

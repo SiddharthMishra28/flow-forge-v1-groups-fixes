@@ -1,0 +1,1182 @@
+2026-03-09 20:22:27.750 [main] INFO  c.u.o.OrkestraV2ApiApplication - Starting OrkestraV2ApiApplication using Java 21.0.10 with PID 22972 (D:\dev\flow-forge-v1-groups-fixes\target\classes started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
+2026-03-09 20:22:27.755 [main] INFO  c.u.o.OrkestraV2ApiApplication - The following 1 profile is active: "local"
+2026-03-09 20:22:30.554 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-09 20:22:31.462 [main] DEBUG org.hibernate.SQL - create table applications (id bigint not null, application_description varchar(255) not null, application_name varchar(255) not null, created_at timestamp(6) not null, gitlab_project_id varchar(255) not null, personal_access_token varchar(255) not null, project_name varchar(255), project_url varchar(255), token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')), token_validation_last_update_date timestamp(6), updated_at timestamp(6) not null, primary key (id))
+2026-03-09 20:22:31.469 [main] DEBUG org.hibernate.SQL - create table artifacts (id bigint not null, artifact_name varchar(255) not null, created_at timestamp(6) not null, run_ids json not null, updated_at timestamp(6) not null, primary key (id))
+2026-03-09 20:22:31.470 [main] DEBUG org.hibernate.SQL - create table flow_executions (id uuid not null, category varchar(255), created_at timestamp(6) not null, end_time timestamp(6), flow_id bigint not null, is_replay boolean, iteration integer, original_flow_execution_id uuid, replay_count integer, revolutions integer, runtime_variables json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), flow_group_id bigint, primary key (id))
+2026-03-09 20:22:31.472 [main] DEBUG org.hibernate.SQL - create table flow_groups (id bigint not null, created_at timestamp(6) not null, current_iteration integer not null, flow_group_name varchar(255) not null, flows json not null, revolutions integer not null, updated_at timestamp(6) not null, primary key (id))
+2026-03-09 20:22:31.473 [main] DEBUG org.hibernate.SQL - create table flow_steps (id bigint not null, branch varchar(255) not null, created_at timestamp(6) not null, description varchar(255), timer_days varchar(255), timer_hours varchar(255), timer_minutes varchar(255), scheduler_type varchar(255), squash_step_ids json, test_data_ids json, test_stage varchar(255) not null, test_tag varchar(255) not null, updated_at timestamp(6) not null, application_id bigint not null, primary key (id))
+2026-03-09 20:22:31.475 [main] DEBUG org.hibernate.SQL - create table flows (id bigint not null, created_at timestamp(6) not null, flow_step_ids json not null, squash_test_case varchar(255) not null, squash_test_case_id bigint not null, updated_at timestamp(6) not null, primary key (id))
+2026-03-09 20:22:31.475 [main] DEBUG org.hibernate.SQL - create table pipeline_executions (id bigint not null, configured_test_data json, created_at timestamp(6) not null, end_time timestamp(6), flow_execution_id uuid not null, flow_id bigint not null, flow_step_id bigint not null, is_replay boolean not null, job_id bigint, job_url varchar(255), pipeline_id bigint, pipeline_url varchar(255), resume_time timestamp(6), runtime_test_data json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), primary key (id))
+2026-03-09 20:22:31.477 [main] DEBUG org.hibernate.SQL - create table test_data (data_id bigint not null, application_name varchar(255), category varchar(255) not null, created_at timestamp(6) not null, description varchar(255), updated_at timestamp(6) not null, variables json not null, application_id bigint, primary key (data_id))
+2026-03-09 20:22:31.481 [main] DEBUG org.hibernate.SQL - create sequence applications_seq start with 1 increment by 1
+2026-03-09 20:22:31.483 [main] DEBUG org.hibernate.SQL - create sequence artifacts_id_seq start with 1 increment by 1
+2026-03-09 20:22:31.484 [main] DEBUG org.hibernate.SQL - create sequence flow_groups_id_seq start with 1 increment by 1
+2026-03-09 20:22:31.484 [main] DEBUG org.hibernate.SQL - create sequence flow_steps_seq start with 1 increment by 1
+2026-03-09 20:22:31.485 [main] DEBUG org.hibernate.SQL - create sequence flows_seq start with 1 increment by 1
+2026-03-09 20:22:31.485 [main] DEBUG org.hibernate.SQL - create sequence pipeline_executions_seq start with 1 increment by 1
+2026-03-09 20:22:31.485 [main] DEBUG org.hibernate.SQL - create sequence test_data_seq start with 1 increment by 1
+2026-03-09 20:22:31.485 [main] DEBUG org.hibernate.SQL - alter table if exists flow_executions add constraint FKr71stky8abwyfobvpeefjc7fv foreign key (flow_group_id) references flow_groups
+2026-03-09 20:22:31.490 [main] DEBUG org.hibernate.SQL - alter table if exists flow_steps add constraint FKp00aj00r8cvyydod3holpe5oh foreign key (application_id) references applications
+2026-03-09 20:22:31.491 [main] DEBUG org.hibernate.SQL - alter table if exists test_data add constraint FK3iretb06mhjh2gksyhkkj4cfx foreign key (application_id) references applications
+2026-03-09 20:22:33.393 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-09 20:22:34.093 [main] INFO  c.u.o.OrkestraV2ApiApplication - Started OrkestraV2ApiApplication in 6.862 seconds (process running for 7.212)
+2026-03-09 20:22:34.181 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:22:34.189 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:23:01.651 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-09 20:23:01.654 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-03-09 20:23:03.113 [http-nio-8080-exec-9] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 1191 ms
+2026-03-09 20:23:34.103 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:23:34.105 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:24:34.096 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:24:34.097 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:25:34.099 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:25:34.100 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:26:34.095 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:26:34.097 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:27:34.097 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:27:34.098 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:28:34.106 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:28:34.107 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:29:34.107 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:29:34.109 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:30:34.104 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:30:34.104 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:31:34.109 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:31:34.110 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:32:34.100 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:32:34.101 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:33:34.110 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:33:34.111 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:34:34.100 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:34:34.101 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:35:34.104 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:35:34.105 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:36:34.099 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:36:34.100 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:37:34.094 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:37:34.095 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:38:34.100 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:38:34.100 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:39:34.099 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:39:34.100 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:40:34.094 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:40:34.095 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:41:34.094 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:41:34.095 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:42:34.100 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:42:34.101 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:43:34.097 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:43:34.098 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:44:34.099 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:44:34.101 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:45:34.101 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:45:34.102 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:46:34.101 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:46:34.102 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:47:34.105 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:47:34.107 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:48:34.105 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:48:34.106 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:49:34.102 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:49:34.103 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:50:34.095 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:50:34.096 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:51:34.103 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:51:34.105 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:52:34.105 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:52:34.108 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:53:34.107 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:53:34.109 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 20:54:34.094 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
+2026-03-09 20:54:34.095 [scheduling-1] INFO  c.u.o.service.SchedulingService - Found 0 scheduled executions ready to resume
+2026-03-09 21:15:23.775 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 27280 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
+2026-03-09 21:15:23.777 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
+2026-03-09 21:15:23.807 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@7ec58feb
+2026-03-09 21:15:26.435 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-09 21:15:27.387 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-09 21:15:27.389 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-09 21:15:27.389 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-09 21:15:27.389 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-09 21:15:27.389 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-09 21:15:27.389 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-09 21:15:27.390 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-09 21:15:27.390 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-09 21:15:27.390 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-09 21:15:27.390 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-09 21:15:27.390 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-09 21:15:27.390 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-09 21:15:27.390 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-09 21:15:27.391 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-09 21:15:27.391 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-09 21:15:27.391 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-09 21:15:27.391 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
+2026-03-09 21:15:27.396 [main] DEBUG org.hibernate.SQL - 
+    create sequence applications_seq start with 1 increment by 1
+2026-03-09 21:15:27.398 [main] DEBUG org.hibernate.SQL - 
+    create sequence artifacts_id_seq start with 1 increment by 1
+2026-03-09 21:15:27.398 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_groups_id_seq start with 1 increment by 1
+2026-03-09 21:15:27.399 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_steps_seq start with 1 increment by 1
+2026-03-09 21:15:27.399 [main] DEBUG org.hibernate.SQL - 
+    create sequence flows_seq start with 1 increment by 1
+2026-03-09 21:15:27.399 [main] DEBUG org.hibernate.SQL - 
+    create sequence pipeline_executions_seq start with 1 increment by 1
+2026-03-09 21:15:27.399 [main] DEBUG org.hibernate.SQL - 
+    create sequence queued_flow_executions_seq start with 1 increment by 1
+2026-03-09 21:15:27.399 [main] DEBUG org.hibernate.SQL - 
+    create sequence test_data_seq start with 1 increment by 1
+2026-03-09 21:15:27.403 [main] DEBUG org.hibernate.SQL - 
+    create table applications (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        token_validation_last_update_date timestamp(6),
+        updated_at timestamp(6) not null,
+        application_description varchar(255) not null,
+        application_name varchar(255) not null,
+        gitlab_project_id varchar(255) not null,
+        personal_access_token varchar(255) not null,
+        project_name varchar(255),
+        project_url varchar(255),
+        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
+        primary key (id)
+    )
+2026-03-09 21:15:27.412 [main] DEBUG org.hibernate.SQL - 
+    create table artifacts (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        artifact_name varchar(255) not null,
+        run_ids json not null,
+        primary key (id)
+    )
+2026-03-09 21:15:27.413 [main] DEBUG org.hibernate.SQL - 
+    create table flow_executions (
+        is_replay boolean,
+        iteration integer,
+        replay_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_group_id bigint,
+        flow_id bigint not null,
+        start_time timestamp(6),
+        id uuid not null,
+        original_flow_execution_id uuid,
+        category varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        runtime_variables json,
+        primary key (id)
+    )
+2026-03-09 21:15:27.415 [main] DEBUG org.hibernate.SQL - 
+    create table flow_groups (
+        current_iteration integer not null,
+        revolutions integer not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        flow_group_name varchar(255) not null,
+        flows json not null,
+        primary key (id)
+    )
+2026-03-09 21:15:27.415 [main] DEBUG org.hibernate.SQL - 
+    create table flow_steps (
+        application_id bigint not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        branch varchar(255) not null,
+        description varchar(255),
+        scheduler_type varchar(255),
+        test_stage varchar(255) not null,
+        test_tag varchar(255) not null,
+        timer_days varchar(255),
+        timer_hours varchar(255),
+        timer_minutes varchar(255),
+        squash_step_ids json,
+        test_data_ids json,
+        primary key (id)
+    )
+2026-03-09 21:15:27.415 [main] DEBUG org.hibernate.SQL - 
+    create table flows (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        squash_test_case_id bigint not null,
+        updated_at timestamp(6) not null,
+        squash_test_case varchar(255) not null,
+        flow_step_ids json not null,
+        primary key (id)
+    )
+2026-03-09 21:15:27.417 [main] DEBUG org.hibernate.SQL - 
+    create table pipeline_executions (
+        is_replay boolean not null,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_id bigint not null,
+        flow_step_id bigint not null,
+        id bigint not null,
+        job_id bigint,
+        pipeline_id bigint,
+        resume_time timestamp(6),
+        start_time timestamp(6),
+        flow_execution_id uuid not null,
+        job_url varchar(255),
+        pipeline_url varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        configured_test_data json,
+        runtime_test_data json,
+        primary key (id)
+    )
+2026-03-09 21:15:27.418 [main] DEBUG org.hibernate.SQL - 
+    create table queued_flow_executions (
+        iteration integer,
+        priority integer,
+        retry_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        flow_group_id bigint,
+        flow_id bigint not null,
+        id bigint not null,
+        flow_execution_id uuid not null,
+        category varchar(255),
+        primary key (id)
+    )
+2026-03-09 21:15:27.418 [main] DEBUG org.hibernate.SQL - 
+    create table test_data (
+        application_id bigint,
+        created_at timestamp(6) not null,
+        data_id bigint not null,
+        updated_at timestamp(6) not null,
+        application_name varchar(255),
+        category varchar(255) not null,
+        description varchar(255),
+        variables json not null,
+        primary key (data_id)
+    )
+2026-03-09 21:15:27.420 [main] DEBUG org.hibernate.SQL - 
+    create index idx_queued_created_at 
+       on queued_flow_executions (created_at)
+2026-03-09 21:15:27.420 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_executions 
+       add constraint FKr71stky8abwyfobvpeefjc7fv 
+       foreign key (flow_group_id) 
+       references flow_groups
+2026-03-09 21:15:27.425 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_steps 
+       add constraint FKp00aj00r8cvyydod3holpe5oh 
+       foreign key (application_id) 
+       references applications
+2026-03-09 21:15:27.428 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists test_data 
+       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
+       foreign key (application_id) 
+       references applications
+2026-03-09 21:15:30.501 [main] WARN  o.s.w.c.s.GenericWebApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionController': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Unsatisfied dependency expressed through field 'flowExecutionQueueService': Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+2026-03-09 21:15:30.505 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-09 21:15:30.507 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-09 21:15:30.509 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-09 21:15:30.510 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-09 21:15:30.511 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-09 21:15:30.512 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-09 21:15:30.512 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-09 21:15:30.514 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-09 21:15:30.515 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-09 21:15:30.515 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-09 21:15:30.516 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-09 21:15:30.517 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-09 21:15:30.517 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-09 21:15:30.517 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-09 21:15:30.518 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-09 21:15:30.518 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-09 21:15:30.518 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
+2026-03-09 21:15:30.599 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The dependencies of some of the beans in the application context form a cycle:
+
+   flowExecutionController (field private com.ubs.orkestra.service.FlowExecutionService com.ubs.orkestra.controller.FlowExecutionController.flowExecutionService)
+┌─────┐
+|  flowExecutionService (field private com.ubs.orkestra.service.FlowExecutionQueueService com.ubs.orkestra.service.FlowExecutionService.flowExecutionQueueService)
+↑     ↓
+|  flowExecutionQueueService (field private com.ubs.orkestra.service.FlowExecutionService com.ubs.orkestra.service.FlowExecutionQueueService.flowExecutionService)
+└─────┘
+
+
+Action:
+
+Relying upon circular references is discouraged and they are prohibited by default. Update your application to remove the dependency cycle between beans. As a last resort, it may be possible to break the cycle automatically by setting spring.main.allow-circular-references to true.
+
+2026-03-09 21:15:30.619 [main] ERROR o.s.test.context.TestContextManager - Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] to prepare test instance [com.ubs.orkestra.OrkestraV2ApiApplicationTests@6363028]
+java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMergedContextConfiguration@2f3fa378 testClass = com.ubs.orkestra.OrkestraV2ApiApplicationTests, locations = [], classes = [com.ubs.orkestra.OrkestraV2ApiApplication], contextInitializerClasses = [], activeProfiles = ["test"], propertySourceDescriptors = [], propertySourceProperties = ["org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true"], contextCustomizers = [org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@1a5a4e19, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@41f69e84, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@5f9edf14, org.springframework.boot.test.web.reactive.server.WebTestClientContextCustomizer@7ac296f6, org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@747f281, org.springframework.boot.test.context.SpringBootTestAnnotation@e16a109c], resourceBasePath = "src/main/webapp", contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:180)
+	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:130)
+	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:191)
+	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:130)
+	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:247)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:163)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$10(ClassBasedTestDescriptor.java:378)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:383)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$11(ClassBasedTestDescriptor.java:378)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310)
+	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735)
+	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734)
+	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:377)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:290)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:289)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:279)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:278)
+	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:106)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:105)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionController': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Unsatisfied dependency expressed through field 'flowExecutionQueueService': Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:772)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:752)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:946)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:616)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:455)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:323)
+	at org.springframework.boot.test.context.SpringBootContextLoader.lambda$loadContext$3(SpringBootContextLoader.java:137)
+	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:58)
+	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:46)
+	at org.springframework.boot.SpringApplication.withHook(SpringApplication.java:1442)
+	at org.springframework.boot.test.context.SpringBootContextLoader$ContextLoaderHook.run(SpringBootContextLoader.java:552)
+	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:137)
+	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:108)
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:225)
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:152)
+	... 73 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionService': Unsatisfied dependency expressed through field 'flowExecutionQueueService': Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:772)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:752)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1441)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1348)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:769)
+	... 98 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:772)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:752)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1441)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1348)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:769)
+	... 112 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.beforeSingletonCreation(DefaultSingletonBeanRegistry.java:355)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:227)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1441)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1348)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:769)
+	... 126 common frames omitted
+2026-03-09 21:15:30.728 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:15:30.780 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:15:30.782 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:15:30.786 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:15:42.992 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 8356 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
+2026-03-09 21:15:42.993 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
+2026-03-09 21:15:43.025 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@7ec58feb
+2026-03-09 21:15:45.901 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-09 21:15:46.864 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-09 21:15:46.866 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-09 21:15:46.866 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-09 21:15:46.866 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-09 21:15:46.866 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-09 21:15:46.866 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-09 21:15:46.868 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-09 21:15:46.868 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-09 21:15:46.868 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-09 21:15:46.868 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-09 21:15:46.869 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-09 21:15:46.869 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-09 21:15:46.869 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-09 21:15:46.869 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-09 21:15:46.870 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-09 21:15:46.870 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-09 21:15:46.870 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
+2026-03-09 21:15:46.876 [main] DEBUG org.hibernate.SQL - 
+    create sequence applications_seq start with 1 increment by 1
+2026-03-09 21:15:46.879 [main] DEBUG org.hibernate.SQL - 
+    create sequence artifacts_id_seq start with 1 increment by 1
+2026-03-09 21:15:46.879 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_groups_id_seq start with 1 increment by 1
+2026-03-09 21:15:46.879 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_steps_seq start with 1 increment by 1
+2026-03-09 21:15:46.880 [main] DEBUG org.hibernate.SQL - 
+    create sequence flows_seq start with 1 increment by 1
+2026-03-09 21:15:46.880 [main] DEBUG org.hibernate.SQL - 
+    create sequence pipeline_executions_seq start with 1 increment by 1
+2026-03-09 21:15:46.880 [main] DEBUG org.hibernate.SQL - 
+    create sequence queued_flow_executions_seq start with 1 increment by 1
+2026-03-09 21:15:46.880 [main] DEBUG org.hibernate.SQL - 
+    create sequence test_data_seq start with 1 increment by 1
+2026-03-09 21:15:46.884 [main] DEBUG org.hibernate.SQL - 
+    create table applications (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        token_validation_last_update_date timestamp(6),
+        updated_at timestamp(6) not null,
+        application_description varchar(255) not null,
+        application_name varchar(255) not null,
+        gitlab_project_id varchar(255) not null,
+        personal_access_token varchar(255) not null,
+        project_name varchar(255),
+        project_url varchar(255),
+        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
+        primary key (id)
+    )
+2026-03-09 21:15:46.895 [main] DEBUG org.hibernate.SQL - 
+    create table artifacts (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        artifact_name varchar(255) not null,
+        run_ids json not null,
+        primary key (id)
+    )
+2026-03-09 21:15:46.896 [main] DEBUG org.hibernate.SQL - 
+    create table flow_executions (
+        is_replay boolean,
+        iteration integer,
+        replay_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_group_id bigint,
+        flow_id bigint not null,
+        start_time timestamp(6),
+        id uuid not null,
+        original_flow_execution_id uuid,
+        category varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        runtime_variables json,
+        primary key (id)
+    )
+2026-03-09 21:15:46.899 [main] DEBUG org.hibernate.SQL - 
+    create table flow_groups (
+        current_iteration integer not null,
+        revolutions integer not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        flow_group_name varchar(255) not null,
+        flows json not null,
+        primary key (id)
+    )
+2026-03-09 21:15:46.900 [main] DEBUG org.hibernate.SQL - 
+    create table flow_steps (
+        application_id bigint not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        branch varchar(255) not null,
+        description varchar(255),
+        scheduler_type varchar(255),
+        test_stage varchar(255) not null,
+        test_tag varchar(255) not null,
+        timer_days varchar(255),
+        timer_hours varchar(255),
+        timer_minutes varchar(255),
+        squash_step_ids json,
+        test_data_ids json,
+        primary key (id)
+    )
+2026-03-09 21:15:46.901 [main] DEBUG org.hibernate.SQL - 
+    create table flows (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        squash_test_case_id bigint not null,
+        updated_at timestamp(6) not null,
+        squash_test_case varchar(255) not null,
+        flow_step_ids json not null,
+        primary key (id)
+    )
+2026-03-09 21:15:46.901 [main] DEBUG org.hibernate.SQL - 
+    create table pipeline_executions (
+        is_replay boolean not null,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_id bigint not null,
+        flow_step_id bigint not null,
+        id bigint not null,
+        job_id bigint,
+        pipeline_id bigint,
+        resume_time timestamp(6),
+        start_time timestamp(6),
+        flow_execution_id uuid not null,
+        job_url varchar(255),
+        pipeline_url varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        configured_test_data json,
+        runtime_test_data json,
+        primary key (id)
+    )
+2026-03-09 21:15:46.902 [main] DEBUG org.hibernate.SQL - 
+    create table queued_flow_executions (
+        iteration integer,
+        priority integer,
+        retry_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        flow_group_id bigint,
+        flow_id bigint not null,
+        id bigint not null,
+        flow_execution_id uuid not null,
+        category varchar(255),
+        primary key (id)
+    )
+2026-03-09 21:15:46.903 [main] DEBUG org.hibernate.SQL - 
+    create table test_data (
+        application_id bigint,
+        created_at timestamp(6) not null,
+        data_id bigint not null,
+        updated_at timestamp(6) not null,
+        application_name varchar(255),
+        category varchar(255) not null,
+        description varchar(255),
+        variables json not null,
+        primary key (data_id)
+    )
+2026-03-09 21:15:46.905 [main] DEBUG org.hibernate.SQL - 
+    create index idx_queued_created_at 
+       on queued_flow_executions (created_at)
+2026-03-09 21:15:46.905 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_executions 
+       add constraint FKr71stky8abwyfobvpeefjc7fv 
+       foreign key (flow_group_id) 
+       references flow_groups
+2026-03-09 21:15:46.915 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_steps 
+       add constraint FKp00aj00r8cvyydod3holpe5oh 
+       foreign key (application_id) 
+       references applications
+2026-03-09 21:15:46.916 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists test_data 
+       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
+       foreign key (application_id) 
+       references applications
+2026-03-09 21:15:49.798 [main] WARN  o.s.w.c.s.GenericWebApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionController': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Unsatisfied dependency expressed through field 'flowExecutionQueueService': Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+2026-03-09 21:15:49.801 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-09 21:15:49.803 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-09 21:15:49.805 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-09 21:15:49.805 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-09 21:15:49.805 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-09 21:15:49.805 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-09 21:15:49.805 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-09 21:15:49.807 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-09 21:15:49.807 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-09 21:15:49.807 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-09 21:15:49.808 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-09 21:15:49.808 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-09 21:15:49.808 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-09 21:15:49.808 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-09 21:15:49.808 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-09 21:15:49.809 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-09 21:15:49.809 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
+2026-03-09 21:15:49.873 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The dependencies of some of the beans in the application context form a cycle:
+
+   flowExecutionController (field private com.ubs.orkestra.service.FlowExecutionService com.ubs.orkestra.controller.FlowExecutionController.flowExecutionService)
+┌─────┐
+|  flowExecutionService (field private com.ubs.orkestra.service.FlowExecutionQueueService com.ubs.orkestra.service.FlowExecutionService.flowExecutionQueueService)
+↑     ↓
+|  flowExecutionQueueService (field private com.ubs.orkestra.service.FlowExecutionService com.ubs.orkestra.service.FlowExecutionQueueService.flowExecutionService)
+└─────┘
+
+
+Action:
+
+Relying upon circular references is discouraged and they are prohibited by default. Update your application to remove the dependency cycle between beans. As a last resort, it may be possible to break the cycle automatically by setting spring.main.allow-circular-references to true.
+
+2026-03-09 21:15:49.884 [main] ERROR o.s.test.context.TestContextManager - Caught exception while allowing TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] to prepare test instance [com.ubs.orkestra.OrkestraV2ApiApplicationTests@71ec7440]
+java.lang.IllegalStateException: Failed to load ApplicationContext for [WebMergedContextConfiguration@466cbbd5 testClass = com.ubs.orkestra.OrkestraV2ApiApplicationTests, locations = [], classes = [com.ubs.orkestra.OrkestraV2ApiApplication], contextInitializerClasses = [], activeProfiles = ["test"], propertySourceDescriptors = [], propertySourceProperties = ["org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true"], contextCustomizers = [org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@1a5a4e19, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@41f69e84, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@5f9edf14, org.springframework.boot.test.web.reactive.server.WebTestClientContextCustomizer@7ac296f6, org.springframework.boot.test.autoconfigure.actuate.observability.ObservabilityContextCustomizerFactory$DisableObservabilityContextCustomizer@1f, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizer@747f281, org.springframework.boot.test.context.SpringBootTestAnnotation@e16a109c], resourceBasePath = "src/main/webapp", contextLoader = org.springframework.boot.test.context.SpringBootContextLoader, parent = null]
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:180)
+	at org.springframework.test.context.support.DefaultTestContext.getApplicationContext(DefaultTestContext.java:130)
+	at org.springframework.test.context.web.ServletTestExecutionListener.setUpRequestContextIfNecessary(ServletTestExecutionListener.java:191)
+	at org.springframework.test.context.web.ServletTestExecutionListener.prepareTestInstance(ServletTestExecutionListener.java:130)
+	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:247)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.postProcessTestInstance(SpringExtension.java:163)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$10(ClassBasedTestDescriptor.java:378)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.executeAndMaskThrowable(ClassBasedTestDescriptor.java:383)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeTestInstancePostProcessors$11(ClassBasedTestDescriptor.java:378)
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)
+	at java.base/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+	at java.base/java.util.stream.StreamSpliterators$WrappingSpliterator.forEachRemaining(StreamSpliterators.java:310)
+	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:735)
+	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734)
+	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeTestInstancePostProcessors(ClassBasedTestDescriptor.java:377)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$instantiateAndPostProcessTestInstance$6(ClassBasedTestDescriptor.java:290)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.instantiateAndPostProcessTestInstance(ClassBasedTestDescriptor.java:289)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$4(ClassBasedTestDescriptor.java:279)
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$testInstancesProvider$5(ClassBasedTestDescriptor.java:278)
+	at org.junit.jupiter.engine.execution.TestInstancesProvider.getTestInstances(TestInstancesProvider.java:31)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$prepare$0(TestMethodTestDescriptor.java:106)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:105)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.prepare(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$prepare$2(NodeTestTask.java:123)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.prepare(NodeTestTask.java:123)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:90)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionController': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Unsatisfied dependency expressed through field 'flowExecutionQueueService': Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:772)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:752)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:946)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:616)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:753)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:455)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:323)
+	at org.springframework.boot.test.context.SpringBootContextLoader.lambda$loadContext$3(SpringBootContextLoader.java:137)
+	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:58)
+	at org.springframework.util.function.ThrowingSupplier.get(ThrowingSupplier.java:46)
+	at org.springframework.boot.SpringApplication.withHook(SpringApplication.java:1442)
+	at org.springframework.boot.test.context.SpringBootContextLoader$ContextLoaderHook.run(SpringBootContextLoader.java:552)
+	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:137)
+	at org.springframework.boot.test.context.SpringBootContextLoader.loadContext(SpringBootContextLoader.java:108)
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContextInternal(DefaultCacheAwareContextLoaderDelegate.java:225)
+	at org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate.loadContext(DefaultCacheAwareContextLoaderDelegate.java:152)
+	... 73 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionService': Unsatisfied dependency expressed through field 'flowExecutionQueueService': Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:772)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:752)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1441)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1348)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:769)
+	... 98 common frames omitted
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'flowExecutionQueueService': Unsatisfied dependency expressed through field 'flowExecutionService': Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:772)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:752)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:493)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:325)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1441)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1348)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:769)
+	... 112 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCurrentlyInCreationException: Error creating bean with name 'flowExecutionService': Requested bean is currently in creation: Is there an unresolvable circular reference?
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.beforeSingletonCreation(DefaultSingletonBeanRegistry.java:355)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:227)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:323)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1441)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1348)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:769)
+	... 126 common frames omitted
+2026-03-09 21:15:49.952 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:15:49.994 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:15:49.996 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:15:49.999 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:16:17.926 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 14044 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
+2026-03-09 21:16:17.927 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
+2026-03-09 21:16:17.956 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@7ec58feb
+2026-03-09 21:16:20.255 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-09 21:16:20.986 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-09 21:16:20.988 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-09 21:16:20.988 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-09 21:16:20.988 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-09 21:16:20.990 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-09 21:16:20.991 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-09 21:16:20.991 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-09 21:16:20.991 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-09 21:16:20.991 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-09 21:16:20.991 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
+2026-03-09 21:16:20.995 [main] DEBUG org.hibernate.SQL - 
+    create sequence applications_seq start with 1 increment by 1
+2026-03-09 21:16:20.997 [main] DEBUG org.hibernate.SQL - 
+    create sequence artifacts_id_seq start with 1 increment by 1
+2026-03-09 21:16:20.997 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_groups_id_seq start with 1 increment by 1
+2026-03-09 21:16:20.997 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_steps_seq start with 1 increment by 1
+2026-03-09 21:16:20.999 [main] DEBUG org.hibernate.SQL - 
+    create sequence flows_seq start with 1 increment by 1
+2026-03-09 21:16:20.999 [main] DEBUG org.hibernate.SQL - 
+    create sequence pipeline_executions_seq start with 1 increment by 1
+2026-03-09 21:16:20.999 [main] DEBUG org.hibernate.SQL - 
+    create sequence queued_flow_executions_seq start with 1 increment by 1
+2026-03-09 21:16:20.999 [main] DEBUG org.hibernate.SQL - 
+    create sequence test_data_seq start with 1 increment by 1
+2026-03-09 21:16:21.002 [main] DEBUG org.hibernate.SQL - 
+    create table applications (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        token_validation_last_update_date timestamp(6),
+        updated_at timestamp(6) not null,
+        application_description varchar(255) not null,
+        application_name varchar(255) not null,
+        gitlab_project_id varchar(255) not null,
+        personal_access_token varchar(255) not null,
+        project_name varchar(255),
+        project_url varchar(255),
+        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
+        primary key (id)
+    )
+2026-03-09 21:16:21.008 [main] DEBUG org.hibernate.SQL - 
+    create table artifacts (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        artifact_name varchar(255) not null,
+        run_ids json not null,
+        primary key (id)
+    )
+2026-03-09 21:16:21.009 [main] DEBUG org.hibernate.SQL - 
+    create table flow_executions (
+        is_replay boolean,
+        iteration integer,
+        replay_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_group_id bigint,
+        flow_id bigint not null,
+        start_time timestamp(6),
+        id uuid not null,
+        original_flow_execution_id uuid,
+        category varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        runtime_variables json,
+        primary key (id)
+    )
+2026-03-09 21:16:21.011 [main] DEBUG org.hibernate.SQL - 
+    create table flow_groups (
+        current_iteration integer not null,
+        revolutions integer not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        flow_group_name varchar(255) not null,
+        flows json not null,
+        primary key (id)
+    )
+2026-03-09 21:16:21.012 [main] DEBUG org.hibernate.SQL - 
+    create table flow_steps (
+        application_id bigint not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        branch varchar(255) not null,
+        description varchar(255),
+        scheduler_type varchar(255),
+        test_stage varchar(255) not null,
+        test_tag varchar(255) not null,
+        timer_days varchar(255),
+        timer_hours varchar(255),
+        timer_minutes varchar(255),
+        squash_step_ids json,
+        test_data_ids json,
+        primary key (id)
+    )
+2026-03-09 21:16:21.013 [main] DEBUG org.hibernate.SQL - 
+    create table flows (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        squash_test_case_id bigint not null,
+        updated_at timestamp(6) not null,
+        squash_test_case varchar(255) not null,
+        flow_step_ids json not null,
+        primary key (id)
+    )
+2026-03-09 21:16:21.014 [main] DEBUG org.hibernate.SQL - 
+    create table pipeline_executions (
+        is_replay boolean not null,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_id bigint not null,
+        flow_step_id bigint not null,
+        id bigint not null,
+        job_id bigint,
+        pipeline_id bigint,
+        resume_time timestamp(6),
+        start_time timestamp(6),
+        flow_execution_id uuid not null,
+        job_url varchar(255),
+        pipeline_url varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        configured_test_data json,
+        runtime_test_data json,
+        primary key (id)
+    )
+2026-03-09 21:16:21.015 [main] DEBUG org.hibernate.SQL - 
+    create table queued_flow_executions (
+        iteration integer,
+        priority integer,
+        retry_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        flow_group_id bigint,
+        flow_id bigint not null,
+        id bigint not null,
+        flow_execution_id uuid not null,
+        category varchar(255),
+        primary key (id)
+    )
+2026-03-09 21:16:21.016 [main] DEBUG org.hibernate.SQL - 
+    create table test_data (
+        application_id bigint,
+        created_at timestamp(6) not null,
+        data_id bigint not null,
+        updated_at timestamp(6) not null,
+        application_name varchar(255),
+        category varchar(255) not null,
+        description varchar(255),
+        variables json not null,
+        primary key (data_id)
+    )
+2026-03-09 21:16:21.017 [main] DEBUG org.hibernate.SQL - 
+    create index idx_queued_created_at 
+       on queued_flow_executions (created_at)
+2026-03-09 21:16:21.018 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_executions 
+       add constraint FKr71stky8abwyfobvpeefjc7fv 
+       foreign key (flow_group_id) 
+       references flow_groups
+2026-03-09 21:16:21.027 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_steps 
+       add constraint FKp00aj00r8cvyydod3holpe5oh 
+       foreign key (application_id) 
+       references applications
+2026-03-09 21:16:21.028 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists test_data 
+       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
+       foreign key (application_id) 
+       references applications
+2026-03-09 21:16:23.648 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
+2026-03-09 21:16:24.152 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-09 21:16:24.389 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 61 mappings in 'requestMappingHandlerMapping'
+2026-03-09 21:16:24.499 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-03-09 21:16:24.561 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-03-09 21:16:24.619 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-03-09 21:16:25.377 [main] DEBUG org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        queued_flow_executions qfe1_0
+2026-03-09 21:16:25.377 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        pe1_0.id,
+        pe1_0.configured_test_data,
+        pe1_0.created_at,
+        pe1_0.end_time,
+        pe1_0.flow_execution_id,
+        pe1_0.flow_id,
+        pe1_0.flow_step_id,
+        pe1_0.is_replay,
+        pe1_0.job_id,
+        pe1_0.job_url,
+        pe1_0.pipeline_id,
+        pe1_0.pipeline_url,
+        pe1_0.resume_time,
+        pe1_0.runtime_test_data,
+        pe1_0.start_time,
+        pe1_0.status 
+    from
+        pipeline_executions pe1_0 
+    where
+        pe1_0.status=? 
+        and pe1_0.resume_time<?
+2026-03-09 21:16:25.393 [main] INFO  c.u.o.s.FlowExecutionQueueService - No queued flow executions found on startup.
+2026-03-09 21:16:25.395 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 7.814 seconds (process running for 8.577)
+2026-03-09 21:16:26.007 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:16:26.015 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:16:26.015 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:16:26.017 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-09 21:16:26.049 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@7ec58feb, started on Mon Mar 09 21:16:17 IST 2026
+2026-03-09 21:16:26.062 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-09 21:16:26.065 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-09 21:16:26.066 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-09 21:16:26.066 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-09 21:16:26.067 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-09 21:16:26.067 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-09 21:16:26.067 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-09 21:16:26.068 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-09 21:16:26.068 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-09 21:16:26.068 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-09 21:16:26.068 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-09 21:16:26.068 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-09 21:16:26.069 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-09 21:16:26.069 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-09 21:16:26.069 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-09 21:16:26.069 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-09 21:16:26.069 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
