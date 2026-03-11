@@ -93,5 +93,6 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\Pipelin
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\TestDataDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\config\OpenApiConfig.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\FlowExecutionSpecification.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\enums\AutomationStatus.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowGroupPatchDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\Artifact.java

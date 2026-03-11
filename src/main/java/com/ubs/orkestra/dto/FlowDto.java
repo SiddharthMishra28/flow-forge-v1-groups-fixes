@@ -1,5 +1,6 @@
 package com.ubs.orkestra.dto;
 
+import com.ubs.orkestra.enums.AutomationStatus;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,9 @@ public class FlowDto {
     @NotNull(message = "Squash test case is required")
     private String squashTestCase;
 
+    @Schema(description = "Automation status of the flow", example = "Automated", allowableValues = {"Automated", "Partial", "Not-Automated"})
+    private AutomationStatus automationStatus;
+
     @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Timestamp when the record was created")
     private LocalDateTime createdAt;
     
@@ -35,6 +39,13 @@ public class FlowDto {
         this.flowStepIds = flowStepIds;
         this.squashTestCaseId = squashTestCaseId;
         this.squashTestCase = squashTestCase;
+    }
+
+    public FlowDto(List<Long> flowStepIds, Long squashTestCaseId, String squashTestCase, AutomationStatus automationStatus) {
+        this.flowStepIds = flowStepIds;
+        this.squashTestCaseId = squashTestCaseId;
+        this.squashTestCase = squashTestCase;
+        this.automationStatus = automationStatus;
     }
 
     // Getters and Setters
@@ -70,6 +81,13 @@ public class FlowDto {
         this.squashTestCase = squashTestCase;
     }
 
+    public AutomationStatus getAutomationStatus() {
+        return automationStatus;
+    }
+
+    public void setAutomationStatus(AutomationStatus automationStatus) {
+        this.automationStatus = automationStatus;
+    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

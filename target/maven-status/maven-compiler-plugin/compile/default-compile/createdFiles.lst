@@ -14,6 +14,7 @@ com\ubs\orkestra\config\CorsConfig.class
 com\ubs\orkestra\controller\ArtifactController.class
 com\ubs\orkestra\repository\FlowRepository.class
 com\ubs\orkestra\util\GitLabApiClient$GitLabCommit.class
+com\ubs\orkestra\enums\AutomationStatus.class
 com\ubs\orkestra\model\InvokeScheduler.class
 com\ubs\orkestra\dto\FlowGroupCreateDto.class
 com\ubs\orkestra\dto\TimerDto.class

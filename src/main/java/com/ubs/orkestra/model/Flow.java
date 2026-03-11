@@ -1,5 +1,6 @@
 package com.ubs.orkestra.model;
 
+import com.ubs.orkestra.enums.AutomationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,6 +33,9 @@ public class Flow {
     @Column(name = "squash_test_case", nullable = false)
     private String squashTestCase;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "automation_status", length = 20)
+    private AutomationStatus automationStatus;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -48,6 +52,13 @@ public class Flow {
         this.flowStepIds = flowStepIds;
         this.squashTestCaseId = squashTestCaseId;
         this.squashTestCase = squashTestCase;
+    }
+
+    public Flow(List<Long> flowStepIds, Long squashTestCaseId, String squashTestCase, AutomationStatus automationStatus) {
+        this.flowStepIds = flowStepIds;
+        this.squashTestCaseId = squashTestCaseId;
+        this.squashTestCase = squashTestCase;
+        this.automationStatus = automationStatus;
     }
 
     // Getters and Setters
@@ -83,6 +94,13 @@ public class Flow {
         this.squashTestCase = squashTestCase;
     }
 
+    public AutomationStatus getAutomationStatus() {
+        return automationStatus;
+    }
+
+    public void setAutomationStatus(AutomationStatus automationStatus) {
+        this.automationStatus = automationStatus;
+    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

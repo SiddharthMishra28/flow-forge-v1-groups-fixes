@@ -77,6 +77,7 @@ public class CombinedFlowService {
         flow.setFlowStepIds(flowStepIds);
         flow.setSquashTestCaseId(flowCreateDto.getSquashTestCaseId());
         flow.setSquashTestCase(flowCreateDto.getSquashTestCase());
+        flow.setAutomationStatus(flowCreateDto.getAutomationStatus());
         
         Flow savedFlow = flowRepository.save(flow);
         
@@ -125,6 +126,7 @@ public class CombinedFlowService {
         existingFlow.setFlowStepIds(newFlowStepIds);
         existingFlow.setSquashTestCaseId(flowCreateDto.getSquashTestCaseId());
         existingFlow.setSquashTestCase(flowCreateDto.getSquashTestCase());
+        existingFlow.setAutomationStatus(flowCreateDto.getAutomationStatus());
         
         Flow updatedFlow = flowRepository.save(existingFlow);
         
@@ -166,6 +168,7 @@ public class CombinedFlowService {
         flow.setFlowStepIds(flowStepIds);
         flow.setSquashTestCaseId(combinedFlowDto.getSquashTestCaseId());
         flow.setSquashTestCase(combinedFlowDto.getSquashTestCase());
+        flow.setAutomationStatus(combinedFlowDto.getAutomationStatus());
         
         Flow savedFlow = flowRepository.save(flow);
         
@@ -275,6 +278,7 @@ public class CombinedFlowService {
         existingFlow.setFlowStepIds(newFlowStepIds);
         existingFlow.setSquashTestCaseId(combinedFlowDto.getSquashTestCaseId());
         existingFlow.setSquashTestCase(combinedFlowDto.getSquashTestCase());
+        existingFlow.setAutomationStatus(combinedFlowDto.getAutomationStatus());
         
         Flow updatedFlow = flowRepository.save(existingFlow);
         
@@ -371,6 +375,7 @@ public class CombinedFlowService {
         dto.setId(flow.getId());
         dto.setSquashTestCaseId(flow.getSquashTestCaseId());
         dto.setSquashTestCase(flow.getSquashTestCase());
+        dto.setAutomationStatus(flow.getAutomationStatus());
         dto.setCreatedAt(flow.getCreatedAt());
         dto.setUpdatedAt(flow.getUpdatedAt());
         

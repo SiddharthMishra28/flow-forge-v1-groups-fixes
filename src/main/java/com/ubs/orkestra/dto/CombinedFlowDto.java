@@ -1,5 +1,6 @@
 package com.ubs.orkestra.dto;
 
+import com.ubs.orkestra.enums.AutomationStatus;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
@@ -24,6 +25,9 @@ public class CombinedFlowDto {
 
     @NotNull(message = "Squash test case is required")
     private String squashTestCase;
+
+    @Schema(description = "Automation status of the flow", example = "Automated", allowableValues = {"Automated", "Partial", "Not-Automated"})
+    private AutomationStatus automationStatus;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Timestamp when the record was created")
     private LocalDateTime createdAt;
@@ -71,6 +75,14 @@ public class CombinedFlowDto {
 
     public void setSquashTestCase(String squashTestCase) {
         this.squashTestCase = squashTestCase;
+    }
+
+    public AutomationStatus getAutomationStatus() {
+        return automationStatus;
+    }
+
+    public void setAutomationStatus(AutomationStatus automationStatus) {
+        this.automationStatus = automationStatus;
     }
 
     public LocalDateTime getCreatedAt() {

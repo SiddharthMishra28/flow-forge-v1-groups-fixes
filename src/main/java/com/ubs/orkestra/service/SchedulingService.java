@@ -47,7 +47,7 @@ public class SchedulingService {
         if ("delayed".equals(type)) {
             return calculateDelayedResumeTime(previousStepEndTime, timer);
         } else if ("scheduled".equals(type)) {
-            return calculateScheduledResumeTime(timer);
+            return calculateScheduledResumeTime(previousStepEndTime, timer);
         }
 
         logger.warn("Unknown scheduler type: {}", type);
@@ -97,11 +97,13 @@ public class SchedulingService {
     }
 
     /**
-     * Calculates resume time for scheduled type (absolute time)
+     * Calculates resume time for scheduled type (absolute time based on previous step completion)
+     * NOTE: For first step, previousStepEndTime will be current time
+     * For subsequent steps, it should be the end time of the previous step
      */
-    private LocalDateTime calculateScheduledResumeTime(Timer timer) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime resumeTime = now;
+    private LocalDateTime calculateScheduledResumeTime(LocalDateTime previousStepEndTime, Timer timer) {
+        LocalDateTime baseTime = previousStepEndTime != null ? previousStepEndTime : LocalDateTime.now();
+        LocalDateTime resumeTime = baseTime;
 
         // Calculate days from now
         if (timer.getDays() != null && !timer.getDays().isEmpty()) {
@@ -147,9 +149,11 @@ public class SchedulingService {
         // Set the specific time (hour and minute)
         resumeTime = resumeTime.with(LocalTime.of(targetHour, targetMinute, 0));
 
-        // If the calculated time is in the past and no days offset, schedule for next day
-        if (resumeTime.isBefore(now) && (timer.getDays() == null || timer.getDays().isEmpty())) {
+        // If the calculated time is in the past (relative to current time), schedule for next day
+        LocalDateTime now = LocalDateTime.now();
+        if (resumeTime.isBefore(now) && (timer.getDays() == null || timer.getDays().isEmpty() || timer.getDays().equals("0"))) {
             resumeTime = resumeTime.plusDays(1);
+            logger.debug("Scheduled time was in the past, moved to next day: {}", resumeTime);
         }
 
         return resumeTime;
