@@ -87,9 +87,8 @@ public class FlowStepService {
         FlowStep existingFlowStep = flowStepRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Flow step not found with ID: " + id));
         
-        // Validate that the application exists if it's being changed
-        if (existingFlowStep.getApplication() != null && !existingFlowStep.getApplication().getId().equals(flowStepDto.getApplicationId()) &&
-            !applicationRepository.existsById(flowStepDto.getApplicationId())) {
+        // Validate that the application exists
+        if (!applicationRepository.existsById(flowStepDto.getApplicationId())) {
             throw new IllegalArgumentException("Application not found with ID: " + flowStepDto.getApplicationId());
         }
         
