@@ -103,6 +103,63 @@ public class ArtifactService {
         logger.info("Artifact with id={} deleted", id);
     }
 
+    /**
+     * Patches an artifact by adding and/or removing FlowExecution run IDs.
+     *
+     * @param id the artifact ID
+     * @param patchDto the patch payload containing runIds to add/remove
+     * @return the updated artifact DTO
+     * @throws IllegalArgumentException if artifact not found or if any runIds to add don't exist
+     */
+    @Transactional
+    public ArtifactDto patchArtifact(Long id, com.ubs.orkestra.dto.ArtifactPatchDto patchDto) {
+        logger.info("Patching artifact with id={}", id);
+
+        Artifact artifact = artifactRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Artifact not found with id: " + id));
+
+        List<UUID> currentRunIds = new java.util.ArrayList<>(artifact.getRunIds());
+
+        // Process additions
+        if (patchDto.getAddRunIds() != null && !patchDto.getAddRunIds().isEmpty()) {
+            logger.info("Adding {} run IDs to artifact {}", patchDto.getAddRunIds().size(), id);
+
+            // Validate that all run IDs to add exist in FlowExecution
+            List<UUID> existingIds = flowExecutionRepository.findAllById(patchDto.getAddRunIds())
+                    .stream()
+                    .map(fe -> fe.getId())
+                    .collect(Collectors.toList());
+
+            List<UUID> missingIds = patchDto.getAddRunIds().stream()
+                    .filter(runId -> !existingIds.contains(runId))
+                    .collect(Collectors.toList());
+
+            if (!missingIds.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "The following runIds do not correspond to existing FlowExecutions: " + missingIds);
+            }
+
+            // Add run IDs (avoid duplicates)
+            for (UUID runId : patchDto.getAddRunIds()) {
+                if (!currentRunIds.contains(runId)) {
+                    currentRunIds.add(runId);
+                }
+            }
+        }
+
+        // Process removals
+        if (patchDto.getRemoveRunIds() != null && !patchDto.getRemoveRunIds().isEmpty()) {
+            logger.info("Removing {} run IDs from artifact {}", patchDto.getRemoveRunIds().size(), id);
+            currentRunIds.removeAll(patchDto.getRemoveRunIds());
+        }
+
+        artifact.setRunIds(currentRunIds);
+        Artifact updated = artifactRepository.save(artifact);
+
+        logger.info("Artifact with id={} patched successfully. New runIds count: {}", id, currentRunIds.size());
+        return toDto(updated);
+    }
+
     // --- Mapping ---
 
     private ArtifactDto toDto(Artifact artifact) {

@@ -56,6 +56,7 @@ com\ubs\orkestra\dto\FlowGroupDetailsDto.class
 com\ubs\orkestra\controller\TestDataController.class
 com\ubs\orkestra\service\CombinedFlowService.class
 com\ubs\orkestra\service\FlowExecutionService.class
+com\ubs\orkestra\dto\ArtifactPatchDto.class
 com\ubs\orkestra\config\AsyncConfig.class
 com\ubs\orkestra\dto\CombinedFlowStepDto.class
 com\ubs\orkestra\websocket\FlowLogWebSocketHandler.class

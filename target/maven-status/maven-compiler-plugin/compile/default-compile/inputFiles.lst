@@ -73,6 +73,7 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\Flow
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\analytics\TrendDataDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\analytics\DurationStatsDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\ArtifactService.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\ArtifactPatchDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\config\GitLabConfig.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowStepDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\enums\TokenStatus.java

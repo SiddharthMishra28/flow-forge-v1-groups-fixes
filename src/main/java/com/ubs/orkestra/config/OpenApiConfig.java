@@ -17,21 +17,15 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Pipeline Orchestrator API")
+                        .title("Orkestra API")
                         .description("End-to-End Test Automation Pipeline Orchestration Platform")
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("Pipeline Orchestrator Team")
-                                .email("support@pipelineorchestrator.com"))
-                        .license(new License()
-                                .name("MIT License")
-                                .url("https://opensource.org/licenses/MIT")))
+                                .name("Siddharth Mishra")
+                                .email("siddharth.mishra@ubs.com")))
                 .servers(List.of(
                         new Server()
                                 .url("http://localhost:8080")
-                                .description("Local development server"),
-                        new Server()
-                                .url("https://api.pipelineorchestrator.com")
-                                .description("Production server")));
+                                .description("Local development server")));
     }
 }

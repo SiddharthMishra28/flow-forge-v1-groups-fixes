@@ -2,6 +2,7 @@ package com.ubs.orkestra.controller;
 
 import com.ubs.orkestra.dto.ArtifactCreateDto;
 import com.ubs.orkestra.dto.ArtifactDto;
+import com.ubs.orkestra.dto.ArtifactPatchDto;
 import com.ubs.orkestra.service.ArtifactService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -89,6 +90,32 @@ public class ArtifactController {
         } catch (IllegalArgumentException e) {
             logger.error("Artifact not found: {}", e.getMessage());
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(
+            summary = "Patch artifact by ID",
+            description = "Modifies an artifact by adding and/or removing FlowExecution run IDs"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artifact patched successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request payload or unknown run IDs to add"),
+            @ApiResponse(responseCode = "404", description = "Artifact not found")
+    })
+    public ResponseEntity<ArtifactDto> patchArtifact(
+            @Parameter(description = "Artifact ID") @PathVariable Long id,
+            @Valid @RequestBody ArtifactPatchDto patchDto) {
+        logger.info("PATCH /api/artifacts/{}", id);
+        try {
+            ArtifactDto updated = artifactService.patchArtifact(id, patchDto);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            logger.error("Failed to patch artifact: {}", e.getMessage());
+            if (e.getMessage().contains("not found")) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.badRequest().build();
         }
     }
 }
