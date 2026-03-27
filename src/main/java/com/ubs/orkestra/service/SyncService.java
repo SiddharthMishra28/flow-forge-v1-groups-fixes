@@ -15,6 +15,7 @@ import com.ubs.orkestra.util.OutputEnvParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -58,10 +60,10 @@ public class SyncService {
     private PipelineStatusPollingService pipelineStatusPollingService;
 
     private final AtomicBoolean syncInProgress = new AtomicBoolean(false);
-    private SyncStatusDto currentSyncStatus = null;
+    private volatile SyncStatusDto currentSyncStatus = null;
 
     /**
-     * Synchronize all flow execution data with GitLab.
+     * Synchronize all flow execution data with GitLab (ASYNC - runs in background).
      * This will:
      * 1. Query all flow executions and their pipeline executions
      * 2. For each pipeline with a GitLab pipeline ID, query GitLab for current status
@@ -69,10 +71,19 @@ public class SyncService {
      * 4. Register still-running pipelines for active polling
      * 
      * @param syncOnlyRunning If true, only sync pipelines in RUNNING state. If false, sync all.
-     * @return SyncStatusDto with results of the sync operation
+     * @return SyncStatusDto with initial status (use getCurrentSyncStatus for progress)
+     */
+    @Async("pipelinePollingTaskExecutor")
+    public CompletableFuture<SyncStatusDto> syncAllFlowExecutionDataAsync(boolean syncOnlyRunning) {
+        SyncStatusDto result = syncAllFlowExecutionData(syncOnlyRunning);
+        return CompletableFuture.completedFuture(result);
+    }
+
+    /**
+     * Internal synchronous method for sync operation
      */
     @Transactional
-    public SyncStatusDto syncAllFlowExecutionData(boolean syncOnlyRunning) {
+    private SyncStatusDto syncAllFlowExecutionData(boolean syncOnlyRunning) {
         
         // Check if sync is already in progress
         if (!syncInProgress.compareAndSet(false, true)) {
@@ -97,6 +108,8 @@ public class SyncService {
             
             logger.info("Found {} flow executions to process", flowExecutions.size());
 
+            long processedFlows = 0;
+            long processedPipelines = 0;
             long syncedFlows = 0;
             long syncedPipelines = 0;
             long updatedPipelines = 0;
@@ -105,6 +118,17 @@ public class SyncService {
 
             // Process each flow execution
             for (FlowExecution flowExecution : flowExecutions) {
+                processedFlows++;
+                
+                // Update progress
+                int progress = (int) ((processedFlows * 100) / flowExecutions.size());
+                syncStatus.setProgressPercentage(progress);
+                syncStatus.setProcessedFlowExecutions(processedFlows);
+                
+                if (processedFlows % 100 == 0) {
+                    logger.info("Progress: {}/{} flow executions processed ({}%)", 
+                               processedFlows, flowExecutions.size(), progress);
+                }
                 try {
                     logger.debug("Processing flow execution ID: {}", flowExecution.getId());
                     
@@ -121,7 +145,8 @@ public class SyncService {
 
                     // Process each pipeline execution
                     for (PipelineExecution pipeline : pipelineExecutions) {
-                        syncedPipelines++;
+                        processedPipelines++;
+                        syncStatus.setProcessedPipelineExecutions(processedPipelines);
                         
                         try {
                             // Skip if no GitLab pipeline ID
@@ -132,15 +157,20 @@ public class SyncService {
                                 continue;
                             }
 
-                            // Skip completed pipelines if syncOnlyRunning is true
-                            if (syncOnlyRunning && 
-                                (pipeline.getStatus() == ExecutionStatus.PASSED || 
-                                 pipeline.getStatus() == ExecutionStatus.FAILED)) {
-                                logger.debug("Pipeline execution {} already completed ({}), skipping", 
+                            // FIXED: Check if we should sync this pipeline
+                            // When syncOnlyRunning=true: Only check RUNNING pipelines
+                            // When syncOnlyRunning=false: Check ALL pipelines for discrepancies
+                            boolean shouldSync = !syncOnlyRunning || 
+                                                (pipeline.getStatus() == ExecutionStatus.RUNNING);
+                            
+                            if (!shouldSync) {
+                                logger.debug("Pipeline execution {} already completed ({}), skipping (syncOnlyRunning=true)", 
                                            pipeline.getId(), pipeline.getStatus());
                                 skippedPipelines++;
                                 continue;
                             }
+                            
+                            syncedPipelines++;
 
                             // Get flow step and application
                             FlowStep flowStep = flowStepRepository.findById(pipeline.getFlowStepId())
@@ -254,12 +284,15 @@ public class SyncService {
             }
 
             // Set final statistics
-            syncStatus.setTotalPipelineExecutions(syncedPipelines);
+            syncStatus.setTotalPipelineExecutions((long) pipelineExecutionRepository.findAll().size());
+            syncStatus.setProcessedFlowExecutions(processedFlows);
+            syncStatus.setProcessedPipelineExecutions(processedPipelines);
             syncStatus.setSyncedFlowExecutions(syncedFlows);
             syncStatus.setSyncedPipelineExecutions(syncedPipelines);
             syncStatus.setUpdatedPipelineExecutions(updatedPipelines);
             syncStatus.setFailedPipelineExecutions(failedPipelines);
             syncStatus.setSkippedPipelineExecutions(skippedPipelines);
+            syncStatus.setProgressPercentage(100);
             syncStatus.setEndTime(LocalDateTime.now());
             syncStatus.setInProgress(false);
             

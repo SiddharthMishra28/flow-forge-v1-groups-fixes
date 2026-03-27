@@ -14,6 +14,8 @@ public class SyncStatusDto {
     private LocalDateTime endTime;
     private Long totalFlowExecutions;
     private Long totalPipelineExecutions;
+    private Long processedFlowExecutions;
+    private Long processedPipelineExecutions;
     private Long syncedFlowExecutions;
     private Long syncedPipelineExecutions;
     private Long updatedPipelineExecutions;
@@ -21,6 +23,7 @@ public class SyncStatusDto {
     private Long skippedPipelineExecutions;
     private List<String> errors = new ArrayList<>();
     private String message;
+    private Integer progressPercentage;
     
     public SyncStatusDto() {
         this.errors = new ArrayList<>();
@@ -106,6 +109,30 @@ public class SyncStatusDto {
     
     public void setSkippedPipelineExecutions(Long skippedPipelineExecutions) {
         this.skippedPipelineExecutions = skippedPipelineExecutions;
+    }
+    
+    public Long getProcessedFlowExecutions() {
+        return processedFlowExecutions;
+    }
+    
+    public void setProcessedFlowExecutions(Long processedFlowExecutions) {
+        this.processedFlowExecutions = processedFlowExecutions;
+    }
+    
+    public Long getProcessedPipelineExecutions() {
+        return processedPipelineExecutions;
+    }
+    
+    public void setProcessedPipelineExecutions(Long processedPipelineExecutions) {
+        this.processedPipelineExecutions = processedPipelineExecutions;
+    }
+    
+    public Integer getProgressPercentage() {
+        return progressPercentage;
+    }
+    
+    public void setProgressPercentage(Integer progressPercentage) {
+        this.progressPercentage = progressPercentage;
     }
     
     public List<String> getErrors() {

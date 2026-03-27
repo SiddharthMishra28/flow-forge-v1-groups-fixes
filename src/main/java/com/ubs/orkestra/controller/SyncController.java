@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 /**
  * REST controller for data synchronization operations.
  * Provides endpoints to manually sync flow execution data with GitLab.
@@ -28,7 +30,7 @@ public class SyncController {
     private SyncService syncService;
 
     /**
-     * Synchronize all flow execution data with GitLab.
+     * Synchronize all flow execution data with GitLab (runs asynchronously in background).
      * 
      * This endpoint will:
      * 1. Query all flow executions and their pipeline executions from the database
@@ -57,28 +59,37 @@ public class SyncController {
         @ApiResponse(responseCode = "500", description = "Sync operation failed")
     })
     public ResponseEntity<SyncStatusDto> syncAllData(
-        @Parameter(description = "Only sync RUNNING pipelines (default: true)")
-        @RequestParam(defaultValue = "true") boolean syncOnlyRunning
+        @Parameter(description = "Only sync RUNNING pipelines (default: false for comprehensive sync)")
+        @RequestParam(defaultValue = "false") boolean syncOnlyRunning
     ) {
         logger.info("Received request to sync all flow execution data (syncOnlyRunning: {})", syncOnlyRunning);
         
         try {
-            SyncStatusDto result = syncService.syncAllFlowExecutionData(syncOnlyRunning);
-            
-            if (result.isInProgress() && result.getSyncedFlowExecutions() == null) {
-                // Sync already in progress
-                return ResponseEntity.status(409).body(result);
+            // Check if sync is already in progress
+            SyncStatusDto currentStatus = syncService.getCurrentSyncStatus();
+            if (currentStatus.isInProgress()) {
+                logger.warn("Sync already in progress, returning current status");
+                return ResponseEntity.status(409).body(currentStatus);
             }
             
-            return ResponseEntity.ok(result);
+            // Start async sync
+            syncService.syncAllFlowExecutionDataAsync(syncOnlyRunning);
+            
+            // Return immediate response
+            SyncStatusDto initialStatus = new SyncStatusDto();
+            initialStatus.setInProgress(true);
+            initialStatus.setStartTime(LocalDateTime.now());
+            initialStatus.setMessage("Sync operation started in background. Use GET /api/sync-data/status to check progress.");
+            
+            return ResponseEntity.accepted().body(initialStatus);
             
         } catch (Exception e) {
-            logger.error("Error during sync operation: {}", e.getMessage(), e);
+            logger.error("Error starting sync operation: {}", e.getMessage(), e);
             
             SyncStatusDto errorStatus = new SyncStatusDto();
             errorStatus.setInProgress(false);
             errorStatus.addError("Critical error: " + e.getMessage());
-            errorStatus.setMessage("Sync failed: " + e.getMessage());
+            errorStatus.setMessage("Sync failed to start: " + e.getMessage());
             
             return ResponseEntity.status(500).body(errorStatus);
         }
