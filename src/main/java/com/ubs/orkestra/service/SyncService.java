@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -179,10 +180,24 @@ public class SyncService {
                         syncStatus.setProcessedPipelineExecutions(processedPipelines);
                         
                         try {
-                            // Skip if no GitLab pipeline ID
+                            // CRITICAL: Handle SCHEDULED pipelines without pipelineId and resumeTime
+                            // These need to be marked as CANCELLED
                             if (pipeline.getPipelineId() == null) {
-                                logger.debug("Pipeline execution {} has no GitLab pipeline ID, skipping", 
-                                           pipeline.getId());
+                                if (pipeline.getStatus() == ExecutionStatus.SCHEDULED && 
+                                    pipeline.getResumeTime() == null) {
+                                    // This pipeline was scheduled but never triggered - mark as CANCELLED
+                                    logger.warn("Pipeline execution {} is SCHEDULED but has no pipelineId and no resumeTime - marking as CANCELLED", 
+                                               pipeline.getId());
+                                    
+                                    SyncResult cancelResult = cancelScheduledPipeline(pipeline.getId());
+                                    if (cancelResult.wasUpdated) {
+                                        updatedPipelines++;
+                                        flowHadUpdates = true;
+                                    }
+                                } else {
+                                    logger.debug("Pipeline execution {} has no GitLab pipeline ID (status: {}), skipping", 
+                                               pipeline.getId(), pipeline.getStatus());
+                                }
                                 skippedPipelines++;
                                 continue;
                             }
@@ -238,6 +253,12 @@ public class SyncService {
                             syncStatus.addError("Pipeline execution " + pipeline.getId() + ": " + e.getMessage());
                             failedPipelines++;
                         }
+                    }
+                    
+                    // CRITICAL: After syncing all pipelines for this flow, update FlowExecution status
+                    // This ensures the overall flow status reflects the current state of all pipelines
+                    if (flowHadUpdates) {
+                        updateFlowExecutionStatus(flowExecution.getId());
                     }
 
                     if (flowHadUpdates) {
@@ -562,6 +583,137 @@ public class SyncService {
         }
         
         return result;
+    }
+
+    /**
+     * Cancel a scheduled pipeline that was never triggered.
+     * This happens when a pipeline is SCHEDULED but has no pipelineId and no resumeTime.
+     * 
+     * @param pipelineExecutionId Pipeline execution ID to cancel
+     * @return SyncResult indicating what happened
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public SyncResult cancelScheduledPipeline(Long pipelineExecutionId) {
+        SyncResult result = new SyncResult();
+        
+        try {
+            PipelineExecution pipeline = pipelineExecutionRepository.findById(pipelineExecutionId)
+                .orElse(null);
+            
+            if (pipeline == null) {
+                logger.warn("Pipeline execution {} not found for cancellation", pipelineExecutionId);
+                result.skipped = true;
+                return result;
+            }
+            
+            // Update status to CANCELLED
+            pipeline.setStatus(ExecutionStatus.CANCELLED);
+            pipeline.setEndTime(LocalDateTime.now());
+            pipelineExecutionRepository.save(pipeline);
+            
+            logger.info("Marked pipeline execution {} as CANCELLED (was SCHEDULED but never triggered)", 
+                       pipelineExecutionId);
+            
+            result.wasUpdated = true;
+            
+        } catch (Exception e) {
+            logger.error("Error cancelling pipeline execution {}: {}", 
+                       pipelineExecutionId, e.getMessage(), e);
+            result.failed = true;
+            result.errorMessage = "Failed to cancel pipeline execution " + pipelineExecutionId;
+        }
+        
+        return result;
+    }
+
+    /**
+     * Update FlowExecution status based on all its PipelineExecutions.
+     * 
+     * Logic:
+     * - If ANY pipeline is CANCELLED or FAILED → FlowExecution = FAILED
+     * - If ALL pipelines are PASSED → FlowExecution = PASSED
+     * - Otherwise → FlowExecution = current status (RUNNING, etc.)
+     * 
+     * CRITICAL: This preserves the existing logic for "all PASSED" flows!
+     * 
+     * @param flowExecutionId FlowExecution ID to update
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateFlowExecutionStatus(UUID flowExecutionId) {
+        try {
+            FlowExecution flowExecution = flowExecutionRepository.findById(flowExecutionId)
+                .orElse(null);
+            
+            if (flowExecution == null) {
+                logger.warn("FlowExecution {} not found for status update", flowExecutionId);
+                return;
+            }
+            
+            // Get all pipeline executions for this flow
+            List<PipelineExecution> pipelines = pipelineExecutionRepository.findByFlowExecutionId(flowExecutionId);
+            
+            if (pipelines.isEmpty()) {
+                logger.debug("No pipeline executions found for FlowExecution {}", flowExecutionId);
+                return;
+            }
+            
+            // Calculate status based on all pipelines
+            boolean allPassed = true;
+            boolean anyFailed = false;
+            boolean anyCancelled = false;
+            boolean anyRunning = false;
+            
+            for (PipelineExecution pipeline : pipelines) {
+                ExecutionStatus status = pipeline.getStatus();
+                
+                if (status == ExecutionStatus.FAILED) {
+                    anyFailed = true;
+                    allPassed = false;
+                } else if (status == ExecutionStatus.CANCELLED) {
+                    anyCancelled = true;
+                    allPassed = false;
+                } else if (status == ExecutionStatus.RUNNING || status == ExecutionStatus.SCHEDULED) {
+                    anyRunning = true;
+                    allPassed = false;
+                } else if (status != ExecutionStatus.PASSED) {
+                    allPassed = false;
+                }
+            }
+            
+            ExecutionStatus previousStatus = flowExecution.getStatus();
+            ExecutionStatus newStatus = previousStatus;
+            
+            // Determine new status
+            if (allPassed) {
+                // CRITICAL: Preserve existing logic - all PASSED means flow is PASSED
+                newStatus = ExecutionStatus.PASSED;
+                if (flowExecution.getEndTime() == null) {
+                    flowExecution.setEndTime(LocalDateTime.now());
+                }
+            } else if (anyFailed || anyCancelled) {
+                // Any failure or cancellation means the flow failed
+                newStatus = ExecutionStatus.FAILED;
+                if (flowExecution.getEndTime() == null) {
+                    flowExecution.setEndTime(LocalDateTime.now());
+                }
+            } else if (anyRunning) {
+                // Some still running, keep as RUNNING
+                newStatus = ExecutionStatus.RUNNING;
+            }
+            
+            // Update if status changed
+            if (newStatus != previousStatus) {
+                flowExecution.setStatus(newStatus);
+                flowExecutionRepository.save(flowExecution);
+                
+                logger.info("Updated FlowExecution {} status from {} to {} based on pipeline statuses", 
+                          flowExecutionId, previousStatus, newStatus);
+            }
+            
+        } catch (Exception e) {
+            logger.error("Error updating FlowExecution status for {}: {}", 
+                       flowExecutionId, e.getMessage(), e);
+        }
     }
 
     /**
