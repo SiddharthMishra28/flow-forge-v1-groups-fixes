@@ -21,7 +21,10 @@ public class SyncStatusDto {
     private Long updatedPipelineExecutions;
     private Long failedPipelineExecutions;
     private Long skippedPipelineExecutions;
+    private Long orphanedPipelineExecutions;  // Pipelines where flow step was deleted
+    private Long recoveredPipelineExecutions; // Orphaned pipelines successfully synced via URL fallback
     private List<String> errors = new ArrayList<>();
+    private List<String> warnings = new ArrayList<>();
     private String message;
     private Integer progressPercentage;
     
@@ -151,10 +154,41 @@ public class SyncStatusDto {
         this.message = message;
     }
     
+    public Long getOrphanedPipelineExecutions() {
+        return orphanedPipelineExecutions;
+    }
+    
+    public void setOrphanedPipelineExecutions(Long orphanedPipelineExecutions) {
+        this.orphanedPipelineExecutions = orphanedPipelineExecutions;
+    }
+    
+    public Long getRecoveredPipelineExecutions() {
+        return recoveredPipelineExecutions;
+    }
+    
+    public void setRecoveredPipelineExecutions(Long recoveredPipelineExecutions) {
+        this.recoveredPipelineExecutions = recoveredPipelineExecutions;
+    }
+    
+    public List<String> getWarnings() {
+        return warnings;
+    }
+    
+    public void setWarnings(List<String> warnings) {
+        this.warnings = warnings;
+    }
+    
     public void addError(String error) {
         if (errors == null) {
             errors = new ArrayList<>();
         }
         errors.add(error);
+    }
+    
+    public void addWarning(String warning) {
+        if (warnings == null) {
+            warnings = new ArrayList<>();
+        }
+        warnings.add(warning);
     }
 }

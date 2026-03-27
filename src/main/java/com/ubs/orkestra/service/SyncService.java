@@ -120,6 +120,8 @@ public class SyncService {
             long updatedPipelines = 0;
             long failedPipelines = 0;
             long skippedPipelines = 0;
+            long orphanedPipelines = 0;    // Flow step deleted after execution
+            long recoveredPipelines = 0;   // Successfully synced despite being orphaned
 
             // Process each flow execution
             for (FlowExecution flowExecution : flowExecutions) {
@@ -193,6 +195,18 @@ public class SyncService {
                             }
                             if (result.skipped) {
                                 skippedPipelines++;
+                                // Track orphaned pipelines separately
+                                if (result.skipReason != null && result.skipReason.contains("flow was edited")) {
+                                    orphanedPipelines++;
+                                    syncStatus.addWarning("Pipeline " + pipeline.getPipelineId() + 
+                                        " (execution " + pipeline.getId() + "): " + result.skipReason);
+                                }
+                            }
+                            if (result.recovered) {
+                                recoveredPipelines++;
+                                syncStatus.addWarning("Successfully recovered orphaned pipeline " + 
+                                    pipeline.getPipelineId() + " (execution " + pipeline.getId() + 
+                                    ") via URL fallback - flow was edited after execution");
                             }
                             
                         } catch (Exception e) {
@@ -223,6 +237,8 @@ public class SyncService {
             syncStatus.setUpdatedPipelineExecutions(updatedPipelines);
             syncStatus.setFailedPipelineExecutions(failedPipelines);
             syncStatus.setSkippedPipelineExecutions(skippedPipelines);
+            syncStatus.setOrphanedPipelineExecutions(orphanedPipelines);
+            syncStatus.setRecoveredPipelineExecutions(recoveredPipelines);
             syncStatus.setProgressPercentage(100);
             syncStatus.setEndTime(LocalDateTime.now());
             syncStatus.setInProgress(false);
@@ -233,11 +249,13 @@ public class SyncService {
             logger.info("Pipeline executions updated: {}", updatedPipelines);
             logger.info("Pipeline executions failed: {}", failedPipelines);
             logger.info("Pipeline executions skipped: {}", skippedPipelines);
+            logger.info("Orphaned pipeline executions (flow edited): {}", orphanedPipelines);
+            logger.info("Recovered orphaned pipelines via URL: {}", recoveredPipelines);
             logger.info("Active pipelines being polled: {}", pipelineStatusPollingService.getActivePollCount());
 
             syncStatus.setMessage(String.format(
-                "Sync completed. Processed %d flow executions, updated %d pipelines, failed %d, skipped %d",
-                syncedFlows, updatedPipelines, failedPipelines, skippedPipelines
+                "Sync completed. Processed %d flow executions, updated %d pipelines, failed %d, skipped %d, orphaned %d, recovered %d",
+                syncedFlows, updatedPipelines, failedPipelines, skippedPipelines, orphanedPipelines, recoveredPipelines
             ));
 
             return syncStatus;
@@ -277,13 +295,77 @@ public class SyncService {
         boolean wasUpdated = false;
         boolean failed = false;
         boolean skipped = false;
+        boolean recovered = false;  // Successfully synced despite being orphaned
         String errorMessage = null;
+        String skipReason = null;
+    }
+
+    /**
+     * Extract Application from pipeline URL when flow step is deleted.
+     * 
+     * Pipeline URL format: https://gitlab.com/<project-id>/-/pipelines/<pipeline-id>
+     * Example: https://gitlab.com/12345678/-/pipelines/987654321
+     * 
+     * @param pipeline Pipeline execution with pipelineUrl
+     * @return Application if found, null otherwise
+     */
+    private Application extractApplicationFromPipelineUrl(PipelineExecution pipeline) {
+        try {
+            String pipelineUrl = pipeline.getPipelineUrl();
+            if (pipelineUrl == null || pipelineUrl.isEmpty()) {
+                logger.debug("Pipeline execution {} has no pipeline URL for fallback", pipeline.getId());
+                return null;
+            }
+            
+            // Parse GitLab project ID from URL
+            // Format: https://gitlab.com/<project-id>/-/pipelines/<pipeline-id>
+            // or: https://gitlab.example.com/<project-id>/-/pipelines/<pipeline-id>
+            String[] parts = pipelineUrl.split("/-/pipelines/");
+            if (parts.length < 2) {
+                logger.warn("Cannot parse pipeline URL format: {}", pipelineUrl);
+                return null;
+            }
+            
+            String baseUrl = parts[0];
+            String[] urlParts = baseUrl.split("/");
+            if (urlParts.length < 1) {
+                logger.warn("Cannot extract project ID from URL: {}", pipelineUrl);
+                return null;
+            }
+            
+            // Project ID is the last segment before "/-/pipelines/"
+            String projectId = urlParts[urlParts.length - 1];
+            
+            logger.debug("Extracted GitLab project ID '{}' from pipeline URL: {}", projectId, pipelineUrl);
+            
+            // Look up application by GitLab project ID
+            Application application = applicationRepository.findByGitlabProjectId(projectId)
+                .orElse(null);
+            
+            if (application == null) {
+                logger.warn("No application found for GitLab project ID '{}' extracted from pipeline URL", projectId);
+                return null;
+            }
+            
+            logger.info("Found application {} (ID: {}) for GitLab project ID '{}'", 
+                      application.getId(), application.getId(), projectId);
+            
+            return application;
+            
+        } catch (Exception e) {
+            logger.error("Error extracting application from pipeline URL for pipeline execution {}: {}", 
+                       pipeline.getId(), e.getMessage(), e);
+            return null;
+        }
     }
 
     /**
      * Sync a single pipeline in its own transaction.
      * CRITICAL: This method has @Transactional with REQUIRES_NEW to ensure
      * each pipeline gets its own Hibernate session, avoiding LazyInitializationException.
+     * 
+     * HANDLES ORPHANED PIPELINES: When flows are edited after execution, flow steps may be deleted.
+     * This method uses fallback mechanisms to still sync the pipeline using the GitLab pipeline URL.
      * 
      * @param pipelineExecutionId Pipeline execution ID to sync
      * @return SyncResult indicating what happened
@@ -300,30 +382,43 @@ public class SyncService {
             if (pipeline == null) {
                 logger.warn("Pipeline execution {} not found", pipelineExecutionId);
                 result.skipped = true;
+                result.skipReason = "Pipeline execution not found";
                 return result;
             }
 
-            // Get flow step (with fresh session, no lazy loading issues)
+            // CRITICAL: Get flow step - might be null if flow was edited/deleted
             FlowStep flowStep = flowStepRepository.findById(pipeline.getFlowStepId())
                 .orElse(null);
             
-            if (flowStep == null) {
-                logger.warn("Flow step {} not found for pipeline execution {}", 
-                          pipeline.getFlowStepId(), pipeline.getId());
-                result.skipped = true;
-                return result;
-            }
-
-            // CRITICAL FIX: Eagerly load Application to avoid "no session" error
-            // Use repository to fetch with proper session management
-            Application application = applicationRepository.findById(flowStep.getApplication().getId())
-                .orElse(null);
+            Application application = null;
             
+            if (flowStep != null) {
+                // Normal path: Flow step exists, get application from it
+                application = applicationRepository.findById(flowStep.getApplication().getId())
+                    .orElse(null);
+            }
+            
+            // FALLBACK: If flow step deleted or application not found, try to recover from pipeline URL
             if (application == null) {
-                logger.warn("Application {} not found for pipeline execution {}", 
-                          flowStep.getApplication().getId(), pipeline.getId());
-                result.skipped = true;
-                return result;
+                logger.warn("Flow step {} not found for pipeline execution {} - attempting fallback via pipeline URL", 
+                          pipeline.getFlowStepId(), pipeline.getId());
+                
+                application = extractApplicationFromPipelineUrl(pipeline);
+                
+                if (application == null) {
+                    logger.warn("Cannot recover application for pipeline execution {} - flow step deleted and URL parsing failed. Skipping.", 
+                              pipeline.getId());
+                    result.skipped = true;
+                    result.skipReason = "Flow step deleted, cannot recover application (flow was edited after execution)";
+                    return result;
+                }
+                
+                logger.info("Successfully recovered application {} for orphaned pipeline execution {} via URL parsing", 
+                          application.getId(), pipeline.getId());
+                
+                // Mark as recovered - we'll still sync it despite orphaned flow step
+                result.recovered = true;
+                flowStep = null; // Set to null to avoid using deleted flow step for artifact download
             }
 
             // Skip if mock mode
@@ -369,8 +464,13 @@ public class SyncService {
                             pipeline.setEndTime(LocalDateTime.now());
                         }
 
-                        // Download artifacts for completed pipelines
-                        downloadAndParseArtifacts(pipeline, application, flowStep);
+                        // Download artifacts for completed pipelines (only if flow step exists)
+                        if (flowStep != null) {
+                            downloadAndParseArtifacts(pipeline, application, flowStep);
+                        } else {
+                            logger.info("Skipping artifact download for orphaned pipeline {} - flow step deleted", 
+                                      pipeline.getPipelineId());
+                        }
                         
                         logger.info("Updated pipeline {} from {} to {}", 
                                   pipeline.getPipelineId(), previousStatus, newStatus);
