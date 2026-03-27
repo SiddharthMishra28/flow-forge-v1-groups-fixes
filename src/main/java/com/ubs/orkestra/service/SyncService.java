@@ -68,27 +68,31 @@ public class SyncService {
     private volatile SyncStatusDto currentSyncStatus = null;
 
     /**
-     * Synchronize all flow execution data with GitLab (ASYNC - runs in background).
+     * Synchronize flow execution data with GitLab (ASYNC - runs in background).
      * This will:
-     * 1. Query all flow executions and their pipeline executions
+     * 1. Query flow executions (limited by 'limit' parameter if > 0)
      * 2. For each pipeline with a GitLab pipeline ID, query GitLab for current status
      * 3. Update database with latest status and artifacts
      * 4. Register still-running pipelines for active polling
      * 
      * @param syncOnlyRunning If true, only sync pipelines in RUNNING state. If false, sync all.
+     * @param limit Maximum number of flow executions to sync (0 = all)
      * @return SyncStatusDto with initial status (use getCurrentSyncStatus for progress)
      */
     @Async("pipelinePollingTaskExecutor")
-    public CompletableFuture<SyncStatusDto> syncAllFlowExecutionDataAsync(boolean syncOnlyRunning) {
-        SyncStatusDto result = syncAllFlowExecutionData(syncOnlyRunning);
+    public CompletableFuture<SyncStatusDto> syncAllFlowExecutionDataAsync(boolean syncOnlyRunning, int limit) {
+        SyncStatusDto result = syncAllFlowExecutionData(syncOnlyRunning, limit);
         return CompletableFuture.completedFuture(result);
     }
 
     /**
      * Main sync operation (called by async method, no @Transactional here)
      * Each pipeline sync gets its own transaction to avoid session issues
+     * 
+     * @param syncOnlyRunning If true, only sync RUNNING pipelines
+     * @param limit Maximum number of flow executions to sync (0 = all)
      */
-    private SyncStatusDto syncAllFlowExecutionData(boolean syncOnlyRunning) {
+    private SyncStatusDto syncAllFlowExecutionData(boolean syncOnlyRunning, int limit) {
         
         // Check if sync is already in progress
         if (!syncInProgress.compareAndSet(false, true)) {
@@ -106,12 +110,31 @@ public class SyncService {
         try {
             logger.info("=== STARTING DATA SYNC FROM GITLAB ===");
             logger.info("Sync mode: {}", syncOnlyRunning ? "RUNNING pipelines only" : "ALL pipelines");
+            if (limit > 0) {
+                logger.info("Limit: {} most recent flow executions", limit);
+            } else {
+                logger.info("Limit: ALL flow executions");
+            }
 
-            // Get all flow executions
-            List<FlowExecution> flowExecutions = flowExecutionRepository.findAll();
-            syncStatus.setTotalFlowExecutions((long) flowExecutions.size());
+            // Get flow executions (limited if specified)
+            List<FlowExecution> allFlowExecutions = flowExecutionRepository.findAll();
             
-            logger.info("Found {} flow executions to process", flowExecutions.size());
+            // Apply limit by taking most recent executions
+            List<FlowExecution> flowExecutions;
+            if (limit > 0 && allFlowExecutions.size() > limit) {
+                // Sort by ID descending (most recent first) and take 'limit' items
+                flowExecutions = allFlowExecutions.stream()
+                    .sorted((a, b) -> b.getId().compareTo(a.getId()))
+                    .limit(limit)
+                    .toList();
+                logger.info("Limited to {} most recent flow executions (out of {} total)", 
+                           flowExecutions.size(), allFlowExecutions.size());
+            } else {
+                flowExecutions = allFlowExecutions;
+                logger.info("Processing all {} flow executions", flowExecutions.size());
+            }
+            
+            syncStatus.setTotalFlowExecutions((long) flowExecutions.size());
 
             long processedFlows = 0;
             long processedPipelines = 0;
@@ -303,8 +326,12 @@ public class SyncService {
     /**
      * Extract Application from pipeline URL when flow step is deleted.
      * 
-     * Pipeline URL format: https://gitlab.com/<project-id>/-/pipelines/<pipeline-id>
-     * Example: https://gitlab.com/12345678/-/pipelines/987654321
+     * CORRECT GitLab URL format: https://gitlab.com/namespace/project/-/pipelines/pipeline-id
+     * Example: https://gitlab.com/org_rzx/pipeline-agent/-/pipelines/2413248770
+     * 
+     * GitLab stores EITHER:
+     * - Numeric project ID (e.g., "12345678")
+     * - Project path (e.g., "org_rzx/pipeline-agent")
      * 
      * @param pipeline Pipeline execution with pipelineUrl
      * @return Application if found, null otherwise
@@ -317,38 +344,66 @@ public class SyncService {
                 return null;
             }
             
-            // Parse GitLab project ID from URL
-            // Format: https://gitlab.com/<project-id>/-/pipelines/<pipeline-id>
-            // or: https://gitlab.example.com/<project-id>/-/pipelines/<pipeline-id>
+            // Parse GitLab project path from URL
+            // Format: https://gitlab.com/namespace/project/-/pipelines/pipeline-id
+            // Extract: "namespace/project"
             String[] parts = pipelineUrl.split("/-/pipelines/");
             if (parts.length < 2) {
-                logger.warn("Cannot parse pipeline URL format: {}", pipelineUrl);
+                logger.warn("Cannot parse pipeline URL format (expected '/-/pipelines/' separator): {}", pipelineUrl);
                 return null;
             }
             
-            String baseUrl = parts[0];
-            String[] urlParts = baseUrl.split("/");
-            if (urlParts.length < 1) {
-                logger.warn("Cannot extract project ID from URL: {}", pipelineUrl);
+            String beforePipelines = parts[0]; // e.g., "https://gitlab.com/org_rzx/pipeline-agent"
+            
+            // Remove the base URL to get the project path
+            // Handle both http:// and https://
+            String projectPath;
+            if (beforePipelines.contains("://")) {
+                String[] urlParts = beforePipelines.split("://", 2);
+                if (urlParts.length < 2) {
+                    logger.warn("Cannot parse URL protocol: {}", pipelineUrl);
+                    return null;
+                }
+                
+                String afterProtocol = urlParts[1]; // e.g., "gitlab.com/org_rzx/pipeline-agent"
+                
+                // Remove the domain (first segment after protocol)
+                String[] pathParts = afterProtocol.split("/", 2);
+                if (pathParts.length < 2) {
+                    logger.warn("Cannot extract project path from URL: {}", pipelineUrl);
+                    return null;
+                }
+                
+                projectPath = pathParts[1]; // e.g., "org_rzx/pipeline-agent"
+            } else {
+                logger.warn("URL does not contain protocol: {}", pipelineUrl);
                 return null;
             }
             
-            // Project ID is the last segment before "/-/pipelines/"
-            String projectId = urlParts[urlParts.length - 1];
+            logger.debug("Extracted project path '{}' from pipeline URL: {}", projectPath, pipelineUrl);
             
-            logger.debug("Extracted GitLab project ID '{}' from pipeline URL: {}", projectId, pipelineUrl);
-            
-            // Look up application by GitLab project ID
-            Application application = applicationRepository.findByGitlabProjectId(projectId)
+            // Try to find application by the extracted project path
+            // GitLab API accepts both numeric ID and URL-encoded path
+            Application application = applicationRepository.findByGitlabProjectId(projectPath)
                 .orElse(null);
             
             if (application == null) {
-                logger.warn("No application found for GitLab project ID '{}' extracted from pipeline URL", projectId);
+                // Try URL-encoded version (GitLab API format)
+                String urlEncodedPath = projectPath.replace("/", "%2F");
+                application = applicationRepository.findByGitlabProjectId(urlEncodedPath)
+                    .orElse(null);
+            }
+            
+            if (application == null) {
+                logger.warn("No application found for GitLab project path '{}' (or URL-encoded '{}') extracted from pipeline URL", 
+                          projectPath, projectPath.replace("/", "%2F"));
+                logger.warn("This likely means the Application's gitlabProjectId field contains a numeric ID, not the project path");
+                logger.warn("Pipeline URL: {}", pipelineUrl);
                 return null;
             }
             
-            logger.info("Found application {} (ID: {}) for GitLab project ID '{}'", 
-                      application.getId(), application.getId(), projectId);
+            logger.info("Found application {} (ID: {}) for GitLab project path '{}'", 
+                      application.getApplicationName(), application.getId(), projectPath);
             
             return application;
             

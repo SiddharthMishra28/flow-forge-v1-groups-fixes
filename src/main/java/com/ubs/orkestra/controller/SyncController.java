@@ -30,10 +30,10 @@ public class SyncController {
     private SyncService syncService;
 
     /**
-     * Synchronize all flow execution data with GitLab (runs asynchronously in background).
+     * Synchronize flow execution data with GitLab (runs asynchronously in background).
      * 
      * This endpoint will:
-     * 1. Query all flow executions and their pipeline executions from the database
+     * 1. Query flow executions from the database (limited by 'limit' parameter)
      * 2. For each pipeline with a GitLab pipeline ID, query GitLab for current status
      * 3. Update database with latest status, artifacts, and runtime data
      * 4. Register still-running pipelines for active polling
@@ -44,27 +44,41 @@ public class SyncController {
      * - When status appears out of sync with GitLab
      * - For recovery after GitLab API issues
      * 
-     * @param syncOnlyRunning If true, only sync pipelines in RUNNING state. If false, sync all pipelines (default: true)
+     * @param syncOnlyRunning If true, only sync pipelines in RUNNING state. If false, sync all pipelines (default: false)
+     * @param limit Maximum number of flow executions to sync (default: 0 = all, use for large datasets)
      * @return SyncStatusDto with detailed results of the sync operation
      */
     @PostMapping("/sync-data")
     @Operation(
         summary = "Synchronize flow execution data with GitLab",
         description = "Queries GitLab for current pipeline status and updates database. " +
-                     "Useful for recovery after restarts or when data appears out of sync."
+                     "Useful for recovery after restarts or when data appears out of sync. " +
+                     "Use 'limit' parameter to sync only the most recent X flow executions."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Sync operation completed successfully"),
+        @ApiResponse(responseCode = "202", description = "Sync operation started in background"),
         @ApiResponse(responseCode = "409", description = "Sync operation already in progress"),
-        @ApiResponse(responseCode = "500", description = "Sync operation failed")
+        @ApiResponse(responseCode = "500", description = "Sync operation failed to start")
     })
     public ResponseEntity<SyncStatusDto> syncAllData(
         @Parameter(description = "Only sync RUNNING pipelines (default: false for comprehensive sync)")
-        @RequestParam(defaultValue = "false") boolean syncOnlyRunning
+        @RequestParam(defaultValue = "false") boolean syncOnlyRunning,
+        
+        @Parameter(description = "Maximum number of flow executions to sync (0 = all, default: 0). Use to limit sync scope for large datasets.")
+        @RequestParam(defaultValue = "0") int limit
     ) {
-        logger.info("Received request to sync all flow execution data (syncOnlyRunning: {})", syncOnlyRunning);
+        logger.info("Received request to sync flow execution data (syncOnlyRunning: {}, limit: {})", syncOnlyRunning, limit);
         
         try {
+            // Validate limit parameter
+            if (limit < 0) {
+                SyncStatusDto errorStatus = new SyncStatusDto();
+                errorStatus.setInProgress(false);
+                errorStatus.addError("Invalid limit parameter: must be >= 0");
+                errorStatus.setMessage("Invalid limit parameter");
+                return ResponseEntity.badRequest().body(errorStatus);
+            }
+            
             // Check if sync is already in progress
             SyncStatusDto currentStatus = syncService.getCurrentSyncStatus();
             if (currentStatus.isInProgress()) {
@@ -72,14 +86,17 @@ public class SyncController {
                 return ResponseEntity.status(409).body(currentStatus);
             }
             
-            // Start async sync
-            syncService.syncAllFlowExecutionDataAsync(syncOnlyRunning);
+            // Start async sync with limit
+            syncService.syncAllFlowExecutionDataAsync(syncOnlyRunning, limit);
             
             // Return immediate response
             SyncStatusDto initialStatus = new SyncStatusDto();
             initialStatus.setInProgress(true);
             initialStatus.setStartTime(LocalDateTime.now());
-            initialStatus.setMessage("Sync operation started in background. Use GET /api/sync-data/status to check progress.");
+            initialStatus.setMessage(String.format(
+                "Sync operation started in background%s. Use GET /api/sync-data/status to check progress.",
+                limit > 0 ? " (limited to " + limit + " flow executions)" : ""
+            ));
             
             return ResponseEntity.accepted().body(initialStatus);
             
