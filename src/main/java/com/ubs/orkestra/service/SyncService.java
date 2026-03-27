@@ -7,6 +7,7 @@ import com.ubs.orkestra.model.Application;
 import com.ubs.orkestra.model.FlowExecution;
 import com.ubs.orkestra.model.FlowStep;
 import com.ubs.orkestra.model.PipelineExecution;
+import com.ubs.orkestra.repository.ApplicationRepository;
 import com.ubs.orkestra.repository.FlowExecutionRepository;
 import com.ubs.orkestra.repository.FlowStepRepository;
 import com.ubs.orkestra.repository.PipelineExecutionRepository;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -58,6 +60,9 @@ public class SyncService {
 
     @Autowired
     private PipelineStatusPollingService pipelineStatusPollingService;
+    
+    @Autowired
+    private ApplicationRepository applicationRepository;
 
     private final AtomicBoolean syncInProgress = new AtomicBoolean(false);
     private volatile SyncStatusDto currentSyncStatus = null;
@@ -80,9 +85,9 @@ public class SyncService {
     }
 
     /**
-     * Internal synchronous method for sync operation
+     * Main sync operation (called by async method, no @Transactional here)
+     * Each pipeline sync gets its own transaction to avoid session issues
      */
-    @Transactional
     private SyncStatusDto syncAllFlowExecutionData(boolean syncOnlyRunning) {
         
         // Check if sync is already in progress
@@ -172,95 +177,21 @@ public class SyncService {
                             
                             syncedPipelines++;
 
-                            // Get flow step and application
-                            FlowStep flowStep = flowStepRepository.findById(pipeline.getFlowStepId())
-                                .orElse(null);
+                            // CRITICAL FIX: Sync each pipeline in its own transaction to avoid "no session" errors
+                            // This ensures each pipeline has a fresh Hibernate session
+                            SyncResult result = syncSinglePipeline(pipeline.getId());
                             
-                            if (flowStep == null) {
-                                logger.warn("Flow step {} not found for pipeline execution {}", 
-                                          pipeline.getFlowStepId(), pipeline.getId());
-                                skippedPipelines++;
-                                continue;
+                            if (result.wasUpdated) {
+                                updatedPipelines++;
+                                flowHadUpdates = true;
                             }
-
-                            Application application = flowStep.getApplication();
-                            if (application == null) {
-                                logger.warn("Application not found for pipeline execution {}", 
-                                          pipeline.getId());
-                                skippedPipelines++;
-                                continue;
-                            }
-
-                            // Query GitLab for current status (skip in mock mode)
-                            if (!gitLabConfig.isMockMode()) {
-                                ExecutionStatus previousStatus = pipeline.getStatus();
-                                
-                                try {
-                                    GitLabApiClient.GitLabPipelineResponse status = gitLabApiClient
-                                        .getPipelineStatus(
-                                            gitLabConfig.getBaseUrl(),
-                                            application.getGitlabProjectId(),
-                                            pipeline.getPipelineId(),
-                                            applicationService.getDecryptedPersonalAccessToken(application.getId())
-                                        )
-                                        .block();
-
-                                    if (status != null) {
-                                        boolean wasUpdated = false;
-                                        
-                                        // Update status if changed
-                                        if (status.isCompleted()) {
-                                            ExecutionStatus newStatus = status.isSuccessful() ? 
-                                                ExecutionStatus.PASSED : ExecutionStatus.FAILED;
-                                            
-                                            if (pipeline.getStatus() != newStatus) {
-                                                pipeline.setStatus(newStatus);
-                                                wasUpdated = true;
-                                                
-                                                if (pipeline.getEndTime() == null) {
-                                                    pipeline.setEndTime(LocalDateTime.now());
-                                                }
-
-                                                // Download artifacts for completed pipelines
-                                                downloadAndParseArtifacts(pipeline, application, flowStep);
-                                                
-                                                logger.info("Updated pipeline {} from {} to {}", 
-                                                          pipeline.getPipelineId(), previousStatus, newStatus);
-                                            }
-                                        } else {
-                                            // Pipeline still running - register for polling
-                                            if (pipeline.getStatus() != ExecutionStatus.RUNNING) {
-                                                pipeline.setStatus(ExecutionStatus.RUNNING);
-                                                wasUpdated = true;
-                                            }
-                                            
-                                            // Register for active polling
-                                            pipelineStatusPollingService.registerPipelineForPolling(pipeline);
-                                            logger.info("Pipeline {} still running, registered for polling", 
-                                                      pipeline.getPipelineId());
-                                        }
-
-                                        if (wasUpdated) {
-                                            pipelineExecutionRepository.save(pipeline);
-                                            updatedPipelines++;
-                                            flowHadUpdates = true;
-                                        }
-                                        
-                                    } else {
-                                        logger.warn("Could not get status from GitLab for pipeline {}", 
-                                                  pipeline.getPipelineId());
-                                        skippedPipelines++;
-                                    }
-                                    
-                                } catch (Exception e) {
-                                    logger.error("Error querying GitLab for pipeline {}: {}", 
-                                               pipeline.getPipelineId(), e.getMessage());
-                                    syncStatus.addError("Pipeline " + pipeline.getPipelineId() + ": " + e.getMessage());
-                                    failedPipelines++;
+                            if (result.failed) {
+                                failedPipelines++;
+                                if (result.errorMessage != null) {
+                                    syncStatus.addError(result.errorMessage);
                                 }
-                            } else {
-                                logger.debug("Mock mode: Skipping GitLab query for pipeline {}", 
-                                           pipeline.getPipelineId());
+                            }
+                            if (result.skipped) {
                                 skippedPipelines++;
                             }
                             
@@ -337,6 +268,145 @@ public class SyncService {
         status.setInProgress(false);
         status.setMessage("No sync operation in progress");
         return status;
+    }
+
+    /**
+     * Result of syncing a single pipeline
+     */
+    private static class SyncResult {
+        boolean wasUpdated = false;
+        boolean failed = false;
+        boolean skipped = false;
+        String errorMessage = null;
+    }
+
+    /**
+     * Sync a single pipeline in its own transaction.
+     * CRITICAL: This method has @Transactional with REQUIRES_NEW to ensure
+     * each pipeline gets its own Hibernate session, avoiding LazyInitializationException.
+     * 
+     * @param pipelineExecutionId Pipeline execution ID to sync
+     * @return SyncResult indicating what happened
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public SyncResult syncSinglePipeline(Long pipelineExecutionId) {
+        SyncResult result = new SyncResult();
+        
+        try {
+            // Fetch pipeline with fresh session
+            PipelineExecution pipeline = pipelineExecutionRepository.findById(pipelineExecutionId)
+                .orElse(null);
+            
+            if (pipeline == null) {
+                logger.warn("Pipeline execution {} not found", pipelineExecutionId);
+                result.skipped = true;
+                return result;
+            }
+
+            // Get flow step (with fresh session, no lazy loading issues)
+            FlowStep flowStep = flowStepRepository.findById(pipeline.getFlowStepId())
+                .orElse(null);
+            
+            if (flowStep == null) {
+                logger.warn("Flow step {} not found for pipeline execution {}", 
+                          pipeline.getFlowStepId(), pipeline.getId());
+                result.skipped = true;
+                return result;
+            }
+
+            // CRITICAL FIX: Eagerly load Application to avoid "no session" error
+            // Use repository to fetch with proper session management
+            Application application = applicationRepository.findById(flowStep.getApplication().getId())
+                .orElse(null);
+            
+            if (application == null) {
+                logger.warn("Application {} not found for pipeline execution {}", 
+                          flowStep.getApplication().getId(), pipeline.getId());
+                result.skipped = true;
+                return result;
+            }
+
+            // Skip if mock mode
+            if (gitLabConfig.isMockMode()) {
+                logger.debug("Mock mode: Skipping GitLab query for pipeline {}", 
+                           pipeline.getPipelineId());
+                result.skipped = true;
+                return result;
+            }
+
+            // Query GitLab for current status
+            ExecutionStatus previousStatus = pipeline.getStatus();
+            
+            try {
+                String decryptedToken = applicationService.getDecryptedPersonalAccessToken(application.getId());
+                
+                GitLabApiClient.GitLabPipelineResponse status = gitLabApiClient
+                    .getPipelineStatus(
+                        gitLabConfig.getBaseUrl(),
+                        application.getGitlabProjectId(),
+                        pipeline.getPipelineId(),
+                        decryptedToken
+                    )
+                    .block();
+
+                if (status == null) {
+                    logger.warn("Could not get status from GitLab for pipeline {}", 
+                              pipeline.getPipelineId());
+                    result.skipped = true;
+                    return result;
+                }
+
+                // Update status if changed
+                if (status.isCompleted()) {
+                    ExecutionStatus newStatus = status.isSuccessful() ? 
+                        ExecutionStatus.PASSED : ExecutionStatus.FAILED;
+                    
+                    if (pipeline.getStatus() != newStatus) {
+                        pipeline.setStatus(newStatus);
+                        result.wasUpdated = true;
+                        
+                        if (pipeline.getEndTime() == null) {
+                            pipeline.setEndTime(LocalDateTime.now());
+                        }
+
+                        // Download artifacts for completed pipelines
+                        downloadAndParseArtifacts(pipeline, application, flowStep);
+                        
+                        logger.info("Updated pipeline {} from {} to {}", 
+                                  pipeline.getPipelineId(), previousStatus, newStatus);
+                    }
+                } else {
+                    // Pipeline still running - register for polling
+                    if (pipeline.getStatus() != ExecutionStatus.RUNNING) {
+                        pipeline.setStatus(ExecutionStatus.RUNNING);
+                        result.wasUpdated = true;
+                    }
+                    
+                    // Register for active polling
+                    pipelineStatusPollingService.registerPipelineForPolling(pipeline);
+                    logger.info("Pipeline {} still running, registered for polling", 
+                              pipeline.getPipelineId());
+                }
+
+                if (result.wasUpdated) {
+                    pipelineExecutionRepository.save(pipeline);
+                }
+                
+            } catch (Exception e) {
+                logger.error("Error querying GitLab for pipeline {}: {}", 
+                           pipeline.getPipelineId(), e.getMessage());
+                result.failed = true;
+                result.errorMessage = "Pipeline " + pipeline.getPipelineId() + ": " + e.getMessage();
+            }
+            
+        } catch (Exception e) {
+            logger.error("Error syncing pipeline execution {}: {}", 
+                       pipelineExecutionId, e.getMessage(), e);
+            result.failed = true;
+            result.errorMessage = "Pipeline execution " + pipelineExecutionId + ": " + e.getMessage();
+        }
+        
+        return result;
     }
 
     /**

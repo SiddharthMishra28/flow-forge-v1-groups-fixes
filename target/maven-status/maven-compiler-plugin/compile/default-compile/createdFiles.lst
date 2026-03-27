@@ -95,6 +95,7 @@ com\ubs\orkestra\dto\FlowExecutionDto.class
 com\ubs\orkestra\controller\AnalyticsController.class
 com\ubs\orkestra\repository\QueuedFlowExecutionRepository.class
 com\ubs\orkestra\service\ApplicationService.class
+com\ubs\orkestra\service\SyncService$SyncResult.class
 com\ubs\orkestra\dto\DelayDto.class
 com\ubs\orkestra\controller\PipelineExecutionController.class
 com\ubs\orkestra\enums\ExecutionStatus.class
