@@ -326,6 +326,11 @@ POST /api/flows/execute?trigger=1,2,3,4,5
 }
 ```
 
+#### Data Synchronization (Sync API) **🆕 v5.0**
+
+- `POST /api/sync-data?syncOnlyRunning=true`: **Manually sync all flow execution data with GitLab** - Queries GitLab for current pipeline status and updates database. Useful for recovery after restarts or when data appears out of sync.
+- `GET /api/sync-data/status`: **Get sync operation status** - Returns the status of currently running sync operation, if any.
+
 #### Analytics
 - `GET /api/analytics/execution-stats`: Get execution statistics.
 - `GET /api/analytics/duration-stats`: Get duration statistics.
@@ -1153,6 +1158,238 @@ GET /api/flow-executions/search?flowGroupId=1&iteration=5&fromDate=2024-01-01T00
 - Individual flow status monitoring maintained
 - Thread pool utilization optimized for concurrent flows
 
+## 🚀 Latest Enhancements (v5.0)
+
+### **🔥 Critical Performance & Reliability Improvements**
+
+#### **1. Optimized Pipeline Polling Mechanism**
+
+**Problem Solved:** The previous polling mechanism had significant sync issues and delays (15-60 seconds) due to synchronous blocking and high polling intervals.
+
+**Solution:**
+- **Centralized Polling Service**: New `PipelineStatusPollingService` that manages all active pipeline polls in a single scheduled task
+- **Faster Polling Intervals**: Reduced from 15s to 5s for flow executions (3x faster), and 60s to 30s for scheduled steps (2x faster)
+- **Non-blocking Execution**: Threads no longer block waiting for pipeline completion, improving resource utilization
+- **Batch Status Checking**: Single scheduler polls all active pipelines every 5 seconds instead of individual blocking loops
+
+**Configuration:**
+```yaml
+flow-execution:
+  polling-interval: 5000  # Default: 5 seconds (previously 15s)
+  
+scheduling:
+  pipeline-status:
+    polling-interval: 30000  # Default: 30 seconds (previously 60s)
+```
+
+**Environment Variables:**
+```bash
+# Fast polling for quick CI/CD
+FLOW_EXECUTION_POLLING_INTERVAL=3000
+
+# Balanced (recommended)
+FLOW_EXECUTION_POLLING_INTERVAL=5000
+
+# Conservative for rate-limited APIs
+FLOW_EXECUTION_POLLING_INTERVAL=10000
+```
+
+#### **2. Automatic Startup Recovery for In-Flight Flows**
+
+**Problem Solved:** When the service pod restarts in Kubernetes, in-flight flow executions would be lost from the in-memory polling registry, causing status sync issues.
+
+**Solution:**
+- **Automatic Recovery on Startup**: `PipelineStatusPollingService` automatically detects and recovers in-flight pipeline executions from the database on startup
+- **GitLab Status Verification**: Checks actual GitLab pipeline status and updates database accordingly
+- **Smart Registration**: Automatically registers still-running pipelines for active polling
+- **Graceful Handling**: Properly handles pipelines that completed while service was down
+
+**How It Works:**
+1. On startup, query database for all `RUNNING` pipeline executions
+2. For each pipeline, check current status from GitLab API
+3. If completed → Update database with final status and download artifacts
+4. If still running → Register for active polling
+5. If error → Mark as FAILED
+
+**Configuration:**
+```yaml
+flow-execution:
+  recovery:
+    enabled: true  # Default: true (can be disabled for testing)
+```
+
+**Startup Logs:**
+```
+=== STARTUP RECOVERY: Checking for in-flight pipeline executions ===
+Found 3 in-flight pipeline executions that need recovery!
+Pipeline 12345 already completed in GitLab with status: success
+Pipeline 12346 still running in GitLab, registering for polling
+Pipeline 12347 still running in GitLab, registering for polling
+=== STARTUP RECOVERY COMPLETE ===
+Total in-flight pipelines found: 3
+Recovered for polling: 2
+Already completed in GitLab: 1
+Active pipelines being polled: 2
+```
+
+#### **3. Manual Data Synchronization Endpoint**
+
+**New Feature:** `/api/sync-data` endpoint for manual recovery and data synchronization with GitLab.
+
+**Use Cases:**
+- After service restarts to ensure data is fully in sync
+- After manual database changes or corrections
+- When status appears out of sync with GitLab
+- For recovery after GitLab API outages or issues
+- Bulk status updates for all flows
+
+**Endpoint:**
+```http
+POST /api/sync-data?syncOnlyRunning=true
+```
+
+**Parameters:**
+- `syncOnlyRunning` (optional, default: `true`): 
+  - `true` = Only sync pipelines in RUNNING state (faster, recommended)
+  - `false` = Sync all pipelines regardless of status (comprehensive check)
+
+**What It Does:**
+1. Queries all flow executions and their pipeline executions from database
+2. For each pipeline with a GitLab pipeline ID, queries GitLab for current status
+3. Updates database with latest status, end time, and artifacts
+4. Downloads and parses `output.env` artifacts for runtime variables
+5. Registers still-running pipelines for active polling
+6. Returns detailed sync statistics and error reports
+
+**Response:**
+```json
+{
+  "inProgress": false,
+  "startTime": "2026-03-27T21:00:00",
+  "endTime": "2026-03-27T21:02:15",
+  "totalFlowExecutions": 150,
+  "totalPipelineExecutions": 450,
+  "syncedFlowExecutions": 120,
+  "syncedPipelineExecutions": 450,
+  "updatedPipelineExecutions": 23,
+  "failedPipelineExecutions": 2,
+  "skippedPipelineExecutions": 425,
+  "errors": [
+    "Pipeline 98765: GitLab API timeout",
+    "Pipeline execution 42: Flow step not found"
+  ],
+  "message": "Sync completed. Processed 120 flow executions, updated 23 pipelines, failed 2, skipped 425"
+}
+```
+
+**Get Sync Status:**
+```http
+GET /api/sync-data/status
+```
+
+Returns current sync operation status if one is in progress.
+
+**Usage Examples:**
+
+```bash
+# Sync only RUNNING pipelines (recommended for regular use)
+curl -X POST "http://localhost:8080/api/sync-data?syncOnlyRunning=true"
+
+# Comprehensive sync of all pipelines (use after major changes)
+curl -X POST "http://localhost:8080/api/sync-data?syncOnlyRunning=false"
+
+# Check sync status
+curl -X GET "http://localhost:8080/api/sync-data/status"
+```
+
+**When to Use:**
+- **After Kubernetes pod restart**: Verify all in-flight flows recovered correctly
+- **After database migration**: Ensure all data is consistent with GitLab
+- **Periodic health check**: Run weekly to verify system state
+- **After GitLab outage**: Catch up on any missed status updates
+- **Manual intervention**: After manually updating database records
+
+**Safety Features:**
+- **Single-operation lock**: Prevents concurrent sync operations
+- **Sequential processing**: Processes flows one at a time to avoid overwhelming GitLab API
+- **Comprehensive error reporting**: All errors logged and returned in response
+- **Transaction safety**: Each update is transactional to prevent partial updates
+- **Non-destructive**: Only updates status, never deletes data
+
+### **🔧 Technical Architecture Changes**
+
+#### **New Services:**
+- `PipelineStatusPollingService`: Centralized pipeline polling with startup recovery
+- `SyncService`: Manual data synchronization with GitLab
+
+#### **New DTOs:**
+- `SyncStatusDto`: Sync operation status and detailed statistics
+
+#### **New Controllers:**
+- `SyncController`: REST endpoints for manual data synchronization
+
+#### **Enhanced Configuration:**
+```yaml
+flow-execution:
+  polling-interval: 5000  # Optimized from 15000ms
+  recovery:
+    enabled: true  # NEW: Automatic startup recovery
+
+scheduling:
+  pipeline-status:
+    polling-interval: 30000  # Optimized from 60000ms
+  queue-processing:
+    polling-interval: 30000  # Unchanged
+```
+
+### **🛡️ Backward Compatibility**
+
+✅ **All Existing Features Unchanged:**
+- Token validation scheduler (daily at 2 AM)
+- Scheduled flow execution polling
+- Queue processing
+- Bulk/group executions
+- Replay flows
+
+✅ **Deprecated Methods:**
+Old polling methods in `FlowExecutionService` are deprecated but still functional:
+- `pollPipelineCompletion()` → Delegates to new service
+- `pollPipelineCompletionAsync()` → Delegates to new service
+- `waitForPipelineCompletion()` → Delegates to new service
+
+### **📊 Performance Improvements**
+
+| Metric | Before (v4.0) | After (v5.0) | Improvement |
+|--------|---------------|--------------|-------------|
+| Flow polling interval | 15 seconds | 5 seconds | **3x faster** |
+| Scheduled step resumption | 60 seconds | 30 seconds | **2x faster** |
+| Status update latency | 15-60s | 5-30s | **3-12x faster** |
+| Thread blocking | Yes (blocking) | No (non-blocking) | **Better utilization** |
+| Restart recovery | ❌ Manual | ✅ Automatic | **Critical fix** |
+| Kubernetes compatibility | ⚠️ Loses in-flight | ✅ Full recovery | **Production-ready** |
+
+### **🎯 Migration Guide**
+
+#### **For Existing Users (v4.x → v5.0):**
+
+**No code changes required!** v5.0 is fully backward compatible.
+
+**Recommended actions:**
+1. **Review new polling intervals**: Default is now 5s (previously 15s). Adjust if needed.
+2. **Enable startup recovery**: Already enabled by default, but verify in logs.
+3. **Test sync endpoint**: Try `/api/sync-data` in development first.
+4. **Monitor logs**: Look for startup recovery messages after restarts.
+5. **Update monitoring**: Adjust alerting for faster polling intervals.
+
+**Optional customizations:**
+```bash
+# Keep conservative polling (if GitLab has rate limits)
+export FLOW_EXECUTION_POLLING_INTERVAL=10000
+
+# Disable recovery (not recommended, only for testing)
+export FLOW_EXECUTION_RECOVERY_ENABLED=false
+```
+
 ## 🚀 Latest Enhancements (v4.0)
 
 ### **🔥 Major Feature Additions**
@@ -1299,4 +1536,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ---
 
-**Orkestra v4.0** - Orchestrating seamless E2E test automation workflows with enhanced efficiency, intelligent resource management, powerful multi-flow execution capabilities, FlowGroup orchestration with iteration tracking, and advanced filtering and search capabilities.
+**Orkestra v5.0** - Orchestrating seamless E2E test automation workflows with optimized polling (3x faster), automatic startup recovery for Kubernetes environments, manual data synchronization capabilities, enhanced efficiency, intelligent resource management, powerful multi-flow execution capabilities, FlowGroup orchestration with iteration tracking, and advanced filtering and search capabilities.

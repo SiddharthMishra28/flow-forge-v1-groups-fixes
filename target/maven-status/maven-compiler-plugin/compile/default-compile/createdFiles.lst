@@ -17,6 +17,7 @@ com\ubs\orkestra\repository\FlowRepository.class
 com\ubs\orkestra\util\GitLabApiClient$GitLabCommit.class
 com\ubs\orkestra\enums\AutomationStatus.class
 com\ubs\orkestra\model\InvokeScheduler.class
+com\ubs\orkestra\controller\SyncController.class
 com\ubs\orkestra\dto\FlowGroupCreateDto.class
 com\ubs\orkestra\dto\TimerDto.class
 com\ubs\orkestra\validator\ValidInvokeScheduler.class
@@ -47,6 +48,7 @@ com\ubs\orkestra\util\GitLabApiClient$GitLabBranchResponse.class
 com\ubs\orkestra\dto\ApplicationDto.class
 com\ubs\orkestra\dto\BranchDto.class
 com\ubs\orkestra\exception\GlobalExceptionHandler.class
+com\ubs\orkestra\service\SyncService.class
 com\ubs\orkestra\config\OpenApiConfig.class
 com\ubs\orkestra\dto\analytics\TrendDataDto.class
 com\ubs\orkestra\repository\FlowStepRepository.class
@@ -65,6 +67,7 @@ com\ubs\orkestra\websocket\FlowLogWebSocketHandler.class
 com\ubs\orkestra\model\Application.class
 com\ubs\orkestra\model\Timer.class
 com\ubs\orkestra\util\GitLabApiClient$GitLabPipelineResponse.class
+com\ubs\orkestra\dto\SyncStatusDto.class
 com\ubs\orkestra\repository\ApplicationRepository.class
 com\ubs\orkestra\dto\InvokeTimerDto.class
 com\ubs\orkestra\dto\TestDataDto.class

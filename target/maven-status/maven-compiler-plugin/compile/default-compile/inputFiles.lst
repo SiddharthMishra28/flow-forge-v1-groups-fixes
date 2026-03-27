@@ -4,6 +4,7 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowGroupDt
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\analytics\FailureAnalysisDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\FlowGroup.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\TestDataController.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\SyncStatusDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\PipelineExecution.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\CombinedFlowDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\FlowService.java
@@ -33,6 +34,7 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\Flow.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\FlowStepRepository.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\TokenValidationScheduler.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowGroupCreateDto.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\SyncController.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\config\CorsConfig.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\FlowController.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\exception\GlobalExceptionHandler.java
@@ -66,6 +68,7 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\enums\Execution
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\QueuedFlowExecutionRepository.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowExecutionDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\TestDataService.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\SyncService.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\PipelineExecutionRepository.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\Timer.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\FlowExecutionController.java
