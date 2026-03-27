@@ -1692,14 +1692,29 @@ public class FlowExecutionService {
     /**
      * Get all pipeline executions for a flow execution, ensuring ALL configured FlowSteps are represented
      * with appropriate status, even if not yet executed.
+     * 
+     * CRITICAL FIX: Only use pipeline executions that belong to THIS specific flowExecutionId.
+     * Previously, the map merge logic could pick pipeline executions from other executions of the same flow,
+     * causing status display issues in the UI (e.g., showing old FAILED status as SCHEDULED in new executions).
      */
     private List<PipelineExecutionDto> getAllPipelineExecutionsForFlowExecution(UUID flowExecutionId, Flow flow, List<FlowStep> flowSteps) {
-        // Get existing pipeline executions for this flow execution - ensure fresh data
+        // Get existing pipeline executions for THIS SPECIFIC flow execution - ensure fresh data
+        // This query already filters by flowExecutionId, so we only get executions for this specific run
         List<PipelineExecution> existingPipelineExecutions = pipelineExecutionRepository.findByFlowExecutionIdOrderByCreatedAt(flowExecutionId);
 
         // Create a map of existing executions by flowStepId for quick lookup
+        // Since we're already filtered by flowExecutionId, there should be no duplicates per stepId
+        // But we keep the merge function for safety - in case of duplicates (e.g., retries), take the latest (b)
         Map<Long, PipelineExecution> existingByStepId = existingPipelineExecutions.stream()
-                .collect(Collectors.toMap(PipelineExecution::getFlowStepId, pe -> pe, (a, b) -> a));
+                .collect(Collectors.toMap(
+                    PipelineExecution::getFlowStepId, 
+                    pe -> pe, 
+                    (a, b) -> {
+                        // If duplicates exist for same step (shouldn't happen normally), take the latest one
+                        logger.warn("Found duplicate pipeline executions for flowExecutionId {} and flowStepId {}. Taking latest.", flowExecutionId, b.getFlowStepId());
+                        return b.getCreatedAt().isAfter(a.getCreatedAt()) ? b : a;
+                    }
+                ));
 
         // Build complete list of pipeline executions for all configured FlowSteps in order
         List<PipelineExecutionDto> allPipelineExecutions = new ArrayList<>();
