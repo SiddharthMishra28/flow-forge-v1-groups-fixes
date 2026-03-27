@@ -73,10 +73,13 @@ public class FlowExecutionService {
     @Autowired
     private FlowExecutionQueueService flowExecutionQueueService;
 
-    @org.springframework.beans.factory.annotation.Value("${scheduling.pipeline-status.polling-interval:60000}")
+    @Autowired
+    private PipelineStatusPollingService pipelineStatusPollingService;
+
+    @org.springframework.beans.factory.annotation.Value("${scheduling.pipeline-status.polling-interval:30000}")
     private long scheduledPollingIntervalMs;
 
-    @org.springframework.beans.factory.annotation.Value("${flow-execution.polling-interval:15000}")
+    @org.springframework.beans.factory.annotation.Value("${flow-execution.polling-interval:5000}")
     private long flowExecutionPollingIntervalMs;
 
     @Autowired(required = false)
@@ -493,39 +496,15 @@ public class FlowExecutionService {
         return pipelineExecution;
     }
 
+    // DEPRECATED: Replaced by PipelineStatusPollingService scheduled polling
+    // Kept for backward compatibility but not actively used
+    @Deprecated
     @Async("pipelinePollingTaskExecutor")
     public void pollPipelineCompletionAsync(PipelineExecution pipelineExecution, Application application, String gitlabBaseUrl, FlowStep step) {
-        logger.info("Starting async polling for first pipeline completion: {}", pipelineExecution.getPipelineId());
-
-        try {
-            while (true) {
-                GitLabApiClient.GitLabPipelineResponse status = gitLabApiClient
-                        .getPipelineStatus(gitlabBaseUrl, application.getGitlabProjectId(),
-                                         pipelineExecution.getPipelineId(), applicationService.getDecryptedPersonalAccessToken(application.getId()))
-                        .block();
-
-                if (status != null && status.isCompleted()) {
-                    pipelineExecution.setStatus(status.isSuccessful() ? ExecutionStatus.PASSED : ExecutionStatus.FAILED);
-                    pipelineExecution.setEndTime(LocalDateTime.now());
-
-                    // Download artifacts regardless of success or failure
-                    // This allows failed steps to also export runtime variables via output.env
-                    downloadAndParseArtifacts(pipelineExecution, application, gitlabBaseUrl, step);
-
-                    pipelineExecutionRepository.save(pipelineExecution);
-                    logger.info("First pipeline {} completed with status: {}", pipelineExecution.getPipelineId(), pipelineExecution.getStatus());
-                    break;
-                }
-
-                // Wait before next poll - configurable via application.yml
-                Thread.sleep(flowExecutionPollingIntervalMs);
-            }
-        } catch (Exception e) {
-            logger.error("Error polling first pipeline completion: {}", e.getMessage(), e);
-            pipelineExecution.setStatus(ExecutionStatus.FAILED);
-            pipelineExecution.setEndTime(LocalDateTime.now());
-            pipelineExecutionRepository.save(pipelineExecution);
-        }
+        logger.warn("DEPRECATED: Using old pollPipelineCompletionAsync method. Should use PipelineStatusPollingService instead.");
+        
+        // Delegate to new polling service
+        pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
     }
 
     @Async("flowExecutionTaskExecutor")
@@ -570,7 +549,11 @@ public class FlowExecutionService {
 
                     // Wait for completion if still running
                     if (existingPipelineExecution.getStatus() == ExecutionStatus.RUNNING) {
-                        existingPipelineExecution = waitForPipelineCompletion(existingPipelineExecution, application, step);
+                        // Register for polling if not already registered
+                        pipelineStatusPollingService.registerPipelineForPolling(existingPipelineExecution);
+                        // Use optimized polling service
+                        existingPipelineExecution = pipelineStatusPollingService.waitForPipelineCompletion(
+                            existingPipelineExecution, 3600000); // 1 hour timeout
                     }
 
                     if (existingPipelineExecution.getStatus() == ExecutionStatus.FAILED) {
@@ -1437,8 +1420,12 @@ public class FlowExecutionService {
                     
                     logger.info("Pipeline triggered successfully: {} for step {}", response.getId(), step.getId());
                     
-                    // Poll for completion
-                    pollPipelineCompletion(pipelineExecution, application, gitLabConfig.getBaseUrl(), step);
+                    // Register pipeline for active polling instead of blocking
+                    pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+                    
+                    // Wait for completion using optimized polling service
+                    pipelineExecution = pipelineStatusPollingService.waitForPipelineCompletion(
+                        pipelineExecution, 3600000); // 1 hour timeout
                 } else {
                     logger.error("Failed to trigger pipeline - null response from GitLab API");
                     pipelineExecution.setStatus(ExecutionStatus.FAILED);
@@ -1457,7 +1444,8 @@ public class FlowExecutionService {
         return pipelineExecution;
     }
 
-    private void downloadAndParseArtifacts(PipelineExecution pipelineExecution, Application application, 
+    // Made package-private to allow PipelineStatusPollingService to access it
+  void downloadAndParseArtifacts(PipelineExecution pipelineExecution, Application application, 
                                          String gitlabBaseUrl, FlowStep step) {
         try {
             // Get pipeline jobs
@@ -1608,76 +1596,27 @@ public class FlowExecutionService {
     /**
      * Wait for a pipeline that is already running to complete
      */
+    // DEPRECATED: Replaced by PipelineStatusPollingService.waitForPipelineCompletion
+    // Kept for backward compatibility but not actively used
+    @Deprecated
     private PipelineExecution waitForPipelineCompletion(PipelineExecution pipelineExecution, Application application, FlowStep step) {
-        logger.info("Waiting for already running pipeline {} to complete", pipelineExecution.getPipelineId());
-
-        try {
-            while (true) {
-                GitLabApiClient.GitLabPipelineResponse status = gitLabApiClient
-                        .getPipelineStatus(gitLabConfig.getBaseUrl(), application.getGitlabProjectId(),
-                                         pipelineExecution.getPipelineId(), applicationService.getDecryptedPersonalAccessToken(application.getId()))
-                        .block();
-
-                if (status != null && status.isCompleted()) {
-                    pipelineExecution.setStatus(status.isSuccessful() ? ExecutionStatus.PASSED : ExecutionStatus.FAILED);
-                    pipelineExecution.setEndTime(LocalDateTime.now());
-
-                    // Download artifacts regardless of success or failure
-                    // This allows failed steps to also export runtime variables via output.env
-                    downloadAndParseArtifacts(pipelineExecution, application, gitLabConfig.getBaseUrl(), step);
-
-                    pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
-                    logger.info("Pipeline {} completed with status: {}", pipelineExecution.getPipelineId(), pipelineExecution.getStatus());
-                    break;
-                }
-
-                // Wait before next poll - configurable via application.yml
-                Thread.sleep(flowExecutionPollingIntervalMs);
-            }
-        } catch (Exception e) {
-            logger.error("Error waiting for pipeline completion: {}", e.getMessage(), e);
-            pipelineExecution.setStatus(ExecutionStatus.FAILED);
-            pipelineExecution.setEndTime(LocalDateTime.now());
-            pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
-        }
-
-        return pipelineExecution;
+        logger.warn("DEPRECATED: Using old waitForPipelineCompletion method. Should use PipelineStatusPollingService instead.");
+        
+        // Delegate to new polling service
+        pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+        return pipelineStatusPollingService.waitForPipelineCompletion(pipelineExecution, 3600000);
     }
 
+    // DEPRECATED: Replaced by PipelineStatusPollingService scheduled polling
+    // Kept for backward compatibility but not actively used
+    @Deprecated
     @Async("pipelinePollingTaskExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void pollPipelineCompletion(PipelineExecution pipelineExecution, Application application, String gitlabBaseUrl, FlowStep step) {
-        logger.info("Starting to poll pipeline completion for pipeline: {}", pipelineExecution.getPipelineId());
-
-        try {
-            while (true) {
-                GitLabApiClient.GitLabPipelineResponse status = gitLabApiClient
-                        .getPipelineStatus(gitlabBaseUrl, application.getGitlabProjectId(),
-                                         pipelineExecution.getPipelineId(), applicationService.getDecryptedPersonalAccessToken(application.getId()))
-                        .block();
-
-                if (status != null && status.isCompleted()) {
-                    pipelineExecution.setStatus(status.isSuccessful() ? ExecutionStatus.PASSED : ExecutionStatus.FAILED);
-                    pipelineExecution.setEndTime(LocalDateTime.now());
-
-                    // Download artifacts regardless of success or failure
-                    // This allows failed steps to also export runtime variables via output.env
-                    downloadAndParseArtifacts(pipelineExecution, application, gitlabBaseUrl, step);
-
-                    pipelineExecutionRepository.save(pipelineExecution);
-                    logger.info("Pipeline {} completed with status: {}", pipelineExecution.getPipelineId(), pipelineExecution.getStatus());
-                    break;
-                }
-
-                // Wait before next poll - configurable via application.yml
-                Thread.sleep(flowExecutionPollingIntervalMs);
-            }
-        } catch (Exception e) {
-            logger.error("Error polling pipeline completion: {}", e.getMessage(), e);
-            pipelineExecution.setStatus(ExecutionStatus.FAILED);
-            pipelineExecution.setEndTime(LocalDateTime.now());
-            pipelineExecutionRepository.save(pipelineExecution);
-        }
+        logger.warn("DEPRECATED: Using old pollPipelineCompletion method. Should use PipelineStatusPollingService instead.");
+        
+        // Delegate to new polling service
+        pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)

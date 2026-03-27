@@ -1,4 +1,5 @@
 com\ubs\orkestra\dto\ArtifactDto.class
+com\ubs\orkestra\service\PipelineStatusPollingService$PipelinePollingContext.class
 com\ubs\orkestra\service\SchedulingService.class
 com\ubs\orkestra\OrkestraV2ApiApplication.class
 com\ubs\orkestra\repository\ArtifactRepository.class
@@ -25,6 +26,7 @@ com\ubs\orkestra\model\Artifact.class
 com\ubs\orkestra\service\ArtifactService.class
 com\ubs\orkestra\dto\InvokeSchedulerDto.class
 com\ubs\orkestra\repository\FlowExecutionSpecification.class
+com\ubs\orkestra\service\PipelineStatusPollingService.class
 com\ubs\orkestra\model\Delay.class
 com\ubs\orkestra\repository\FlowExecutionRepository.class
 com\ubs\orkestra\model\TestData.class

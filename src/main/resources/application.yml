@@ -47,8 +47,16 @@ flow-execution:
   # Pipeline status polling interval during flow execution in milliseconds
   # This controls how frequently the system checks if running pipelines have completed
   # Lower values = more responsive status updates but higher API load
-  # Default: 15000ms (15 seconds)
-  polling-interval: ${FLOW_EXECUTION_POLLING_INTERVAL:15000}
+  # OPTIMIZED: Reduced from 15000ms to 5000ms for faster status updates
+  # Default: 5000ms (5 seconds)
+  polling-interval: ${FLOW_EXECUTION_POLLING_INTERVAL:5000}
+  
+  # Startup recovery configuration
+  # Enables automatic recovery of in-flight pipeline executions on service restart
+  # When the service restarts, it checks the database for any pipelines in RUNNING state
+  # and automatically resumes polling for them to ensure no status updates are lost
+  recovery:
+    enabled: ${FLOW_EXECUTION_RECOVERY_ENABLED:true}  # Enable startup recovery (default: true)
 
 # Scheduling Configuration
 scheduling:
@@ -58,8 +66,10 @@ scheduling:
     # 0 0 2 * * * = Every day at 2:00 AM
     cron: ${TOKEN_VALIDATION_CRON:0 0 2 * * *}
   pipeline-status:
-    # Scheduled pipeline status polling interval in milliseconds (default: 60 seconds)
-    polling-interval: ${PIPELINE_STATUS_POLLING_INTERVAL:60000}
+    # Scheduled pipeline status polling interval in milliseconds for delayed/scheduled flows
+    # OPTIMIZED: Reduced from 60000ms to 30000ms for faster scheduled step resumption
+    # Default: 30000ms (30 seconds)
+    polling-interval: ${PIPELINE_STATUS_POLLING_INTERVAL:30000}
   queue-processing:
     # Queued flow execution polling interval in milliseconds (default: 30 seconds)
     polling-interval: ${QUEUE_PROCESSING_POLLING_INTERVAL:30000}
