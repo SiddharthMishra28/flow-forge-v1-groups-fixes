@@ -580,6 +580,9 @@ public class FlowExecutionService {
                         flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
                         flowExecutionRepository.save(flowExecution);
 
+                        // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                        cancelRemainingPipelineExecutions(flowExecution.getId(), stepId);
+
                         logger.error("Flow execution failed at step: {}", stepId);
                         return CompletableFuture.completedFuture(convertToDto(flowExecution));
                     }
@@ -653,6 +656,9 @@ public class FlowExecutionService {
                     flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
                     flowExecutionRepository.save(flowExecution);
 
+                    // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                    cancelRemainingPipelineExecutions(flowExecution.getId(), stepId);
+
                     logger.error("Flow execution failed at step: {}", stepId);
                     return CompletableFuture.completedFuture(convertToDto(flowExecution));
                 }
@@ -685,6 +691,9 @@ public class FlowExecutionService {
                 flowExecution.setStatus(ExecutionStatus.FAILED);
                 flowExecution.setEndTime(LocalDateTime.now());
                 flowExecutionRepository.save(flowExecution);
+                
+                // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                cancelRemainingPipelineExecutions(flowExecution.getId(), null);
             }
             // Propagate exception so that the CompletableFuture completes exceptionally
             throw new RuntimeException(e);
@@ -865,6 +874,10 @@ public class FlowExecutionService {
                     flowExecution.setEndTime(LocalDateTime.now());
                     flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
                     flowExecutionRepository.save(flowExecution);
+                    
+                    // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                    cancelRemainingPipelineExecutions(flowExecution.getId(), completedStepId);
+                    
                     logger.error("Flow execution failed at scheduled step: {}", completedStepId);
                     return;
                 }
@@ -923,6 +936,9 @@ public class FlowExecutionService {
                     flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
                     flowExecutionRepository.save(flowExecution);
 
+                    // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                    cancelRemainingPipelineExecutions(flowExecution.getId(), stepId);
+
                     logger.error("Flow execution failed at step: {}", stepId);
                     return;
                 }
@@ -939,6 +955,9 @@ public class FlowExecutionService {
                         flowExecution.setEndTime(LocalDateTime.now());
                         flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
                         flowExecutionRepository.save(flowExecution);
+
+                        // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                        cancelRemainingPipelineExecutions(flowExecution.getId(), stepId);
 
                         logger.error("Flow execution failed at step: {}", stepId);
                         return;
@@ -991,6 +1010,9 @@ public class FlowExecutionService {
                         flowExecution.setEndTime(LocalDateTime.now());
                         flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
                         flowExecutionRepository.save(flowExecution);
+
+                        // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                        cancelRemainingPipelineExecutions(flowExecution.getId(), stepId);
 
                         logger.error("Flow execution failed at scheduled step: {}", stepId);
                         return;
@@ -1063,6 +1085,9 @@ public class FlowExecutionService {
                     flowExecution.setRuntimeVariables(accumulatedRuntimeVariables);
                     flowExecutionRepository.save(flowExecution);
 
+                    // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                    cancelRemainingPipelineExecutions(flowExecution.getId(), stepId);
+
                     logger.error("Flow execution failed at step: {}", stepId);
                     return;
                 }
@@ -1094,6 +1119,9 @@ public class FlowExecutionService {
                 flowExecution.setStatus(ExecutionStatus.FAILED);
                 flowExecution.setEndTime(LocalDateTime.now());
                 flowExecutionRepository.save(flowExecution);
+                
+                // Cancel all remaining SCHEDULED/PENDING pipeline executions
+                cancelRemainingPipelineExecutions(flowExecution.getId(), null);
             }
         } finally {
             org.slf4j.MDC.remove("flowExecutionId");
@@ -1536,6 +1564,44 @@ public class FlowExecutionService {
             pipelineExecution.setEndTime(LocalDateTime.now());
             pipelineExecutionRepository.save(pipelineExecution);
             Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Cancel all remaining SCHEDULED or PENDING pipeline executions when a flow fails.
+     * This ensures UI shows correct status - no ambiguous SCHEDULED status when flow is FAILED.
+     */
+    private void cancelRemainingPipelineExecutions(UUID flowExecutionId, Long failedAtStepId) {
+        logger.info("Cancelling remaining pipeline executions for flow execution {} after failure at step {}", 
+                   flowExecutionId, failedAtStepId);
+        
+        try {
+            // Get all pipeline executions for this flow execution
+            List<PipelineExecution> allPipelineExecutions = pipelineExecutionRepository.findByFlowExecutionIdOrderByCreatedAt(flowExecutionId);
+            
+            // Find all SCHEDULED or PENDING executions (not yet started)
+            List<PipelineExecution> remainingExecutions = allPipelineExecutions.stream()
+                .filter(pe -> pe.getStatus() == ExecutionStatus.SCHEDULED || pe.getStatus() == ExecutionStatus.PENDING)
+                .filter(pe -> !pe.getFlowStepId().equals(failedAtStepId)) // Don't cancel the failed step itself
+                .collect(Collectors.toList());
+            
+            if (!remainingExecutions.isEmpty()) {
+                logger.info("Found {} remaining SCHEDULED/PENDING pipeline executions to cancel", remainingExecutions.size());
+                
+                for (PipelineExecution pe : remainingExecutions) {
+                    pe.setStatus(ExecutionStatus.CANCELLED);
+                    pe.setEndTime(LocalDateTime.now());
+                    pipelineExecutionRepository.save(pe);
+                    logger.debug("Cancelled pipeline execution for step {}", pe.getFlowStepId());
+                }
+                
+                logger.info("Successfully cancelled {} remaining pipeline executions", remainingExecutions.size());
+            } else {
+                logger.debug("No remaining SCHEDULED/PENDING pipeline executions to cancel");
+            }
+        } catch (Exception e) {
+            logger.error("Error cancelling remaining pipeline executions: {}", e.getMessage(), e);
+            // Don't throw - this is cleanup, shouldn't affect main flow
         }
     }
 
