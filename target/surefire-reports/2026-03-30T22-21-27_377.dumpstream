@@ -1,5 +1,0 @@
-# Created at 2026-03-30T22:21:27.564
-Boot Manifest-JAR contains absolute paths in classpath 'D:\dev\flow-forge-v1-groups-fixes\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-

@@ -13,43 +13,50 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class AsyncConfig {
 
     /**
-     * Thread pool for executing flows concurrently.
+     * Thread pool for flow-execution tasks.
      *
-     * Sizing rationale for 50-70 parallel flows:
-     *   - corePoolSize=20 : keep 20 threads warm at all times
-     *   - maxPoolSize=70  : allow up to 70 concurrent flow-execution threads
-     *   - queueCapacity=5 : intentionally tiny – acts only as a small burst buffer.
-     *                        Overflow MUST go to the DB-backed queue (queued_flow_executions)
-     *                        so it survives restarts.  A large internal queue would silently
-     *                        swallow flows that would be lost on restart.
+     * With the scheduler-driven architecture, threads in this pool are held only
+     * for the duration of a single GitLab API call (~1-5 s) – never for the full
+     * lifetime of a pipeline run (minutes to hours).
      *
-     * Return type is ThreadPoolTaskExecutor (not the Executor interface) so that
-     * FlowExecutionQueueService can inspect pool statistics (activeCount, maxPoolSize, etc.).
+     * Sizing rationale:
+     *   corePoolSize  = 5   – threads always warm
+     *   maxPoolSize   = 15  – burst headroom
+     *   queueCapacity = 200 – absorbs spikes; tasks are fast so the queue drains quickly
+     *
+     * Used by:
+     *   - FlowExecutionService.executeFlowAsync            (register step-0 for polling)
+     *   - FlowExecutionService.resumeFlowExecution         (trigger scheduled step)
+     *   - FlowExecutionService.executeReplayFlowAsync      (trigger replay step)
+     *   - FlowExecutionService.advanceFlowToNextStep       (trigger next step on completion)
+     *   - FlowExecutionService.startPendingFlow            (start a PENDING flow)
+     *
+     * Return type is ThreadPoolTaskExecutor (not Executor) so that
+     * FlowExecutionQueueService can inspect pool metrics.
      */
     @Bean(name = "flowExecutionTaskExecutor")
     public ThreadPoolTaskExecutor flowExecutionTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.setMaxPoolSize(70);
-        executor.setQueueCapacity(5);
-        executor.setThreadNamePrefix("FlowExecution-");
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(15);
+        executor.setQueueCapacity(200);
+        executor.setThreadNamePrefix("FlowAdvancer-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(60);
-        // Throw TaskRejectedException on overflow; callers catch this and route to DB queue.
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        executor.setAwaitTerminationSeconds(30);
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;
     }
 
     /**
-     * Thread pool for background/async operations that are NOT flow-execution threads.
+     * Thread pool for background sync operations only.
      *
-     * Currently used by:
-     *   - SyncService.syncAllFlowExecutionDataAsync()  (manual GitLab re-sync)
+     * Used by:
+     *   - SyncService.syncAllFlowExecutionDataAsync()
      *
-     * NOTE: Individual pipeline-status polling is NOT handled here.
-     * PipelineStatusPollingService uses a @Scheduled method (Spring's TaskScheduler)
-     * backed by a ConcurrentHashMap of active polls – no separate thread pool needed.
+     * NOTE: Individual pipeline-status polling runs on Spring's @Scheduled
+     * executor (single-threaded), backed by an in-memory ConcurrentHashMap.
+     * This pool has NO involvement in pipeline polling.
      */
     @Bean(name = "pipelinePollingTaskExecutor")
     public Executor pipelinePollingTaskExecutor() {

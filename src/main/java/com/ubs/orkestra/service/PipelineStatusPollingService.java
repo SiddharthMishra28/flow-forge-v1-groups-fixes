@@ -14,10 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -55,6 +54,11 @@ public class PipelineStatusPollingService {
 
     @Autowired
     private OutputEnvParser outputEnvParser;
+
+    /** Injected lazily to break the circular dependency FlowExecutionService ↔ PipelineStatusPollingService. */
+    @Autowired
+    @Lazy
+    private FlowExecutionService flowExecutionService;
 
     @org.springframework.beans.factory.annotation.Value("${flow-execution.polling-interval:5000}")
     private long pollingIntervalMs;
@@ -321,8 +325,34 @@ public class PipelineStatusPollingService {
                 return;
             }
 
-            // Check GitLab pipeline status
-            if (!gitLabConfig.isMockMode()) {
+            if (gitLabConfig.isMockMode()) {
+                // Mock mode: treat a pipeline as complete after ~3 seconds of polling
+                long elapsedMs = java.time.Duration.between(context.startTime, LocalDateTime.now()).toMillis();
+                if (elapsedMs >= 3000) {
+                    logger.info("MOCK: Pipeline {} (execution {}) completing after {}ms",
+                               context.pipelineId, context.pipelineExecutionId, elapsedMs);
+
+                    pipelineExecution.setStatus(ExecutionStatus.PASSED);
+                    pipelineExecution.setEndTime(LocalDateTime.now());
+
+                    // Simulate output.env data
+                    Map<String, String> mockOutput = new HashMap<>();
+                    mockOutput.put("MOCK_USER_ID", "user_" + context.pipelineId);
+                    mockOutput.put("MOCK_SESSION_TOKEN", "token_" + Long.toHexString(context.pipelineId));
+                    mockOutput.put("MOCK_TRANSACTION_ID", "txn_" + context.pipelineId);
+                    Map<String, String> runtimeData = new HashMap<>();
+                    if (pipelineExecution.getConfiguredTestData() != null) {
+                        runtimeData.putAll(pipelineExecution.getConfiguredTestData());
+                    }
+                    runtimeData.putAll(mockOutput);
+                    pipelineExecution.setRuntimeTestData(runtimeData);
+                    pipelineExecutionRepository.save(pipelineExecution);
+
+                    activePipelinePolls.remove(context.pipelineExecutionId);
+                    triggerFlowContinuation(pipelineExecution);
+                }
+            } else {
+                // Real GitLab pipeline status check
                 GitLabApiClient.GitLabPipelineResponse status = gitLabApiClient
                     .getPipelineStatus(
                         gitLabConfig.getBaseUrl(),
@@ -333,23 +363,18 @@ public class PipelineStatusPollingService {
                     .block();
 
                 if (status != null && status.isCompleted()) {
-                    // Pipeline completed - update status
                     pipelineExecution.setStatus(status.isSuccessful() ? ExecutionStatus.PASSED : ExecutionStatus.FAILED);
                     pipelineExecution.setEndTime(LocalDateTime.now());
 
-                    // Download artifacts inline (avoid circular dependency)
                     downloadAndParseArtifacts(pipelineExecution, application, flowStep);
 
                     pipelineExecutionRepository.save(pipelineExecution);
 
-                    logger.info("Pipeline {} (execution {}) completed with status {} after {} polls", 
-                               context.pipelineId, context.pipelineExecutionId, 
+                    logger.info("Pipeline {} (execution {}) completed with status {} after {} polls",
+                               context.pipelineId, context.pipelineExecutionId,
                                pipelineExecution.getStatus(), context.pollCount);
 
-                    // Remove from active polls
                     activePipelinePolls.remove(context.pipelineExecutionId);
-
-                    // Trigger flow continuation if needed
                     triggerFlowContinuation(pipelineExecution);
                 }
             }
@@ -361,20 +386,22 @@ public class PipelineStatusPollingService {
     }
 
     /**
-     * Trigger flow execution continuation after a pipeline completes
+     * Called after every pipeline completion.  Delegates to
+     * {@link FlowExecutionService#advanceFlowToNextStep} which drives the flow state-machine:
+     * it either triggers the next step or marks the flow complete/failed.
      */
     private void triggerFlowContinuation(PipelineExecution completedPipeline) {
         try {
-            // Check if this is part of a flow that needs to continue
-            if (completedPipeline.getFlowExecutionId() != null) {
-                logger.debug("Pipeline completion may trigger flow continuation for execution {}", 
-                           completedPipeline.getFlowExecutionId());
-                
-                // The flow execution service will handle continuation logic
-                // This is handled by the executeFlowAsync method which waits for pipeline completion
+            UUID flowExecutionId = completedPipeline.getFlowExecutionId();
+            Long flowStepId = completedPipeline.getFlowStepId();
+            if (flowExecutionId != null && flowStepId != null) {
+                logger.debug("Triggering flow continuation: flowExecution={} completedStep={}",
+                            flowExecutionId, flowStepId);
+                flowExecutionService.advanceFlowToNextStep(flowExecutionId, flowStepId);
             }
         } catch (Exception e) {
-            logger.error("Error triggering flow continuation: {}", e.getMessage(), e);
+            logger.error("Error triggering flow continuation for pipeline {}: {}",
+                        completedPipeline.getId(), e.getMessage(), e);
         }
     }
 

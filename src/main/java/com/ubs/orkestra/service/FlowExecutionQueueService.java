@@ -20,6 +20,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -66,6 +67,12 @@ public class FlowExecutionQueueService {
 
     @org.springframework.beans.factory.annotation.Value("${scheduling.queue-processing.max-retry-count:3}")
     private int maxRetryCount;
+
+    @org.springframework.beans.factory.annotation.Value("${flow-execution.max-concurrent-flows:50}")
+    private int maxConcurrentFlows;
+
+    @org.springframework.beans.factory.annotation.Value("${flow-execution.pending-timeout-minutes:30}")
+    private int pendingTimeoutMinutes;
 
     // -------------------------------------------------------------------------
     // Public queue API
@@ -209,6 +216,78 @@ public class FlowExecutionQueueService {
     }
 
     // -------------------------------------------------------------------------
+    // PENDING flow processing
+    // -------------------------------------------------------------------------
+
+    /**
+     * Periodically starts PENDING FlowExecutions when capacity is available and times out
+     * those that have been waiting longer than {@code pendingTimeoutMinutes}.
+     *
+     * <p>This replaces the old thread-pool-based queue drain with a simpler model:
+     * flows are created with {@code status=PENDING} by {@link FlowExecutionService#executeMultipleFlows}
+     * when the running count exceeds {@code maxConcurrentFlows}.
+     */
+    @Scheduled(fixedDelayString = "${scheduling.queue-processing.polling-interval:30000}",
+               initialDelayString = "${scheduling.queue-processing.initial-delay:10000}")
+    @Transactional
+    public void processPendingFlowExecutions() {
+        try {
+            // Timeout PENDING flows that have been waiting too long
+            LocalDateTime timeoutBefore = LocalDateTime.now().minusMinutes(pendingTimeoutMinutes);
+            List<FlowExecution> timedOut = flowExecutionRepository.findByStatus(ExecutionStatus.PENDING)
+                .stream()
+                .filter(fe -> fe.getCreatedAt() != null && fe.getCreatedAt().isBefore(timeoutBefore))
+                .collect(Collectors.toList());
+
+            for (FlowExecution fe : timedOut) {
+                logger.warn("PENDING flow execution {} timed out after {} minutes — marking CANCELLED",
+                           fe.getId(), pendingTimeoutMinutes);
+                fe.setStatus(ExecutionStatus.CANCELLED);
+                fe.setEndTime(LocalDateTime.now());
+                flowExecutionRepository.save(fe);
+            }
+
+            // Start PENDING flows up to available capacity
+            long runningCount = flowExecutionRepository.countByStatus(ExecutionStatus.RUNNING);
+            int availableSlots = (int) Math.max(0, maxConcurrentFlows - runningCount);
+            if (availableSlots <= 0) {
+                long pendingCount = flowExecutionRepository.countByStatus(ExecutionStatus.PENDING);
+                if (pendingCount > 0) {
+                    logger.debug("processPendingFlowExecutions: no capacity (running={}), {} PENDING flows waiting",
+                               runningCount, pendingCount);
+                }
+                return;
+            }
+
+            List<FlowExecution> pendingFlows = flowExecutionRepository.findByStatus(ExecutionStatus.PENDING)
+                .stream()
+                .filter(fe -> fe.getCreatedAt() == null || !fe.getCreatedAt().isBefore(timeoutBefore))
+                .limit(availableSlots)
+                .collect(Collectors.toList());
+
+            if (pendingFlows.isEmpty()) {
+                return;
+            }
+
+            logger.info("processPendingFlowExecutions: starting {} PENDING flows (available slots: {})",
+                       pendingFlows.size(), availableSlots);
+
+            for (FlowExecution fe : pendingFlows) {
+                try {
+                    flowExecutionService.executeFlowAsync(fe.getId());
+                    logger.info("processPendingFlowExecutions: started PENDING flow {}", fe.getId());
+                } catch (Exception e) {
+                    logger.error("processPendingFlowExecutions: failed to start PENDING flow {}: {}",
+                                fe.getId(), e.getMessage(), e);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error("processPendingFlowExecutions error: {}", e.getMessage(), e);
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // Startup recovery
     // -------------------------------------------------------------------------
 
@@ -295,6 +374,13 @@ public class FlowExecutionQueueService {
                 }
                 logger.info("Startup recovery: resumed={}, re-queued={} out of {} orphaned flows",
                            resumed, requeued, orphaned.size());
+            }
+
+            // Step 3 — hand off PENDING flows to the scheduler (it runs after the initial delay)
+            long pendingCount = flowExecutionRepository.countByStatus(ExecutionStatus.PENDING);
+            if (pendingCount > 0) {
+                logger.info("Startup recovery: {} PENDING flow executions found — will be started by processPendingFlowExecutions scheduler",
+                           pendingCount);
             }
 
             logger.info("=== STARTUP RECOVERY: Flow Execution Queue COMPLETE ===");

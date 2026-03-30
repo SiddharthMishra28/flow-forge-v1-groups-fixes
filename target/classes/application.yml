@@ -44,6 +44,16 @@ gitlab:
 
 # Flow Execution Configuration
 flow-execution:
+  # Maximum number of flows that may be in RUNNING state simultaneously.
+  # Flows that exceed this threshold are created with status=PENDING and started
+  # by FlowExecutionQueueService.processPendingFlowExecutions as capacity opens up.
+  max-concurrent-flows: ${MAX_CONCURRENT_FLOWS:50}
+
+  # How long a PENDING flow may wait before it is automatically cancelled.
+  # After this timeout FlowExecutionQueueService marks the flow CANCELLED so resources
+  # are not held indefinitely during sustained overload.
+  pending-timeout-minutes: ${PENDING_TIMEOUT_MINUTES:30}
+
   # Pipeline status polling interval during flow execution in milliseconds
   # This controls how frequently the system checks if running pipelines have completed
   # Lower values = more responsive status updates but higher API load
@@ -78,14 +88,14 @@ scheduling:
     # Maximum retry attempts for queue processing failures (default: 3)
     max-retry-count: ${QUEUE_PROCESSING_MAX_RETRY:3}
 
-# Thread Pool Configuration
-# flowExecutionTaskExecutor: corePool=20, maxPool=70, queueCapacity=5
-# - Sized to handle 50-70 concurrent flows without internal queue buffering.
-# - The tiny queueCapacity=5 is a burst buffer only; all real overflow goes to
-#   queued_flow_executions (DB-backed, restart-safe).
+# Thread Pool Configuration (fire-and-poll architecture)
+# flowExecutionTaskExecutor: corePool=5, maxPool=15, queueCapacity=200
+# - Threads held only for the duration of a GitLab trigger API call (~1-5 s).
+# - Concurrency is controlled by flow-execution.max-concurrent-flows, NOT by thread count.
+# - CallerRunsPolicy: any overflow falls back to the calling thread (safe for short calls).
 # pipelinePollingTaskExecutor: corePool=5, maxPool=10, queueCapacity=20
 # - Used only by SyncService background tasks.
-# - Individual pipeline status polling runs on Spring's @Scheduled executor.
+# - Pipeline status polling runs on Spring's @Scheduled executor (PipelineStatusPollingService).
 
 ---
 spring:
