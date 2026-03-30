@@ -138,13 +138,15 @@ public class FlowExecutionService {
             activeThreads = flowExecutionTaskExecutor.getActiveCount();
             maxThreads = flowExecutionTaskExecutor.getMaxPoolSize();
             queueSize = flowExecutionTaskExecutor.getThreadPoolExecutor().getQueue().size();
-            availableCapacity = (maxThreads - activeThreads) +
-                                (flowExecutionTaskExecutor.getThreadPoolExecutor().getQueue().remainingCapacity());
+            // Only count free thread slots – deliberately exclude internal queue capacity.
+            // Flows that land in the internal queue are NOT in the DB queue and would be
+            // lost on restart. All true overflow must go to queued_flow_executions instead.
+            availableCapacity = Math.max(0, maxThreads - activeThreads);
         } else {
             logger.warn("ThreadPoolTaskExecutor not available (likely test environment), using default capacity values");
         }
 
-        logger.info("Thread pool status - Active: {}, Max: {}, Queue Size: {}, Available Capacity: {}",
+        logger.info("Thread pool status - Active: {}, Max: {}, Queue Size: {}, Available Capacity (free threads): {}",
                    activeThreads, maxThreads, queueSize, availableCapacity);
 
         // Create flow executions synchronously first, then start async execution or queue them

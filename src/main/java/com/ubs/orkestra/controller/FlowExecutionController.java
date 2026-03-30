@@ -2,6 +2,7 @@ package com.ubs.orkestra.controller;
 
 import com.ubs.orkestra.dto.FlowExecutionDto;
 import com.ubs.orkestra.dto.FlowExecutionRequestDto;
+import com.ubs.orkestra.service.FlowExecutionQueueService;
 import com.ubs.orkestra.service.FlowExecutionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,6 +37,9 @@ public class FlowExecutionController {
 
     @Autowired
     private FlowExecutionService flowExecutionService;
+
+    @Autowired
+    private FlowExecutionQueueService flowExecutionQueueService;
 
     @PostMapping("/flows/{flowId}/execute")
     @Operation(summary = "Execute a flow", description = "Trigger execution of a specific flow")
@@ -84,14 +88,24 @@ public class FlowExecutionController {
             String category = requestDto != null ? requestDto.getCategory() : null;
             Map<String, Object> result = flowExecutionService.executeMultipleFlows(flowIds, category);
             
-            // Start async execution for all accepted flows - this happens after we have the response ready
+            // Start async execution for all accepted flows.
+            // If the thread pool is at capacity despite the capacity check (rare race),
+            // route the rejected flow to the DB queue so it is never lost.
             @SuppressWarnings("unchecked")
             List<FlowExecutionDto> acceptedExecutions = (List<FlowExecutionDto>) result.get("accepted");
             if (acceptedExecutions != null) {
                 for (FlowExecutionDto executionDto : acceptedExecutions) {
-                    flowExecutionService.executeFlowAsync(executionDto.getId());
-                    logger.info("Started async execution for flow ID: {} with execution ID: {}", 
-                               executionDto.getFlowId(), executionDto.getId());
+                    try {
+                        flowExecutionService.executeFlowAsync(executionDto.getId());
+                        logger.info("Started async execution for flow ID: {} with execution ID: {}",
+                                   executionDto.getFlowId(), executionDto.getId());
+                    } catch (Exception e) {
+                        // Thread pool rejected the task (race between capacity check and submission).
+                        // Route to DB queue – the scheduled poller will pick it up.
+                        logger.warn("Thread pool rejected flow execution {} – routing to DB queue: {}",
+                                   executionDto.getId(), e.getMessage());
+                        flowExecutionQueueService.enqueueFromExistingExecution(executionDto.getId());
+                    }
                 }
             }
             

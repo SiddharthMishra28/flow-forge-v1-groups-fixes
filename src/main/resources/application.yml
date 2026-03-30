@@ -78,6 +78,15 @@ scheduling:
     # Maximum retry attempts for queue processing failures (default: 3)
     max-retry-count: ${QUEUE_PROCESSING_MAX_RETRY:3}
 
+# Thread Pool Configuration
+# flowExecutionTaskExecutor: corePool=20, maxPool=70, queueCapacity=5
+# - Sized to handle 50-70 concurrent flows without internal queue buffering.
+# - The tiny queueCapacity=5 is a burst buffer only; all real overflow goes to
+#   queued_flow_executions (DB-backed, restart-safe).
+# pipelinePollingTaskExecutor: corePool=5, maxPool=10, queueCapacity=20
+# - Used only by SyncService background tasks.
+# - Individual pipeline status polling runs on Spring's @Scheduled executor.
+
 ---
 spring:
   config:
