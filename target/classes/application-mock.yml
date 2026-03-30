@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: mock
+
+# GitLab Mock Mode Configuration
+gitlab:
+  base-url: https://gitlab.com
+  mock-mode: true  # Always true for mock profile
+  timeout: 60
+  max-retries: 3
+
+logging:
+  level:
+    com.testautomation.orchestrator: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG

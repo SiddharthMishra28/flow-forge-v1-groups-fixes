@@ -1,11 +1,19 @@
 package com.ubs.orkestra.util;
 
+import io.netty.channel.ChannelOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
+import reactor.util.retry.Retry;
 
+import javax.net.ssl.SSLHandshakeException;
+import java.io.IOException;
+import java.net.ConnectException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +25,84 @@ public class GitLabApiClient {
     private static final Logger logger = LoggerFactory.getLogger(GitLabApiClient.class);
     private final WebClient webClient;
 
+    // Retry configuration for transient SSL / connection errors
+    private static final int    MAX_RETRY_ATTEMPTS   = 3;
+    private static final Duration RETRY_MIN_BACKOFF  = Duration.ofSeconds(1);
+    private static final Duration RETRY_MAX_BACKOFF  = Duration.ofSeconds(10);
+
     public GitLabApiClient() {
+        /*
+         * Configure a dedicated Reactor Netty connection pool sized to handle
+         * 50-70 concurrent flow-execution threads, each potentially making an
+         * outbound HTTPS call to GitLab.
+         *
+         * Default pool: maxConnections = 2 × CPU-cores (typically 16-32).
+         * At 70 concurrent flows that pool gets exhausted, causing connections to
+         * be closed mid-SSL-handshake → StacklessSSLHandshakeException.
+         *
+         * With maxConnections=100 the pool easily absorbs the full concurrent
+         * load.  pendingAcquireMaxCount=300 allows further requests to queue
+         * without immediate rejection.
+         */
+        ConnectionProvider connectionProvider = ConnectionProvider.builder("gitlab-pool")
+                .maxConnections(100)
+                .maxIdleTime(Duration.ofSeconds(30))
+                .maxLifeTime(Duration.ofMinutes(5))
+                .pendingAcquireTimeout(Duration.ofSeconds(45))
+                .pendingAcquireMaxCount(300)
+                .evictInBackground(Duration.ofSeconds(60))  // remove stale/dead connections proactively
+                .build();
+
+        HttpClient httpClient = HttpClient.create(connectionProvider)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 15_000)
+                .responseTimeout(Duration.ofSeconds(60));
+
         this.webClient = WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
                 .build();
+    }
+
+    /**
+     * Returns a Reactor Retry spec that retries on transient SSL / network errors
+     * with exponential back-off.
+     *
+     * <p>SSL errors (e.g. {@code StacklessSSLHandshakeException}) occur BEFORE any
+     * application data is transmitted, so it is safe to retry even POST requests.
+     * 4xx / 5xx application errors are explicitly excluded so they propagate as-is.
+     */
+    private static Retry transientRetry(String operation) {
+        return Retry.backoff(MAX_RETRY_ATTEMPTS, RETRY_MIN_BACKOFF)
+                .maxBackoff(RETRY_MAX_BACKOFF)
+                .filter(GitLabApiClient::isTransientNetworkError)
+                .doBeforeRetry(signal -> logger.warn(
+                        "Retrying {} after transient network error (attempt {}/{}): {}",
+                        operation, signal.totalRetries() + 1, MAX_RETRY_ATTEMPTS,
+                        signal.failure().getMessage()));
+    }
+
+    /**
+     * Returns {@code true} for errors that are safe to retry: SSL handshake
+     * failures, premature connection closes, TCP connection errors.
+     */
+    private static boolean isTransientNetworkError(Throwable t) {
+        if (t == null) return false;
+        if (t instanceof SSLHandshakeException) return true;
+        if (t instanceof ConnectException)      return true;
+        if (t instanceof IOException) {
+            String msg = t.getMessage();
+            if (msg != null) {
+                String lc = msg.toLowerCase();
+                return lc.contains("connection closed")
+                    || lc.contains("connection reset")
+                    || lc.contains("premature close")
+                    || lc.contains("ssl")
+                    || lc.contains("handshake");
+            }
+        }
+        // Walk cause chain – Netty often wraps the root cause
+        Throwable cause = t.getCause();
+        return cause != null && cause != t && isTransientNetworkError(cause);
     }
 
     /**
@@ -47,6 +129,7 @@ public class GitLabApiClient {
                                  .then(Mono.error(new RuntimeException("GitLab API error: " + response.statusCode()))))
                 .bodyToMono(GitLabPipelineResponse.class)
                 .timeout(Duration.ofSeconds(30))
+                .retryWhen(transientRetry("triggerPipeline"))
                 .doOnSuccess(response -> logger.info("Pipeline triggered successfully: {}", response.getId()))
                 .doOnError(error -> logger.error("Failed to trigger pipeline: {}", error.getMessage()));
     }
@@ -64,6 +147,7 @@ public class GitLabApiClient {
                 .retrieve()
                 .bodyToMono(GitLabPipelineResponse.class)
                 .timeout(Duration.ofSeconds(15))
+                .retryWhen(transientRetry("getPipelineStatus"))
                 .doOnError(error -> logger.error("Failed to get pipeline status: {}", error.getMessage()));
     }
 
@@ -83,6 +167,7 @@ public class GitLabApiClient {
                 .retrieve()
                 .bodyToMono(GitLabJobsResponse[].class)
                 .timeout(Duration.ofSeconds(30))
+                .retryWhen(transientRetry("getPipelineJobs"))
                 .doOnError(error -> logger.error("Failed to get pipeline jobs: {}", error.getMessage()));
     }
 
@@ -102,6 +187,7 @@ public class GitLabApiClient {
                 .retrieve()
                 .bodyToMono(String.class)
                 .timeout(Duration.ofSeconds(60))
+                .retryWhen(transientRetry("downloadJobArtifact"))
                 .doOnSuccess(content -> logger.info("Artifact downloaded successfully from job {}", jobId))
                 .doOnError(error -> logger.debug("Failed to download artifact from job {}: {}", jobId, error.getMessage()));
     }
@@ -132,6 +218,7 @@ public class GitLabApiClient {
                          })
                 .bodyToMono(GitLabProjectResponse.class)
                 .timeout(Duration.ofSeconds(15))
+                .retryWhen(transientRetry("validateConnection"))
                 .doOnSuccess(response -> logger.info("GitLab connection validated successfully for project: {}", response.getName()))
                 .doOnError(error -> logger.error("Failed to validate GitLab connection: {}", error.getMessage()));
     }
@@ -162,7 +249,8 @@ public class GitLabApiClient {
                          })
                 .bodyToMono(GitLabBranchResponse[].class)
                 .timeout(Duration.ofSeconds(30))
-                .doOnSuccess(branches -> logger.info("Successfully fetched {} branches for project {}", 
+                .retryWhen(transientRetry("getProjectBranches"))
+                .doOnSuccess(branches -> logger.info("Successfully fetched {} branches for project {}",
                                                    branches != null ? branches.length : 0, projectId))
                 .doOnError(error -> logger.error("Failed to fetch branches for project {}: {}", projectId, error.getMessage()));
     }
