@@ -7,6 +7,7 @@ import com.ubs.orkestra.exception.GitLabValidationException;
 import com.ubs.orkestra.model.Application;
 import com.ubs.orkestra.repository.ApplicationRepository;
 import com.ubs.orkestra.config.GitLabConfig;
+import com.ubs.orkestra.config.GitLabWebHookConfig;
 import com.ubs.orkestra.util.GitLabApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,16 +38,19 @@ public class ApplicationService {
     private GitLabConfig gitLabConfig;
 
     @Autowired
+    private GitLabWebHookConfig gitLabWebHookConfig;
+
+    @Autowired
     private EncryptionService encryptionService;
 
     public ApplicationDto createApplication(ApplicationDto applicationDto) {
         logger.info("Creating new application for GitLab project: {}", applicationDto.getGitlabProjectId());
-        
+
         if (applicationRepository.existsByGitlabProjectId(applicationDto.getGitlabProjectId())) {
-            throw new IllegalArgumentException("Application with GitLab project ID " + 
+            throw new IllegalArgumentException("Application with GitLab project ID " +
                                              applicationDto.getGitlabProjectId() + " already exists");
         }
-        
+
         Application application = convertToEntity(applicationDto);
 
         // Validate GitLab connection before creating application (skip in mock mode)
@@ -69,9 +73,20 @@ public class ApplicationService {
             application.setProjectUrl("https://mock-gitlab.com/mock-project");
             logger.info("Skipping GitLab validation in mock mode for project: {}", applicationDto.getGitlabProjectId());
         }
-        
+
         Application savedApplication = applicationRepository.save(application);
-        
+
+        // Register webhook if auto-registration is enabled
+        if (!gitLabConfig.isMockMode() && gitLabWebHookConfig.isAutoRegister()) {
+            try {
+                registerWebhook(savedApplication, applicationDto.getPersonalAccessToken());
+            } catch (Exception e) {
+                logger.warn("Failed to auto-register webhook for application {}: {}. Application created but webhook not registered.",
+                           savedApplication.getId(), e.getMessage());
+                // Don't fail the application creation - webhook can be registered manually later
+            }
+        }
+
         logger.info("Application created with ID: {}", savedApplication.getId());
         return convertToDto(savedApplication);
     }
@@ -101,57 +116,77 @@ public class ApplicationService {
 
     public ApplicationDto updateApplication(Long id, ApplicationDto applicationDto) {
         logger.info("Updating application with ID: {}", id);
-        
+
         Application existingApplication = applicationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + id));
-        
+
         // Check if GitLab project ID is being changed and if it conflicts with existing ones
         if (!existingApplication.getGitlabProjectId().equals(applicationDto.getGitlabProjectId()) &&
             applicationRepository.existsByGitlabProjectId(applicationDto.getGitlabProjectId())) {
-            throw new IllegalArgumentException("Application with GitLab project ID " + 
+            throw new IllegalArgumentException("Application with GitLab project ID " +
                                              applicationDto.getGitlabProjectId() + " already exists");
         }
-        
+
         // Validate GitLab connection if project ID or token has changed
         boolean projectIdChanged = !existingApplication.getGitlabProjectId().equals(applicationDto.getGitlabProjectId());
         // Decrypt existing token to compare with new token
         String existingDecryptedToken = encryptionService.decrypt(existingApplication.getPersonalAccessToken());
         boolean tokenChanged = !existingDecryptedToken.equals(applicationDto.getPersonalAccessToken());
-        
+
         if (projectIdChanged || tokenChanged) {
             ValidationResponseDto validationResponse = validateGitLabConnectionInternal(
-                applicationDto.getPersonalAccessToken(), 
+                applicationDto.getPersonalAccessToken(),
                 applicationDto.getGitlabProjectId()
             );
-            
+
             if (!validationResponse.isValid()) {
                 throw new GitLabValidationException("GitLab connection validation failed: " + validationResponse.getMessage());
             }
-            
+
             // Update project name and URL from validation response
             existingApplication.setProjectName(validationResponse.getProjectName());
             existingApplication.setProjectUrl(validationResponse.getProjectUrl());
         }
-        
+
         existingApplication.setGitlabProjectId(applicationDto.getGitlabProjectId());
         // Encrypt the new personal access token before saving
         existingApplication.setPersonalAccessToken(encryptionService.encrypt(applicationDto.getPersonalAccessToken()));
         existingApplication.setApplicationName(applicationDto.getApplicationName());
         existingApplication.setApplicationDescription(applicationDto.getApplicationDescription());
-        
+
         Application updatedApplication = applicationRepository.save(existingApplication);
-        
+
+        // Update webhook if auto-registration is enabled and project/token changed
+        if (!gitLabConfig.isMockMode() && gitLabWebHookConfig.isAutoRegister() && (projectIdChanged || tokenChanged)) {
+            try {
+                updateWebhook(updatedApplication, applicationDto.getPersonalAccessToken());
+            } catch (Exception e) {
+                logger.warn("Failed to update webhook for application {}: {}. Webhook may need manual update.",
+                           updatedApplication.getId(), e.getMessage());
+            }
+        }
+
         logger.info("Application updated successfully with ID: {}", updatedApplication.getId());
         return convertToDto(updatedApplication);
     }
 
     public void deleteApplication(Long id) {
         logger.info("Deleting application with ID: {}", id);
-        
-        if (!applicationRepository.existsById(id)) {
-            throw new IllegalArgumentException("Application not found with ID: " + id);
+
+        Application application = applicationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + id));
+
+        // Delete webhook if it exists
+        if (!gitLabConfig.isMockMode() && application.getWebhookId() != null) {
+            try {
+                String decryptedToken = encryptionService.decrypt(application.getPersonalAccessToken());
+                deleteWebhook(application, decryptedToken);
+            } catch (Exception e) {
+                logger.warn("Failed to delete webhook for application {}: {}. Webhook may need manual deletion.",
+                           id, e.getMessage());
+            }
         }
-        
+
         applicationRepository.deleteById(id);
         logger.info("Application deleted successfully with ID: {}", id);
     }
@@ -367,5 +402,134 @@ public class ApplicationService {
         }
         
         return branchDto;
+    }
+
+    /**
+     * Register a webhook in GitLab for the application's project.
+     * Creates a new webhook if one doesn't exist, or updates the existing one.
+     */
+    public void registerWebhookForApplication(Long applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+            .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + applicationId));
+        
+        String decryptedToken = encryptionService.decrypt(application.getPersonalAccessToken());
+        registerWebhook(application, decryptedToken);
+    }
+
+    /**
+     * Register a webhook in GitLab for the application's project.
+     * Creates a new webhook if one doesn't exist, or updates the existing one.
+     */
+    private void registerWebhook(Application application, String accessToken) {
+        try {
+            String webhookUrl = gitLabWebHookConfig.getPipelineWebhookUrl();
+            String secretToken = gitLabWebHookConfig.getSecretToken();
+
+            // Check if webhook already exists
+            GitLabApiClient.GitLabWebHookResponse[] existingWebhooks = gitLabApiClient
+                .getWebhooks(gitLabConfig.getBaseUrl(), application.getGitlabProjectId(), accessToken)
+                .block();
+
+            GitLabApiClient.GitLabWebHookResponse existingWebhook = gitLabApiClient
+                .findWebhookByUrl(existingWebhooks, webhookUrl);
+
+            if (existingWebhook != null) {
+                logger.info("Webhook already exists for application {} with URL {}", 
+                           application.getId(), webhookUrl);
+                application.setWebhookId(existingWebhook.getId());
+                applicationRepository.save(application);
+                return;
+            }
+
+            // Create new webhook
+            GitLabApiClient.GitLabWebHookResponse createdWebhook = gitLabApiClient
+                .createWebhook(gitLabConfig.getBaseUrl(), application.getGitlabProjectId(), 
+                              accessToken, webhookUrl, secretToken)
+                .block();
+
+            if (createdWebhook != null) {
+                application.setWebhookId(createdWebhook.getId());
+                applicationRepository.save(application);
+                logger.info("Webhook registered successfully for application {} with ID: {}", 
+                           application.getId(), createdWebhook.getId());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to register webhook for application {}: {}", 
+                        application.getId(), e.getMessage(), e);
+            throw new RuntimeException("Failed to register webhook: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Update an existing webhook in GitLab.
+     * If webhook doesn't exist, creates a new one.
+     */
+    private void updateWebhook(Application application, String accessToken) {
+        try {
+            String webhookUrl = gitLabWebHookConfig.getPipelineWebhookUrl();
+            String secretToken = gitLabWebHookConfig.getSecretToken();
+
+            if (application.getWebhookId() != null) {
+                // Update existing webhook
+                GitLabApiClient.GitLabWebHookResponse updatedWebhook = gitLabApiClient
+                    .updateWebhook(gitLabConfig.getBaseUrl(), application.getGitlabProjectId(),
+                                  application.getWebhookId(), accessToken, webhookUrl, secretToken)
+                    .block();
+
+                logger.info("Webhook updated successfully for application {} with ID: {}", 
+                           application.getId(), application.getWebhookId());
+            } else {
+                // Webhook ID not stored, try to find by URL
+                GitLabApiClient.GitLabWebHookResponse[] existingWebhooks = gitLabApiClient
+                    .getWebhooks(gitLabConfig.getBaseUrl(), application.getGitlabProjectId(), accessToken)
+                    .block();
+
+                GitLabApiClient.GitLabWebHookResponse existingWebhook = gitLabApiClient
+                    .findWebhookByUrl(existingWebhooks, webhookUrl);
+
+                if (existingWebhook != null) {
+                    GitLabApiClient.GitLabWebHookResponse updatedWebhook = gitLabApiClient
+                        .updateWebhook(gitLabConfig.getBaseUrl(), application.getGitlabProjectId(),
+                                      existingWebhook.getId(), accessToken, webhookUrl, secretToken)
+                        .block();
+
+                    application.setWebhookId(existingWebhook.getId());
+                    applicationRepository.save(application);
+                    logger.info("Webhook updated successfully for application {} with ID: {}", 
+                               application.getId(), existingWebhook.getId());
+                } else {
+                    // Webhook doesn't exist, create new one
+                    registerWebhook(application, accessToken);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to update webhook for application {}: {}", 
+                        application.getId(), e.getMessage(), e);
+            throw new RuntimeException("Failed to update webhook: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Delete a webhook from GitLab.
+     */
+    private void deleteWebhook(Application application, String accessToken) {
+        try {
+            if (application.getWebhookId() == null) {
+                logger.warn("No webhook ID stored for application {}, skipping deletion", application.getId());
+                return;
+            }
+
+            gitLabApiClient.deleteWebhook(gitLabConfig.getBaseUrl(), application.getGitlabProjectId(),
+                                         application.getWebhookId(), accessToken)
+                .block();
+
+            logger.info("Webhook deleted successfully for application {}", application.getId());
+            application.setWebhookId(null);
+            applicationRepository.save(application);
+        } catch (Exception e) {
+            logger.error("Failed to delete webhook for application {}: {}", 
+                        application.getId(), e.getMessage(), e);
+            // Don't throw - allow application deletion to proceed even if webhook deletion fails
+        }
     }
 }

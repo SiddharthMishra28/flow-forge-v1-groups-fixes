@@ -1,58 +1,58 @@
-2026-03-30 20:55:04.568 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 29128 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 20:55:04.571 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
-2026-03-30 20:55:04.606 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438
-2026-03-30 20:55:07.446 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 20:55:08.408 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:00.045 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 6072 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
+2026-03-31 01:12:00.048 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
+2026-03-31 01:12:00.088 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@4c03a37
+2026-03-31 01:12:02.759 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-31 01:12:03.680 [main] DEBUG org.hibernate.SQL - 
     drop table if exists applications cascade 
-2026-03-30 20:55:08.411 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.680 [main] DEBUG org.hibernate.SQL - 
     drop table if exists artifacts cascade 
-2026-03-30 20:55:08.411 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop table if exists flow_executions cascade 
-2026-03-30 20:55:08.411 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop table if exists flow_groups cascade 
-2026-03-30 20:55:08.411 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop table if exists flow_steps cascade 
-2026-03-30 20:55:08.411 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop table if exists flows cascade 
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop table if exists pipeline_executions cascade 
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop table if exists queued_flow_executions cascade 
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop table if exists test_data cascade 
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists applications_seq
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists artifacts_id_seq
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists flow_groups_id_seq
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists flow_steps_seq
-2026-03-30 20:55:08.412 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.687 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists flows_seq
-2026-03-30 20:55:08.414 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.690 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists pipeline_executions_seq
-2026-03-30 20:55:08.414 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.690 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists queued_flow_executions_seq
-2026-03-30 20:55:08.414 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.690 [main] DEBUG org.hibernate.SQL - 
     drop sequence if exists test_data_seq
-2026-03-30 20:55:08.417 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.696 [main] DEBUG org.hibernate.SQL - 
     create sequence applications_seq start with 1 increment by 1
-2026-03-30 20:55:08.419 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.700 [main] DEBUG org.hibernate.SQL - 
     create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 20:55:08.419 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.700 [main] DEBUG org.hibernate.SQL - 
     create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 20:55:08.419 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.700 [main] DEBUG org.hibernate.SQL - 
     create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 20:55:08.419 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.700 [main] DEBUG org.hibernate.SQL - 
     create sequence flows_seq start with 1 increment by 1
-2026-03-30 20:55:08.419 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.700 [main] DEBUG org.hibernate.SQL - 
     create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 20:55:08.420 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.700 [main] DEBUG org.hibernate.SQL - 
     create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 20:55:08.420 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.703 [main] DEBUG org.hibernate.SQL - 
     create sequence test_data_seq start with 1 increment by 1
-2026-03-30 20:55:08.424 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.706 [main] DEBUG org.hibernate.SQL - 
     create table applications (
         created_at timestamp(6) not null,
         id bigint not null,
@@ -67,7 +67,7 @@
         token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
         primary key (id)
     )
-2026-03-30 20:55:08.433 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.714 [main] DEBUG org.hibernate.SQL - 
     create table artifacts (
         created_at timestamp(6) not null,
         id bigint not null,
@@ -76,7 +76,7 @@
         run_ids json not null,
         primary key (id)
     )
-2026-03-30 20:55:08.434 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.714 [main] DEBUG org.hibernate.SQL - 
     create table flow_executions (
         is_replay boolean,
         iteration integer,
@@ -94,7 +94,7 @@
         runtime_variables json,
         primary key (id)
     )
-2026-03-30 20:55:08.436 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.714 [main] DEBUG org.hibernate.SQL - 
     create table flow_groups (
         current_iteration integer not null,
         revolutions integer not null,
@@ -105,7 +105,7 @@
         flows json not null,
         primary key (id)
     )
-2026-03-30 20:55:08.437 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.714 [main] DEBUG org.hibernate.SQL - 
     create table flow_steps (
         application_id bigint not null,
         created_at timestamp(6) not null,
@@ -123,7 +123,7 @@
         test_data_ids json,
         primary key (id)
     )
-2026-03-30 20:55:08.438 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.714 [main] DEBUG org.hibernate.SQL - 
     create table flows (
         created_at timestamp(6) not null,
         id bigint not null,
@@ -134,7 +134,7 @@
         flow_step_ids json not null,
         primary key (id)
     )
-2026-03-30 20:55:08.439 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.720 [main] DEBUG org.hibernate.SQL - 
     create table pipeline_executions (
         is_replay boolean not null,
         created_at timestamp(6) not null,
@@ -154,7 +154,7 @@
         runtime_test_data json,
         primary key (id)
     )
-2026-03-30 20:55:08.439 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.721 [main] DEBUG org.hibernate.SQL - 
     create table queued_flow_executions (
         iteration integer,
         priority integer,
@@ -168,7 +168,7 @@
         category varchar(255),
         primary key (id)
     )
-2026-03-30 20:55:08.441 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.721 [main] DEBUG org.hibernate.SQL - 
     create table test_data (
         application_id bigint,
         created_at timestamp(6) not null,
@@ -180,55 +180,33 @@
         variables json not null,
         primary key (data_id)
     )
-2026-03-30 20:55:08.442 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.721 [main] DEBUG org.hibernate.SQL - 
     create index idx_queued_created_at 
        on queued_flow_executions (created_at)
-2026-03-30 20:55:08.442 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.721 [main] DEBUG org.hibernate.SQL - 
     alter table if exists flow_executions 
        add constraint FKr71stky8abwyfobvpeefjc7fv 
        foreign key (flow_group_id) 
        references flow_groups
-2026-03-30 20:55:08.449 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.731 [main] DEBUG org.hibernate.SQL - 
     alter table if exists flow_steps 
        add constraint FKp00aj00r8cvyydod3holpe5oh 
        foreign key (application_id) 
        references applications
-2026-03-30 20:55:08.450 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:03.735 [main] DEBUG org.hibernate.SQL - 
     alter table if exists test_data 
        add constraint FK3iretb06mhjh2gksyhkkj4cfx 
        foreign key (application_id) 
        references applications
-2026-03-30 20:55:11.565 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
-2026-03-30 20:55:12.100 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 20:55:12.329 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 64 mappings in 'requestMappingHandlerMapping'
-2026-03-30 20:55:12.479 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
-2026-03-30 20:55:12.551 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-30 20:55:12.622 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-30 20:55:13.398 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 9.248 seconds (process running for 11.132)
-2026-03-30 20:55:13.507 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 20:55:13.516 [main] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=?
-2026-03-30 20:55:13.516 [scheduling-1] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:06.774 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
+2026-03-31 01:12:07.290 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-31 01:12:07.491 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 66 mappings in 'requestMappingHandlerMapping'
+2026-03-31 01:12:07.642 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-03-31 01:12:07.714 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-03-31 01:12:07.787 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-03-31 01:12:08.556 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 8.918 seconds (process running for 9.803)
+2026-03-31 01:12:08.639 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
+2026-03-31 01:12:08.694 [scheduling-1] DEBUG org.hibernate.SQL - 
     select
         pe1_0.id,
         pe1_0.configured_test_data,
@@ -251,293 +229,7 @@
     where
         pe1_0.status=? 
         and pe1_0.resume_time<?
-2026-03-30 20:55:13.540 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 20:55:13.543 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 20:55:13.549 [main] DEBUG org.hibernate.SQL - 
-    select
-        qfe1_0.id,
-        qfe1_0.category,
-        qfe1_0.created_at,
-        qfe1_0.flow_execution_id,
-        qfe1_0.flow_group_id,
-        qfe1_0.flow_id,
-        qfe1_0.iteration,
-        qfe1_0.priority,
-        qfe1_0.retry_count,
-        qfe1_0.revolutions 
-    from
-        queued_flow_executions qfe1_0
-2026-03-30 20:55:13.551 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 20:55:13.554 [main] DEBUG org.hibernate.SQL - 
-    select
-        fe1_0.id,
-        fe1_0.category,
-        fe1_0.created_at,
-        fe1_0.end_time,
-        fe1_0.flow_group_id,
-        fe1_0.flow_id,
-        fe1_0.is_replay,
-        fe1_0.iteration,
-        fe1_0.original_flow_execution_id,
-        fe1_0.replay_count,
-        fe1_0.revolutions,
-        fe1_0.runtime_variables,
-        fe1_0.start_time,
-        fe1_0.status 
-    from
-        flow_executions fe1_0 
-    where
-        fe1_0.status=?
-2026-03-30 20:55:13.555 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 20:55:13.555 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 20:55:14.871 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:14.881 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:14.882 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:14.884 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:14.913 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438, started on Mon Mar 30 20:55:04 IST 2026
-2026-03-30 20:55:14.928 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 20:55:14.930 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 20:55:14.931 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 20:55:14.931 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 20:55:14.931 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 20:55:14.931 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 20:55:14.932 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 20:55:14.932 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 20:55:14.932 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 20:55:14.932 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 20:55:14.934 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 20:55:14.934 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 20:55:14.934 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 20:55:14.934 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 20:55:14.935 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 20:55:14.935 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 20:55:14.935 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 20:55:25.150 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 5300 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 20:55:25.152 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
-2026-03-30 20:55:25.188 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438
-2026-03-30 20:55:28.518 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 20:55:29.844 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 20:55:29.848 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 20:55:29.848 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 20:55:29.849 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 20:55:29.849 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 20:55:29.850 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 20:55:29.850 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 20:55:29.850 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 20:55:29.851 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 20:55:29.851 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 20:55:29.852 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 20:55:29.852 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 20:55:29.852 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 20:55:29.853 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 20:55:29.853 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 20:55:29.853 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 20:55:29.854 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 20:55:29.859 [main] DEBUG org.hibernate.SQL - 
-    create sequence applications_seq start with 1 increment by 1
-2026-03-30 20:55:29.862 [main] DEBUG org.hibernate.SQL - 
-    create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 20:55:29.864 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 20:55:29.864 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 20:55:29.865 [main] DEBUG org.hibernate.SQL - 
-    create sequence flows_seq start with 1 increment by 1
-2026-03-30 20:55:29.865 [main] DEBUG org.hibernate.SQL - 
-    create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 20:55:29.866 [main] DEBUG org.hibernate.SQL - 
-    create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 20:55:29.867 [main] DEBUG org.hibernate.SQL - 
-    create sequence test_data_seq start with 1 increment by 1
-2026-03-30 20:55:29.870 [main] DEBUG org.hibernate.SQL - 
-    create table applications (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        token_validation_last_update_date timestamp(6),
-        updated_at timestamp(6) not null,
-        application_description varchar(255) not null,
-        application_name varchar(255) not null,
-        gitlab_project_id varchar(255) not null,
-        personal_access_token varchar(255) not null,
-        project_name varchar(255),
-        project_url varchar(255),
-        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
-        primary key (id)
-    )
-2026-03-30 20:55:29.880 [main] DEBUG org.hibernate.SQL - 
-    create table artifacts (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        artifact_name varchar(255) not null,
-        run_ids json not null,
-        primary key (id)
-    )
-2026-03-30 20:55:29.882 [main] DEBUG org.hibernate.SQL - 
-    create table flow_executions (
-        is_replay boolean,
-        iteration integer,
-        replay_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_group_id bigint,
-        flow_id bigint not null,
-        start_time timestamp(6),
-        id uuid not null,
-        original_flow_execution_id uuid,
-        category varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        runtime_variables json,
-        primary key (id)
-    )
-2026-03-30 20:55:29.885 [main] DEBUG org.hibernate.SQL - 
-    create table flow_groups (
-        current_iteration integer not null,
-        revolutions integer not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        flow_group_name varchar(255) not null,
-        flows json not null,
-        primary key (id)
-    )
-2026-03-30 20:55:29.887 [main] DEBUG org.hibernate.SQL - 
-    create table flow_steps (
-        application_id bigint not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        branch varchar(255) not null,
-        description varchar(255),
-        scheduler_type varchar(255),
-        test_stage varchar(255) not null,
-        test_tag varchar(255) not null,
-        timer_days varchar(255),
-        timer_hours varchar(255),
-        timer_minutes varchar(255),
-        squash_step_ids json,
-        test_data_ids json,
-        primary key (id)
-    )
-2026-03-30 20:55:29.889 [main] DEBUG org.hibernate.SQL - 
-    create table flows (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        squash_test_case_id bigint not null,
-        updated_at timestamp(6) not null,
-        automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')),
-        squash_test_case varchar(255) not null,
-        flow_step_ids json not null,
-        primary key (id)
-    )
-2026-03-30 20:55:29.890 [main] DEBUG org.hibernate.SQL - 
-    create table pipeline_executions (
-        is_replay boolean not null,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_id bigint not null,
-        flow_step_id bigint not null,
-        id bigint not null,
-        job_id bigint,
-        pipeline_id bigint,
-        resume_time timestamp(6),
-        start_time timestamp(6),
-        flow_execution_id uuid not null,
-        job_url varchar(255),
-        pipeline_url varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        configured_test_data json,
-        runtime_test_data json,
-        primary key (id)
-    )
-2026-03-30 20:55:29.892 [main] DEBUG org.hibernate.SQL - 
-    create table queued_flow_executions (
-        iteration integer,
-        priority integer,
-        retry_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        flow_group_id bigint,
-        flow_id bigint not null,
-        id bigint not null,
-        flow_execution_id uuid not null,
-        category varchar(255),
-        primary key (id)
-    )
-2026-03-30 20:55:29.894 [main] DEBUG org.hibernate.SQL - 
-    create table test_data (
-        application_id bigint,
-        created_at timestamp(6) not null,
-        data_id bigint not null,
-        updated_at timestamp(6) not null,
-        application_name varchar(255),
-        category varchar(255) not null,
-        description varchar(255),
-        variables json not null,
-        primary key (data_id)
-    )
-2026-03-30 20:55:29.895 [main] DEBUG org.hibernate.SQL - 
-    create index idx_queued_created_at 
-       on queued_flow_executions (created_at)
-2026-03-30 20:55:29.897 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_executions 
-       add constraint FKr71stky8abwyfobvpeefjc7fv 
-       foreign key (flow_group_id) 
-       references flow_groups
-2026-03-30 20:55:29.906 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_steps 
-       add constraint FKp00aj00r8cvyydod3holpe5oh 
-       foreign key (application_id) 
-       references applications
-2026-03-30 20:55:29.907 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists test_data 
-       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
-       foreign key (application_id) 
-       references applications
-2026-03-30 20:55:34.364 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
-2026-03-30 20:55:34.928 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 20:55:35.167 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 64 mappings in 'requestMappingHandlerMapping'
-2026-03-30 20:55:35.309 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
-2026-03-30 20:55:35.386 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-30 20:55:35.467 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-30 20:55:36.435 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 11.693 seconds (process running for 12.51)
-2026-03-30 20:55:36.554 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 20:55:36.618 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:08.694 [main] DEBUG org.hibernate.SQL - 
     select
         pe1_0.id,
         pe1_0.configured_test_data,
@@ -559,7 +251,300 @@
         pipeline_executions pe1_0 
     where
         pe1_0.status=?
-2026-03-30 20:55:36.618 [scheduling-1] DEBUG org.hibernate.SQL - 
+2026-03-31 01:12:08.717 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
+2026-03-31 01:12:08.718 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
+2026-03-31 01:12:08.718 [main] DEBUG org.hibernate.SQL - 
+    select
+        qfe1_0.id,
+        qfe1_0.category,
+        qfe1_0.created_at,
+        qfe1_0.flow_execution_id,
+        qfe1_0.flow_group_id,
+        qfe1_0.flow_id,
+        qfe1_0.iteration,
+        qfe1_0.priority,
+        qfe1_0.retry_count,
+        qfe1_0.revolutions 
+    from
+        queued_flow_executions qfe1_0
+2026-03-31 01:12:08.727 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
+2026-03-31 01:12:08.730 [main] DEBUG org.hibernate.SQL - 
+    select
+        fe1_0.id,
+        fe1_0.category,
+        fe1_0.created_at,
+        fe1_0.end_time,
+        fe1_0.flow_group_id,
+        fe1_0.flow_id,
+        fe1_0.is_replay,
+        fe1_0.iteration,
+        fe1_0.original_flow_execution_id,
+        fe1_0.replay_count,
+        fe1_0.revolutions,
+        fe1_0.runtime_variables,
+        fe1_0.start_time,
+        fe1_0.status 
+    from
+        flow_executions fe1_0 
+    where
+        fe1_0.status=?
+2026-03-31 01:12:08.730 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
+2026-03-31 01:12:08.735 [main] DEBUG org.hibernate.SQL - 
+    select
+        count(fe1_0.id) 
+    from
+        flow_executions fe1_0 
+    where
+        fe1_0.status=?
+2026-03-31 01:12:08.738 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
+2026-03-31 01:12:09.280 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:12:09.292 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:12:09.292 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:12:09.294 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:12:09.330 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@4c03a37, started on Tue Mar 31 01:12:00 IST 2026
+2026-03-31 01:12:09.344 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-31 01:12:09.347 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-31 01:12:09.347 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-31 01:12:09.347 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-31 01:12:09.347 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-31 01:12:09.347 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-31 01:12:09.347 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-31 01:12:09.347 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-31 01:12:09.352 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
+2026-03-31 01:20:12.583 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 30176 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
+2026-03-31 01:20:12.586 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
+2026-03-31 01:20:12.620 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@4c03a37
+2026-03-31 01:20:15.304 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists applications cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists artifacts cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_executions cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_groups cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flow_steps cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists flows cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists pipeline_executions cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists queued_flow_executions cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists test_data cascade 
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists applications_seq
+2026-03-31 01:20:16.237 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists artifacts_id_seq
+2026-03-31 01:20:16.245 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_groups_id_seq
+2026-03-31 01:20:16.245 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flow_steps_seq
+2026-03-31 01:20:16.245 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists flows_seq
+2026-03-31 01:20:16.245 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists pipeline_executions_seq
+2026-03-31 01:20:16.245 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists queued_flow_executions_seq
+2026-03-31 01:20:16.245 [main] DEBUG org.hibernate.SQL - 
+    drop sequence if exists test_data_seq
+2026-03-31 01:20:16.251 [main] DEBUG org.hibernate.SQL - 
+    create sequence applications_seq start with 1 increment by 1
+2026-03-31 01:20:16.253 [main] DEBUG org.hibernate.SQL - 
+    create sequence artifacts_id_seq start with 1 increment by 1
+2026-03-31 01:20:16.253 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_groups_id_seq start with 1 increment by 1
+2026-03-31 01:20:16.253 [main] DEBUG org.hibernate.SQL - 
+    create sequence flow_steps_seq start with 1 increment by 1
+2026-03-31 01:20:16.253 [main] DEBUG org.hibernate.SQL - 
+    create sequence flows_seq start with 1 increment by 1
+2026-03-31 01:20:16.253 [main] DEBUG org.hibernate.SQL - 
+    create sequence pipeline_executions_seq start with 1 increment by 1
+2026-03-31 01:20:16.255 [main] DEBUG org.hibernate.SQL - 
+    create sequence queued_flow_executions_seq start with 1 increment by 1
+2026-03-31 01:20:16.255 [main] DEBUG org.hibernate.SQL - 
+    create sequence test_data_seq start with 1 increment by 1
+2026-03-31 01:20:16.255 [main] DEBUG org.hibernate.SQL - 
+    create table applications (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        token_validation_last_update_date timestamp(6),
+        updated_at timestamp(6) not null,
+        application_description varchar(255) not null,
+        application_name varchar(255) not null,
+        gitlab_project_id varchar(255) not null,
+        personal_access_token varchar(255) not null,
+        project_name varchar(255),
+        project_url varchar(255),
+        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
+        primary key (id)
+    )
+2026-03-31 01:20:16.266 [main] DEBUG org.hibernate.SQL - 
+    create table artifacts (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        artifact_name varchar(255) not null,
+        run_ids json not null,
+        primary key (id)
+    )
+2026-03-31 01:20:16.266 [main] DEBUG org.hibernate.SQL - 
+    create table flow_executions (
+        is_replay boolean,
+        iteration integer,
+        replay_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_group_id bigint,
+        flow_id bigint not null,
+        start_time timestamp(6),
+        id uuid not null,
+        original_flow_execution_id uuid,
+        category varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        runtime_variables json,
+        primary key (id)
+    )
+2026-03-31 01:20:16.269 [main] DEBUG org.hibernate.SQL - 
+    create table flow_groups (
+        current_iteration integer not null,
+        revolutions integer not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        flow_group_name varchar(255) not null,
+        flows json not null,
+        primary key (id)
+    )
+2026-03-31 01:20:16.269 [main] DEBUG org.hibernate.SQL - 
+    create table flow_steps (
+        application_id bigint not null,
+        created_at timestamp(6) not null,
+        id bigint not null,
+        updated_at timestamp(6) not null,
+        branch varchar(255) not null,
+        description varchar(255),
+        scheduler_type varchar(255),
+        test_stage varchar(255) not null,
+        test_tag varchar(255) not null,
+        timer_days varchar(255),
+        timer_hours varchar(255),
+        timer_minutes varchar(255),
+        squash_step_ids json,
+        test_data_ids json,
+        primary key (id)
+    )
+2026-03-31 01:20:16.269 [main] DEBUG org.hibernate.SQL - 
+    create table flows (
+        created_at timestamp(6) not null,
+        id bigint not null,
+        squash_test_case_id bigint not null,
+        updated_at timestamp(6) not null,
+        automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')),
+        squash_test_case varchar(255) not null,
+        flow_step_ids json not null,
+        primary key (id)
+    )
+2026-03-31 01:20:16.269 [main] DEBUG org.hibernate.SQL - 
+    create table pipeline_executions (
+        is_replay boolean not null,
+        created_at timestamp(6) not null,
+        end_time timestamp(6),
+        flow_id bigint not null,
+        flow_step_id bigint not null,
+        id bigint not null,
+        job_id bigint,
+        pipeline_id bigint,
+        resume_time timestamp(6),
+        start_time timestamp(6),
+        flow_execution_id uuid not null,
+        job_url varchar(255),
+        pipeline_url varchar(255),
+        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
+        configured_test_data json,
+        runtime_test_data json,
+        primary key (id)
+    )
+2026-03-31 01:20:16.274 [main] DEBUG org.hibernate.SQL - 
+    create table queued_flow_executions (
+        iteration integer,
+        priority integer,
+        retry_count integer,
+        revolutions integer,
+        created_at timestamp(6) not null,
+        flow_group_id bigint,
+        flow_id bigint not null,
+        id bigint not null,
+        flow_execution_id uuid not null,
+        category varchar(255),
+        primary key (id)
+    )
+2026-03-31 01:20:16.274 [main] DEBUG org.hibernate.SQL - 
+    create table test_data (
+        application_id bigint,
+        created_at timestamp(6) not null,
+        data_id bigint not null,
+        updated_at timestamp(6) not null,
+        application_name varchar(255),
+        category varchar(255) not null,
+        description varchar(255),
+        variables json not null,
+        primary key (data_id)
+    )
+2026-03-31 01:20:16.274 [main] DEBUG org.hibernate.SQL - 
+    create index idx_queued_created_at 
+       on queued_flow_executions (created_at)
+2026-03-31 01:20:16.277 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_executions 
+       add constraint FKr71stky8abwyfobvpeefjc7fv 
+       foreign key (flow_group_id) 
+       references flow_groups
+2026-03-31 01:20:16.285 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists flow_steps 
+       add constraint FKp00aj00r8cvyydod3holpe5oh 
+       foreign key (application_id) 
+       references applications
+2026-03-31 01:20:16.308 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists test_data 
+       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
+       foreign key (application_id) 
+       references applications
+2026-03-31 01:20:19.160 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
+2026-03-31 01:20:19.600 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-31 01:20:19.785 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 66 mappings in 'requestMappingHandlerMapping'
+2026-03-31 01:20:19.910 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2026-03-31 01:20:19.968 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-03-31 01:20:20.010 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-03-31 01:20:20.780 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 8.595 seconds (process running for 9.444)
+2026-03-31 01:20:20.860 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
+2026-03-31 01:20:20.895 [scheduling-1] DEBUG org.hibernate.SQL - 
     select
         pe1_0.id,
         pe1_0.configured_test_data,
@@ -582,316 +567,7 @@
     where
         pe1_0.status=? 
         and pe1_0.resume_time<?
-2026-03-30 20:55:36.641 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 20:55:36.642 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 20:55:36.651 [main] DEBUG org.hibernate.SQL - 
-    select
-        qfe1_0.id,
-        qfe1_0.category,
-        qfe1_0.created_at,
-        qfe1_0.flow_execution_id,
-        qfe1_0.flow_group_id,
-        qfe1_0.flow_id,
-        qfe1_0.iteration,
-        qfe1_0.priority,
-        qfe1_0.retry_count,
-        qfe1_0.revolutions 
-    from
-        queued_flow_executions qfe1_0
-2026-03-30 20:55:36.653 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 20:55:36.656 [main] DEBUG org.hibernate.SQL - 
-    select
-        fe1_0.id,
-        fe1_0.category,
-        fe1_0.created_at,
-        fe1_0.end_time,
-        fe1_0.flow_group_id,
-        fe1_0.flow_id,
-        fe1_0.is_replay,
-        fe1_0.iteration,
-        fe1_0.original_flow_execution_id,
-        fe1_0.replay_count,
-        fe1_0.revolutions,
-        fe1_0.runtime_variables,
-        fe1_0.start_time,
-        fe1_0.status 
-    from
-        flow_executions fe1_0 
-    where
-        fe1_0.status=?
-2026-03-30 20:55:36.657 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 20:55:36.657 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 20:55:37.122 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:37.131 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:37.132 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:37.133 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:55:37.174 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438, started on Mon Mar 30 20:55:25 IST 2026
-2026-03-30 20:55:37.189 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 20:55:37.191 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 20:55:37.192 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 20:55:37.192 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 20:55:37.193 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 20:55:37.194 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 20:55:37.194 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 20:55:37.195 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 20:55:37.195 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 20:55:37.196 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 20:55:37.196 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 20:55:37.196 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 20:55:37.196 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 20:55:37.196 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 20:55:37.198 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 20:55:37.198 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 20:55:37.198 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 20:55:46.984 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 9916 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 20:55:46.985 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
-2026-03-30 20:55:47.014 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438
-2026-03-30 20:55:49.697 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 20:55:50.807 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 20:55:50.813 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 20:55:50.813 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 20:55:50.814 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 20:55:50.814 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 20:55:50.815 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 20:55:50.815 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 20:55:50.815 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 20:55:50.816 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 20:55:50.816 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 20:55:50.817 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 20:55:50.817 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 20:55:50.817 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 20:55:50.817 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 20:55:50.818 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 20:55:50.818 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 20:55:50.819 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 20:55:50.826 [main] DEBUG org.hibernate.SQL - 
-    create sequence applications_seq start with 1 increment by 1
-2026-03-30 20:55:50.831 [main] DEBUG org.hibernate.SQL - 
-    create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 20:55:50.832 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 20:55:50.832 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 20:55:50.833 [main] DEBUG org.hibernate.SQL - 
-    create sequence flows_seq start with 1 increment by 1
-2026-03-30 20:55:50.833 [main] DEBUG org.hibernate.SQL - 
-    create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 20:55:50.834 [main] DEBUG org.hibernate.SQL - 
-    create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 20:55:50.834 [main] DEBUG org.hibernate.SQL - 
-    create sequence test_data_seq start with 1 increment by 1
-2026-03-30 20:55:50.838 [main] DEBUG org.hibernate.SQL - 
-    create table applications (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        token_validation_last_update_date timestamp(6),
-        updated_at timestamp(6) not null,
-        application_description varchar(255) not null,
-        application_name varchar(255) not null,
-        gitlab_project_id varchar(255) not null,
-        personal_access_token varchar(255) not null,
-        project_name varchar(255),
-        project_url varchar(255),
-        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
-        primary key (id)
-    )
-2026-03-30 20:55:50.849 [main] DEBUG org.hibernate.SQL - 
-    create table artifacts (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        artifact_name varchar(255) not null,
-        run_ids json not null,
-        primary key (id)
-    )
-2026-03-30 20:55:50.851 [main] DEBUG org.hibernate.SQL - 
-    create table flow_executions (
-        is_replay boolean,
-        iteration integer,
-        replay_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_group_id bigint,
-        flow_id bigint not null,
-        start_time timestamp(6),
-        id uuid not null,
-        original_flow_execution_id uuid,
-        category varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        runtime_variables json,
-        primary key (id)
-    )
-2026-03-30 20:55:50.853 [main] DEBUG org.hibernate.SQL - 
-    create table flow_groups (
-        current_iteration integer not null,
-        revolutions integer not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        flow_group_name varchar(255) not null,
-        flows json not null,
-        primary key (id)
-    )
-2026-03-30 20:55:50.855 [main] DEBUG org.hibernate.SQL - 
-    create table flow_steps (
-        application_id bigint not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        branch varchar(255) not null,
-        description varchar(255),
-        scheduler_type varchar(255),
-        test_stage varchar(255) not null,
-        test_tag varchar(255) not null,
-        timer_days varchar(255),
-        timer_hours varchar(255),
-        timer_minutes varchar(255),
-        squash_step_ids json,
-        test_data_ids json,
-        primary key (id)
-    )
-2026-03-30 20:55:50.856 [main] DEBUG org.hibernate.SQL - 
-    create table flows (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        squash_test_case_id bigint not null,
-        updated_at timestamp(6) not null,
-        automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')),
-        squash_test_case varchar(255) not null,
-        flow_step_ids json not null,
-        primary key (id)
-    )
-2026-03-30 20:55:50.859 [main] DEBUG org.hibernate.SQL - 
-    create table pipeline_executions (
-        is_replay boolean not null,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_id bigint not null,
-        flow_step_id bigint not null,
-        id bigint not null,
-        job_id bigint,
-        pipeline_id bigint,
-        resume_time timestamp(6),
-        start_time timestamp(6),
-        flow_execution_id uuid not null,
-        job_url varchar(255),
-        pipeline_url varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        configured_test_data json,
-        runtime_test_data json,
-        primary key (id)
-    )
-2026-03-30 20:55:50.861 [main] DEBUG org.hibernate.SQL - 
-    create table queued_flow_executions (
-        iteration integer,
-        priority integer,
-        retry_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        flow_group_id bigint,
-        flow_id bigint not null,
-        id bigint not null,
-        flow_execution_id uuid not null,
-        category varchar(255),
-        primary key (id)
-    )
-2026-03-30 20:55:50.863 [main] DEBUG org.hibernate.SQL - 
-    create table test_data (
-        application_id bigint,
-        created_at timestamp(6) not null,
-        data_id bigint not null,
-        updated_at timestamp(6) not null,
-        application_name varchar(255),
-        category varchar(255) not null,
-        description varchar(255),
-        variables json not null,
-        primary key (data_id)
-    )
-2026-03-30 20:55:50.865 [main] DEBUG org.hibernate.SQL - 
-    create index idx_queued_created_at 
-       on queued_flow_executions (created_at)
-2026-03-30 20:55:50.866 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_executions 
-       add constraint FKr71stky8abwyfobvpeefjc7fv 
-       foreign key (flow_group_id) 
-       references flow_groups
-2026-03-30 20:55:50.878 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_steps 
-       add constraint FKp00aj00r8cvyydod3holpe5oh 
-       foreign key (application_id) 
-       references applications
-2026-03-30 20:55:50.880 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists test_data 
-       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
-       foreign key (application_id) 
-       references applications
-2026-03-30 20:55:55.933 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
-2026-03-30 20:55:56.913 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 20:55:57.289 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 64 mappings in 'requestMappingHandlerMapping'
-2026-03-30 20:55:57.539 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
-2026-03-30 20:55:57.641 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-30 20:55:57.754 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-30 20:55:59.189 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 12.565 seconds (process running for 13.343)
-2026-03-30 20:55:59.325 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 20:55:59.414 [scheduling-1] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=? 
-        and pe1_0.resume_time<?
-2026-03-30 20:55:59.415 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:20.895 [main] DEBUG org.hibernate.SQL - 
     select
         pe1_0.id,
         pe1_0.configured_test_data,
@@ -913,9 +589,9 @@
         pipeline_executions pe1_0 
     where
         pe1_0.status=?
-2026-03-30 20:55:59.445 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 20:55:59.447 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 20:55:59.456 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:20.918 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
+2026-03-31 01:20:20.919 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
+2026-03-31 01:20:20.925 [main] DEBUG org.hibernate.SQL - 
     select
         qfe1_0.id,
         qfe1_0.category,
@@ -929,8 +605,8 @@
         qfe1_0.revolutions 
     from
         queued_flow_executions qfe1_0
-2026-03-30 20:55:59.457 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 20:55:59.462 [main] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:20.928 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
+2026-03-31 01:20:20.932 [main] DEBUG org.hibernate.SQL - 
     select
         fe1_0.id,
         fe1_0.category,
@@ -950,1565 +626,51 @@
         flow_executions fe1_0 
     where
         fe1_0.status=?
-2026-03-30 20:55:59.465 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 20:55:59.465 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 20:56:00.105 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:56:00.122 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:56:00.123 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:56:00.127 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 20:56:00.179 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438, started on Mon Mar 30 20:55:47 IST 2026
-2026-03-30 20:56:00.199 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 20:56:00.203 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 20:56:00.204 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 20:56:00.205 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 20:56:00.206 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 20:56:00.207 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 20:56:00.208 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 20:56:00.209 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 20:56:00.211 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 20:56:00.212 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 20:56:00.212 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 20:56:00.213 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 20:56:00.213 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 20:56:00.214 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 20:56:00.214 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 20:56:00.214 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 20:56:00.215 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 21:37:20.787 [main] INFO  c.u.o.OrkestraV2ApiApplication - Starting OrkestraV2ApiApplication using Java 21.0.10 with PID 6588 (D:\dev\flow-forge-v1-groups-fixes\target\classes started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 21:37:20.790 [main] INFO  c.u.o.OrkestraV2ApiApplication - The following 1 profile is active: "local"
-2026-03-30 21:37:22.713 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 21:37:23.382 [main] DEBUG org.hibernate.SQL - create table applications (id bigint not null, application_description varchar(255) not null, application_name varchar(255) not null, created_at timestamp(6) not null, gitlab_project_id varchar(255) not null, personal_access_token varchar(255) not null, project_name varchar(255), project_url varchar(255), token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')), token_validation_last_update_date timestamp(6), updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:23.387 [main] DEBUG org.hibernate.SQL - create table artifacts (id bigint not null, artifact_name varchar(255) not null, created_at timestamp(6) not null, run_ids json not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:23.391 [main] DEBUG org.hibernate.SQL - create table flow_executions (id uuid not null, category varchar(255), created_at timestamp(6) not null, end_time timestamp(6), flow_id bigint not null, is_replay boolean, iteration integer, original_flow_execution_id uuid, replay_count integer, revolutions integer, runtime_variables json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), flow_group_id bigint, primary key (id))
-2026-03-30 21:37:23.392 [main] DEBUG org.hibernate.SQL - create table flow_groups (id bigint not null, created_at timestamp(6) not null, current_iteration integer not null, flow_group_name varchar(255) not null, flows json not null, revolutions integer not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:23.393 [main] DEBUG org.hibernate.SQL - create table flow_steps (id bigint not null, branch varchar(255) not null, created_at timestamp(6) not null, description varchar(255), timer_days varchar(255), timer_hours varchar(255), timer_minutes varchar(255), scheduler_type varchar(255), squash_step_ids json, test_data_ids json, test_stage varchar(255) not null, test_tag varchar(255) not null, updated_at timestamp(6) not null, application_id bigint not null, primary key (id))
-2026-03-30 21:37:23.394 [main] DEBUG org.hibernate.SQL - create table flows (id bigint not null, automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')), created_at timestamp(6) not null, flow_step_ids json not null, squash_test_case varchar(255) not null, squash_test_case_id bigint not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:23.394 [main] DEBUG org.hibernate.SQL - create table pipeline_executions (id bigint not null, configured_test_data json, created_at timestamp(6) not null, end_time timestamp(6), flow_execution_id uuid not null, flow_id bigint not null, flow_step_id bigint not null, is_replay boolean not null, job_id bigint, job_url varchar(255), pipeline_id bigint, pipeline_url varchar(255), resume_time timestamp(6), runtime_test_data json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), primary key (id))
-2026-03-30 21:37:23.396 [main] DEBUG org.hibernate.SQL - create table queued_flow_executions (id bigint not null, category varchar(255), created_at timestamp(6) not null, flow_execution_id uuid not null, flow_group_id bigint, flow_id bigint not null, iteration integer, priority integer, retry_count integer, revolutions integer, primary key (id))
-2026-03-30 21:37:23.396 [main] DEBUG org.hibernate.SQL - create table test_data (data_id bigint not null, application_name varchar(255), category varchar(255) not null, created_at timestamp(6) not null, description varchar(255), updated_at timestamp(6) not null, variables json not null, application_id bigint, primary key (data_id))
-2026-03-30 21:37:23.398 [main] DEBUG org.hibernate.SQL - create index idx_queued_created_at on queued_flow_executions (created_at)
-2026-03-30 21:37:23.401 [main] DEBUG org.hibernate.SQL - create sequence applications_seq start with 1 increment by 1
-2026-03-30 21:37:23.403 [main] DEBUG org.hibernate.SQL - create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 21:37:23.403 [main] DEBUG org.hibernate.SQL - create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 21:37:23.404 [main] DEBUG org.hibernate.SQL - create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 21:37:23.404 [main] DEBUG org.hibernate.SQL - create sequence flows_seq start with 1 increment by 1
-2026-03-30 21:37:23.404 [main] DEBUG org.hibernate.SQL - create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 21:37:23.406 [main] DEBUG org.hibernate.SQL - create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 21:37:23.406 [main] DEBUG org.hibernate.SQL - create sequence test_data_seq start with 1 increment by 1
-2026-03-30 21:37:23.406 [main] DEBUG org.hibernate.SQL - alter table if exists flow_executions add constraint FKr71stky8abwyfobvpeefjc7fv foreign key (flow_group_id) references flow_groups
-2026-03-30 21:37:23.410 [main] DEBUG org.hibernate.SQL - alter table if exists flow_steps add constraint FKp00aj00r8cvyydod3holpe5oh foreign key (application_id) references applications
-2026-03-30 21:37:23.411 [main] DEBUG org.hibernate.SQL - alter table if exists test_data add constraint FK3iretb06mhjh2gksyhkkj4cfx foreign key (application_id) references applications
-2026-03-30 21:37:25.020 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 21:37:25.629 [main] INFO  c.u.o.OrkestraV2ApiApplication - Started OrkestraV2ApiApplication in 5.224 seconds (process running for 5.505)
-2026-03-30 21:37:25.679 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 21:37:25.701 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:37:25.701 [main] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=?
-2026-03-30 21:37:25.710 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 21:37:25.712 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 21:37:25.717 [main] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0
-2026-03-30 21:37:25.718 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 21:37:25.720 [main] DEBUG org.hibernate.SQL - select fe1_0.id,fe1_0.category,fe1_0.created_at,fe1_0.end_time,fe1_0.flow_group_id,fe1_0.flow_id,fe1_0.is_replay,fe1_0.iteration,fe1_0.original_flow_execution_id,fe1_0.replay_count,fe1_0.revolutions,fe1_0.runtime_variables,fe1_0.start_time,fe1_0.status from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 21:37:25.721 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 21:37:25.721 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 21:37:40.137 [main] INFO  c.u.o.OrkestraV2ApiApplication - Starting OrkestraV2ApiApplication using Java 21.0.10 with PID 17004 (D:\dev\flow-forge-v1-groups-fixes\target\classes started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 21:37:40.138 [main] INFO  c.u.o.OrkestraV2ApiApplication - The following 1 profile is active: "local"
-2026-03-30 21:37:41.970 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 21:37:42.856 [main] DEBUG org.hibernate.SQL - create table applications (id bigint not null, application_description varchar(255) not null, application_name varchar(255) not null, created_at timestamp(6) not null, gitlab_project_id varchar(255) not null, personal_access_token varchar(255) not null, project_name varchar(255), project_url varchar(255), token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')), token_validation_last_update_date timestamp(6), updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:42.864 [main] DEBUG org.hibernate.SQL - create table artifacts (id bigint not null, artifact_name varchar(255) not null, created_at timestamp(6) not null, run_ids json not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:42.866 [main] DEBUG org.hibernate.SQL - create table flow_executions (id uuid not null, category varchar(255), created_at timestamp(6) not null, end_time timestamp(6), flow_id bigint not null, is_replay boolean, iteration integer, original_flow_execution_id uuid, replay_count integer, revolutions integer, runtime_variables json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), flow_group_id bigint, primary key (id))
-2026-03-30 21:37:42.867 [main] DEBUG org.hibernate.SQL - create table flow_groups (id bigint not null, created_at timestamp(6) not null, current_iteration integer not null, flow_group_name varchar(255) not null, flows json not null, revolutions integer not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:42.868 [main] DEBUG org.hibernate.SQL - create table flow_steps (id bigint not null, branch varchar(255) not null, created_at timestamp(6) not null, description varchar(255), timer_days varchar(255), timer_hours varchar(255), timer_minutes varchar(255), scheduler_type varchar(255), squash_step_ids json, test_data_ids json, test_stage varchar(255) not null, test_tag varchar(255) not null, updated_at timestamp(6) not null, application_id bigint not null, primary key (id))
-2026-03-30 21:37:42.868 [main] DEBUG org.hibernate.SQL - create table flows (id bigint not null, automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')), created_at timestamp(6) not null, flow_step_ids json not null, squash_test_case varchar(255) not null, squash_test_case_id bigint not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 21:37:42.870 [main] DEBUG org.hibernate.SQL - create table pipeline_executions (id bigint not null, configured_test_data json, created_at timestamp(6) not null, end_time timestamp(6), flow_execution_id uuid not null, flow_id bigint not null, flow_step_id bigint not null, is_replay boolean not null, job_id bigint, job_url varchar(255), pipeline_id bigint, pipeline_url varchar(255), resume_time timestamp(6), runtime_test_data json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), primary key (id))
-2026-03-30 21:37:42.872 [main] DEBUG org.hibernate.SQL - create table queued_flow_executions (id bigint not null, category varchar(255), created_at timestamp(6) not null, flow_execution_id uuid not null, flow_group_id bigint, flow_id bigint not null, iteration integer, priority integer, retry_count integer, revolutions integer, primary key (id))
-2026-03-30 21:37:42.873 [main] DEBUG org.hibernate.SQL - create table test_data (data_id bigint not null, application_name varchar(255), category varchar(255) not null, created_at timestamp(6) not null, description varchar(255), updated_at timestamp(6) not null, variables json not null, application_id bigint, primary key (data_id))
-2026-03-30 21:37:42.874 [main] DEBUG org.hibernate.SQL - create index idx_queued_created_at on queued_flow_executions (created_at)
-2026-03-30 21:37:42.878 [main] DEBUG org.hibernate.SQL - create sequence applications_seq start with 1 increment by 1
-2026-03-30 21:37:42.881 [main] DEBUG org.hibernate.SQL - create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 21:37:42.881 [main] DEBUG org.hibernate.SQL - create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 21:37:42.881 [main] DEBUG org.hibernate.SQL - create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 21:37:42.882 [main] DEBUG org.hibernate.SQL - create sequence flows_seq start with 1 increment by 1
-2026-03-30 21:37:42.882 [main] DEBUG org.hibernate.SQL - create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 21:37:42.882 [main] DEBUG org.hibernate.SQL - create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 21:37:42.883 [main] DEBUG org.hibernate.SQL - create sequence test_data_seq start with 1 increment by 1
-2026-03-30 21:37:42.884 [main] DEBUG org.hibernate.SQL - alter table if exists flow_executions add constraint FKr71stky8abwyfobvpeefjc7fv foreign key (flow_group_id) references flow_groups
-2026-03-30 21:37:42.888 [main] DEBUG org.hibernate.SQL - alter table if exists flow_steps add constraint FKp00aj00r8cvyydod3holpe5oh foreign key (application_id) references applications
-2026-03-30 21:37:42.889 [main] DEBUG org.hibernate.SQL - alter table if exists test_data add constraint FK3iretb06mhjh2gksyhkkj4cfx foreign key (application_id) references applications
-2026-03-30 21:37:44.753 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 21:37:45.442 [main] INFO  c.u.o.OrkestraV2ApiApplication - Started OrkestraV2ApiApplication in 5.678 seconds (process running for 5.932)
-2026-03-30 21:37:45.505 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 21:37:45.524 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:37:45.524 [main] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=?
-2026-03-30 21:37:45.534 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 21:37:45.537 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 21:37:45.541 [main] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0
-2026-03-30 21:37:45.544 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 21:37:45.546 [main] DEBUG org.hibernate.SQL - select fe1_0.id,fe1_0.category,fe1_0.created_at,fe1_0.end_time,fe1_0.flow_group_id,fe1_0.flow_id,fe1_0.is_replay,fe1_0.iteration,fe1_0.original_flow_execution_id,fe1_0.replay_count,fe1_0.revolutions,fe1_0.runtime_variables,fe1_0.start_time,fe1_0.status from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 21:37:45.546 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 21:37:45.547 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 21:37:55.458 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:38:15.453 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:38:25.463 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:38:45.451 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:38:55.467 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:39:15.451 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:39:25.483 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:39:45.448 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:39:55.498 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:40:15.449 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:40:25.511 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:40:45.445 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:40:55.522 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:41:15.444 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:41:25.526 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:41:45.451 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:41:55.541 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:42:15.446 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:42:25.546 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:42:45.449 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:42:55.552 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:43:15.451 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:43:25.567 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:43:45.452 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:43:55.575 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:44:15.447 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:44:25.581 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:44:45.448 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:44:55.597 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:45:15.458 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:45:25.615 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:45:45.459 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:45:55.625 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:46:15.457 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:46:25.640 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:46:45.455 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:46:55.654 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:47:15.454 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:47:25.667 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:47:45.451 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:47:55.684 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:48:15.450 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:48:25.699 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:48:45.455 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:48:55.715 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:49:15.443 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:49:25.728 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:49:45.449 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:49:55.742 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:50:15.445 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:50:25.760 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:50:45.457 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:50:55.772 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:51:15.455 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:51:25.786 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:51:45.455 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:51:55.802 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:52:15.450 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:52:25.819 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:52:45.449 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:52:55.828 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:53:15.447 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:53:25.833 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:53:45.447 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:53:55.846 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:54:15.444 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:54:25.855 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:54:45.443 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:54:55.858 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:55:15.455 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:55:25.873 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:55:45.455 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:55:55.892 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:56:15.453 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:56:25.904 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:56:45.456 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:56:55.914 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:57:15.447 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:57:25.932 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:57:45.446 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:57:55.948 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 21:58:15.449 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 21:58:25.963 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 22:21:28.873 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 34828 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 22:21:28.876 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
-2026-03-30 22:21:28.906 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438
-2026-03-30 22:21:31.430 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 22:21:32.348 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 22:21:32.352 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 22:21:32.352 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 22:21:32.352 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 22:21:32.353 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 22:21:32.353 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 22:21:32.353 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 22:21:32.353 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 22:21:32.353 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 22:21:32.355 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 22:21:32.355 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 22:21:32.355 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 22:21:32.355 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 22:21:32.355 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 22:21:32.355 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 22:21:32.355 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:21:32.356 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 22:21:32.362 [main] DEBUG org.hibernate.SQL - 
-    create sequence applications_seq start with 1 increment by 1
-2026-03-30 22:21:32.364 [main] DEBUG org.hibernate.SQL - 
-    create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 22:21:32.365 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 22:21:32.365 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 22:21:32.365 [main] DEBUG org.hibernate.SQL - 
-    create sequence flows_seq start with 1 increment by 1
-2026-03-30 22:21:32.365 [main] DEBUG org.hibernate.SQL - 
-    create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 22:21:32.366 [main] DEBUG org.hibernate.SQL - 
-    create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 22:21:32.366 [main] DEBUG org.hibernate.SQL - 
-    create sequence test_data_seq start with 1 increment by 1
-2026-03-30 22:21:32.370 [main] DEBUG org.hibernate.SQL - 
-    create table applications (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        token_validation_last_update_date timestamp(6),
-        updated_at timestamp(6) not null,
-        application_description varchar(255) not null,
-        application_name varchar(255) not null,
-        gitlab_project_id varchar(255) not null,
-        personal_access_token varchar(255) not null,
-        project_name varchar(255),
-        project_url varchar(255),
-        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
-        primary key (id)
-    )
-2026-03-30 22:21:32.379 [main] DEBUG org.hibernate.SQL - 
-    create table artifacts (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        artifact_name varchar(255) not null,
-        run_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:21:32.380 [main] DEBUG org.hibernate.SQL - 
-    create table flow_executions (
-        is_replay boolean,
-        iteration integer,
-        replay_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_group_id bigint,
-        flow_id bigint not null,
-        start_time timestamp(6),
-        id uuid not null,
-        original_flow_execution_id uuid,
-        category varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        runtime_variables json,
-        primary key (id)
-    )
-2026-03-30 22:21:32.382 [main] DEBUG org.hibernate.SQL - 
-    create table flow_groups (
-        current_iteration integer not null,
-        revolutions integer not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        flow_group_name varchar(255) not null,
-        flows json not null,
-        primary key (id)
-    )
-2026-03-30 22:21:32.382 [main] DEBUG org.hibernate.SQL - 
-    create table flow_steps (
-        application_id bigint not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        branch varchar(255) not null,
-        description varchar(255),
-        scheduler_type varchar(255),
-        test_stage varchar(255) not null,
-        test_tag varchar(255) not null,
-        timer_days varchar(255),
-        timer_hours varchar(255),
-        timer_minutes varchar(255),
-        squash_step_ids json,
-        test_data_ids json,
-        primary key (id)
-    )
-2026-03-30 22:21:32.383 [main] DEBUG org.hibernate.SQL - 
-    create table flows (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        squash_test_case_id bigint not null,
-        updated_at timestamp(6) not null,
-        automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')),
-        squash_test_case varchar(255) not null,
-        flow_step_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:21:32.384 [main] DEBUG org.hibernate.SQL - 
-    create table pipeline_executions (
-        is_replay boolean not null,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_id bigint not null,
-        flow_step_id bigint not null,
-        id bigint not null,
-        job_id bigint,
-        pipeline_id bigint,
-        resume_time timestamp(6),
-        start_time timestamp(6),
-        flow_execution_id uuid not null,
-        job_url varchar(255),
-        pipeline_url varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        configured_test_data json,
-        runtime_test_data json,
-        primary key (id)
-    )
-2026-03-30 22:21:32.385 [main] DEBUG org.hibernate.SQL - 
-    create table queued_flow_executions (
-        iteration integer,
-        priority integer,
-        retry_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        flow_group_id bigint,
-        flow_id bigint not null,
-        id bigint not null,
-        flow_execution_id uuid not null,
-        category varchar(255),
-        primary key (id)
-    )
-2026-03-30 22:21:32.386 [main] DEBUG org.hibernate.SQL - 
-    create table test_data (
-        application_id bigint,
-        created_at timestamp(6) not null,
-        data_id bigint not null,
-        updated_at timestamp(6) not null,
-        application_name varchar(255),
-        category varchar(255) not null,
-        description varchar(255),
-        variables json not null,
-        primary key (data_id)
-    )
-2026-03-30 22:21:32.388 [main] DEBUG org.hibernate.SQL - 
-    create index idx_queued_created_at 
-       on queued_flow_executions (created_at)
-2026-03-30 22:21:32.388 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_executions 
-       add constraint FKr71stky8abwyfobvpeefjc7fv 
-       foreign key (flow_group_id) 
-       references flow_groups
-2026-03-30 22:21:32.394 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_steps 
-       add constraint FKp00aj00r8cvyydod3holpe5oh 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:21:32.395 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists test_data 
-       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:21:35.579 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
-2026-03-30 22:21:36.212 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 22:21:36.436 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 64 mappings in 'requestMappingHandlerMapping'
-2026-03-30 22:21:36.590 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
-2026-03-30 22:21:36.646 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-30 22:21:36.694 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-30 22:21:37.513 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 9.001 seconds (process running for 9.78)
-2026-03-30 22:21:37.604 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 22:21:37.654 [scheduling-1] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:20.933 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
+2026-03-31 01:20:20.936 [main] DEBUG org.hibernate.SQL - 
     select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=? 
-        and pe1_0.resume_time<?
-2026-03-30 22:21:37.654 [main] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=?
-2026-03-30 22:21:37.674 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 22:21:37.676 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 22:21:37.681 [main] DEBUG org.hibernate.SQL - 
-    select
-        qfe1_0.id,
-        qfe1_0.category,
-        qfe1_0.created_at,
-        qfe1_0.flow_execution_id,
-        qfe1_0.flow_group_id,
-        qfe1_0.flow_id,
-        qfe1_0.iteration,
-        qfe1_0.priority,
-        qfe1_0.retry_count,
-        qfe1_0.revolutions 
-    from
-        queued_flow_executions qfe1_0
-2026-03-30 22:21:37.683 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 22:21:37.685 [main] DEBUG org.hibernate.SQL - 
-    select
-        fe1_0.id,
-        fe1_0.category,
-        fe1_0.created_at,
-        fe1_0.end_time,
-        fe1_0.flow_group_id,
-        fe1_0.flow_id,
-        fe1_0.is_replay,
-        fe1_0.iteration,
-        fe1_0.original_flow_execution_id,
-        fe1_0.replay_count,
-        fe1_0.revolutions,
-        fe1_0.runtime_variables,
-        fe1_0.start_time,
-        fe1_0.status 
+        count(fe1_0.id) 
     from
         flow_executions fe1_0 
     where
         fe1_0.status=?
-2026-03-30 22:21:37.687 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 22:21:37.687 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 22:21:38.206 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:21:38.215 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:21:38.216 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:21:38.217 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:21:38.255 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438, started on Mon Mar 30 22:21:28 IST 2026
-2026-03-30 22:21:38.270 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:20.938 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
+2026-03-31 01:20:21.491 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:20:21.499 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:20:21.502 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:20:21.503 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
+2026-03-31 01:20:21.555 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@4c03a37, started on Tue Mar 31 01:20:12 IST 2026
+2026-03-31 01:20:21.573 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists applications cascade 
-2026-03-30 22:21:38.271 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.573 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists artifacts cascade 
-2026-03-30 22:21:38.272 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.573 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists flow_executions cascade 
-2026-03-30 22:21:38.272 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.579 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists flow_groups cascade 
-2026-03-30 22:21:38.274 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.579 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists flow_steps cascade 
-2026-03-30 22:21:38.275 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.579 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists flows cascade 
-2026-03-30 22:21:38.276 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.579 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists pipeline_executions cascade 
-2026-03-30 22:21:38.276 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.581 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists queued_flow_executions cascade 
-2026-03-30 22:21:38.277 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.581 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop table if exists test_data cascade 
-2026-03-30 22:21:38.277 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.581 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists applications_seq
-2026-03-30 22:21:38.277 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.581 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists artifacts_id_seq
-2026-03-30 22:21:38.277 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.581 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists flow_groups_id_seq
-2026-03-30 22:21:38.278 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.583 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists flow_steps_seq
-2026-03-30 22:21:38.278 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.583 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists flows_seq
-2026-03-30 22:21:38.278 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.584 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists pipeline_executions_seq
-2026-03-30 22:21:38.278 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.584 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:21:38.278 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
+2026-03-31 01:20:21.584 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
     drop sequence if exists test_data_seq
-2026-03-30 22:33:03.108 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 28928 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 22:33:03.109 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
-2026-03-30 22:33:03.139 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@1e6cc850
-2026-03-30 22:33:05.473 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 22:33:06.194 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 22:33:06.197 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 22:33:06.197 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 22:33:06.197 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 22:33:06.197 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 22:33:06.197 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 22:33:06.197 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:33:06.198 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 22:33:06.204 [main] DEBUG org.hibernate.SQL - 
-    create sequence applications_seq start with 1 increment by 1
-2026-03-30 22:33:06.206 [main] DEBUG org.hibernate.SQL - 
-    create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 22:33:06.206 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 22:33:06.206 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 22:33:06.207 [main] DEBUG org.hibernate.SQL - 
-    create sequence flows_seq start with 1 increment by 1
-2026-03-30 22:33:06.207 [main] DEBUG org.hibernate.SQL - 
-    create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 22:33:06.207 [main] DEBUG org.hibernate.SQL - 
-    create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 22:33:06.207 [main] DEBUG org.hibernate.SQL - 
-    create sequence test_data_seq start with 1 increment by 1
-2026-03-30 22:33:06.209 [main] DEBUG org.hibernate.SQL - 
-    create table applications (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        token_validation_last_update_date timestamp(6),
-        updated_at timestamp(6) not null,
-        application_description varchar(255) not null,
-        application_name varchar(255) not null,
-        gitlab_project_id varchar(255) not null,
-        personal_access_token varchar(255) not null,
-        project_name varchar(255),
-        project_url varchar(255),
-        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
-        primary key (id)
-    )
-2026-03-30 22:33:06.216 [main] DEBUG org.hibernate.SQL - 
-    create table artifacts (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        artifact_name varchar(255) not null,
-        run_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:06.217 [main] DEBUG org.hibernate.SQL - 
-    create table flow_executions (
-        is_replay boolean,
-        iteration integer,
-        replay_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_group_id bigint,
-        flow_id bigint not null,
-        start_time timestamp(6),
-        id uuid not null,
-        original_flow_execution_id uuid,
-        category varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        runtime_variables json,
-        primary key (id)
-    )
-2026-03-30 22:33:06.219 [main] DEBUG org.hibernate.SQL - 
-    create table flow_groups (
-        current_iteration integer not null,
-        revolutions integer not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        flow_group_name varchar(255) not null,
-        flows json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:06.221 [main] DEBUG org.hibernate.SQL - 
-    create table flow_steps (
-        application_id bigint not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        branch varchar(255) not null,
-        description varchar(255),
-        scheduler_type varchar(255),
-        test_stage varchar(255) not null,
-        test_tag varchar(255) not null,
-        timer_days varchar(255),
-        timer_hours varchar(255),
-        timer_minutes varchar(255),
-        squash_step_ids json,
-        test_data_ids json,
-        primary key (id)
-    )
-2026-03-30 22:33:06.221 [main] DEBUG org.hibernate.SQL - 
-    create table flows (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        squash_test_case_id bigint not null,
-        updated_at timestamp(6) not null,
-        automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')),
-        squash_test_case varchar(255) not null,
-        flow_step_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:06.221 [main] DEBUG org.hibernate.SQL - 
-    create table pipeline_executions (
-        is_replay boolean not null,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_id bigint not null,
-        flow_step_id bigint not null,
-        id bigint not null,
-        job_id bigint,
-        pipeline_id bigint,
-        resume_time timestamp(6),
-        start_time timestamp(6),
-        flow_execution_id uuid not null,
-        job_url varchar(255),
-        pipeline_url varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        configured_test_data json,
-        runtime_test_data json,
-        primary key (id)
-    )
-2026-03-30 22:33:06.222 [main] DEBUG org.hibernate.SQL - 
-    create table queued_flow_executions (
-        iteration integer,
-        priority integer,
-        retry_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        flow_group_id bigint,
-        flow_id bigint not null,
-        id bigint not null,
-        flow_execution_id uuid not null,
-        category varchar(255),
-        primary key (id)
-    )
-2026-03-30 22:33:06.223 [main] DEBUG org.hibernate.SQL - 
-    create table test_data (
-        application_id bigint,
-        created_at timestamp(6) not null,
-        data_id bigint not null,
-        updated_at timestamp(6) not null,
-        application_name varchar(255),
-        category varchar(255) not null,
-        description varchar(255),
-        variables json not null,
-        primary key (data_id)
-    )
-2026-03-30 22:33:06.224 [main] DEBUG org.hibernate.SQL - 
-    create index idx_queued_created_at 
-       on queued_flow_executions (created_at)
-2026-03-30 22:33:06.225 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_executions 
-       add constraint FKr71stky8abwyfobvpeefjc7fv 
-       foreign key (flow_group_id) 
-       references flow_groups
-2026-03-30 22:33:06.230 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_steps 
-       add constraint FKp00aj00r8cvyydod3holpe5oh 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:33:06.231 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists test_data 
-       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:33:08.945 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
-2026-03-30 22:33:09.479 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 22:33:09.700 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 64 mappings in 'requestMappingHandlerMapping'
-2026-03-30 22:33:09.824 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
-2026-03-30 22:33:09.895 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-30 22:33:09.950 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-30 22:33:10.723 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 7.961 seconds (process running for 8.681)
-2026-03-30 22:33:10.807 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 22:33:10.852 [main] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=?
-2026-03-30 22:33:10.852 [scheduling-1] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=? 
-        and pe1_0.resume_time<?
-2026-03-30 22:33:10.869 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 22:33:10.872 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 22:33:10.881 [main] DEBUG org.hibernate.SQL - 
-    select
-        qfe1_0.id,
-        qfe1_0.category,
-        qfe1_0.created_at,
-        qfe1_0.flow_execution_id,
-        qfe1_0.flow_group_id,
-        qfe1_0.flow_id,
-        qfe1_0.iteration,
-        qfe1_0.priority,
-        qfe1_0.retry_count,
-        qfe1_0.revolutions 
-    from
-        queued_flow_executions qfe1_0
-2026-03-30 22:33:10.883 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 22:33:10.885 [main] DEBUG org.hibernate.SQL - 
-    select
-        fe1_0.id,
-        fe1_0.category,
-        fe1_0.created_at,
-        fe1_0.end_time,
-        fe1_0.flow_group_id,
-        fe1_0.flow_id,
-        fe1_0.is_replay,
-        fe1_0.iteration,
-        fe1_0.original_flow_execution_id,
-        fe1_0.replay_count,
-        fe1_0.revolutions,
-        fe1_0.runtime_variables,
-        fe1_0.start_time,
-        fe1_0.status 
-    from
-        flow_executions fe1_0 
-    where
-        fe1_0.status=?
-2026-03-30 22:33:10.887 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 22:33:10.887 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 22:33:11.326 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@1e6cc850, started on Mon Mar 30 22:33:03 IST 2026
-2026-03-30 22:33:11.339 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 22:33:11.341 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 22:33:11.342 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 22:33:11.342 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 22:33:11.344 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 22:33:11.344 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 22:33:11.344 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 22:33:11.345 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 22:33:11.345 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 22:33:11.345 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 22:33:11.345 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 22:33:11.345 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 22:33:11.346 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 22:33:11.346 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 22:33:11.346 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 22:33:11.346 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:33:11.348 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 22:33:23.632 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 4160 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 22:33:23.634 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
-2026-03-30 22:33:23.664 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438
-2026-03-30 22:33:26.036 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 22:33:26.739 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 22:33:26.741 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 22:33:26.741 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 22:33:26.742 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 22:33:26.742 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 22:33:26.742 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 22:33:26.742 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 22:33:26.742 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 22:33:26.742 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 22:33:26.742 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 22:33:26.744 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 22:33:26.744 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 22:33:26.744 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 22:33:26.744 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 22:33:26.744 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 22:33:26.744 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:33:26.744 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 22:33:26.747 [main] DEBUG org.hibernate.SQL - 
-    create sequence applications_seq start with 1 increment by 1
-2026-03-30 22:33:26.749 [main] DEBUG org.hibernate.SQL - 
-    create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 22:33:26.750 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 22:33:26.750 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 22:33:26.750 [main] DEBUG org.hibernate.SQL - 
-    create sequence flows_seq start with 1 increment by 1
-2026-03-30 22:33:26.750 [main] DEBUG org.hibernate.SQL - 
-    create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 22:33:26.750 [main] DEBUG org.hibernate.SQL - 
-    create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 22:33:26.750 [main] DEBUG org.hibernate.SQL - 
-    create sequence test_data_seq start with 1 increment by 1
-2026-03-30 22:33:26.754 [main] DEBUG org.hibernate.SQL - 
-    create table applications (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        token_validation_last_update_date timestamp(6),
-        updated_at timestamp(6) not null,
-        application_description varchar(255) not null,
-        application_name varchar(255) not null,
-        gitlab_project_id varchar(255) not null,
-        personal_access_token varchar(255) not null,
-        project_name varchar(255),
-        project_url varchar(255),
-        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
-        primary key (id)
-    )
-2026-03-30 22:33:26.761 [main] DEBUG org.hibernate.SQL - 
-    create table artifacts (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        artifact_name varchar(255) not null,
-        run_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:26.761 [main] DEBUG org.hibernate.SQL - 
-    create table flow_executions (
-        is_replay boolean,
-        iteration integer,
-        replay_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_group_id bigint,
-        flow_id bigint not null,
-        start_time timestamp(6),
-        id uuid not null,
-        original_flow_execution_id uuid,
-        category varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        runtime_variables json,
-        primary key (id)
-    )
-2026-03-30 22:33:26.762 [main] DEBUG org.hibernate.SQL - 
-    create table flow_groups (
-        current_iteration integer not null,
-        revolutions integer not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        flow_group_name varchar(255) not null,
-        flows json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:26.763 [main] DEBUG org.hibernate.SQL - 
-    create table flow_steps (
-        application_id bigint not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        branch varchar(255) not null,
-        description varchar(255),
-        scheduler_type varchar(255),
-        test_stage varchar(255) not null,
-        test_tag varchar(255) not null,
-        timer_days varchar(255),
-        timer_hours varchar(255),
-        timer_minutes varchar(255),
-        squash_step_ids json,
-        test_data_ids json,
-        primary key (id)
-    )
-2026-03-30 22:33:26.764 [main] DEBUG org.hibernate.SQL - 
-    create table flows (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        squash_test_case_id bigint not null,
-        updated_at timestamp(6) not null,
-        automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')),
-        squash_test_case varchar(255) not null,
-        flow_step_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:26.765 [main] DEBUG org.hibernate.SQL - 
-    create table pipeline_executions (
-        is_replay boolean not null,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_id bigint not null,
-        flow_step_id bigint not null,
-        id bigint not null,
-        job_id bigint,
-        pipeline_id bigint,
-        resume_time timestamp(6),
-        start_time timestamp(6),
-        flow_execution_id uuid not null,
-        job_url varchar(255),
-        pipeline_url varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        configured_test_data json,
-        runtime_test_data json,
-        primary key (id)
-    )
-2026-03-30 22:33:26.765 [main] DEBUG org.hibernate.SQL - 
-    create table queued_flow_executions (
-        iteration integer,
-        priority integer,
-        retry_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        flow_group_id bigint,
-        flow_id bigint not null,
-        id bigint not null,
-        flow_execution_id uuid not null,
-        category varchar(255),
-        primary key (id)
-    )
-2026-03-30 22:33:26.767 [main] DEBUG org.hibernate.SQL - 
-    create table test_data (
-        application_id bigint,
-        created_at timestamp(6) not null,
-        data_id bigint not null,
-        updated_at timestamp(6) not null,
-        application_name varchar(255),
-        category varchar(255) not null,
-        description varchar(255),
-        variables json not null,
-        primary key (data_id)
-    )
-2026-03-30 22:33:26.768 [main] DEBUG org.hibernate.SQL - 
-    create index idx_queued_created_at 
-       on queued_flow_executions (created_at)
-2026-03-30 22:33:26.768 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_executions 
-       add constraint FKr71stky8abwyfobvpeefjc7fv 
-       foreign key (flow_group_id) 
-       references flow_groups
-2026-03-30 22:33:26.774 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_steps 
-       add constraint FKp00aj00r8cvyydod3holpe5oh 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:33:26.774 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists test_data 
-       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:33:29.484 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
-2026-03-30 22:33:29.994 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 22:33:30.226 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 64 mappings in 'requestMappingHandlerMapping'
-2026-03-30 22:33:30.349 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
-2026-03-30 22:33:30.382 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-30 22:33:30.418 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-30 22:33:31.208 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 7.926 seconds (process running for 8.653)
-2026-03-30 22:33:31.308 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 22:33:31.437 [scheduling-1] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=? 
-        and pe1_0.resume_time<?
-2026-03-30 22:33:31.437 [main] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=?
-2026-03-30 22:33:31.462 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 22:33:31.464 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 22:33:31.473 [main] DEBUG org.hibernate.SQL - 
-    select
-        qfe1_0.id,
-        qfe1_0.category,
-        qfe1_0.created_at,
-        qfe1_0.flow_execution_id,
-        qfe1_0.flow_group_id,
-        qfe1_0.flow_id,
-        qfe1_0.iteration,
-        qfe1_0.priority,
-        qfe1_0.retry_count,
-        qfe1_0.revolutions 
-    from
-        queued_flow_executions qfe1_0
-2026-03-30 22:33:31.474 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 22:33:31.477 [main] DEBUG org.hibernate.SQL - 
-    select
-        fe1_0.id,
-        fe1_0.category,
-        fe1_0.created_at,
-        fe1_0.end_time,
-        fe1_0.flow_group_id,
-        fe1_0.flow_id,
-        fe1_0.is_replay,
-        fe1_0.iteration,
-        fe1_0.original_flow_execution_id,
-        fe1_0.replay_count,
-        fe1_0.revolutions,
-        fe1_0.runtime_variables,
-        fe1_0.start_time,
-        fe1_0.status 
-    from
-        flow_executions fe1_0 
-    where
-        fe1_0.status=?
-2026-03-30 22:33:31.478 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 22:33:31.478 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 22:33:31.951 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:31.960 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:31.960 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:31.961 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:31.990 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438, started on Mon Mar 30 22:33:23 IST 2026
-2026-03-30 22:33:32.001 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 22:33:32.005 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 22:33:32.005 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 22:33:32.006 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 22:33:32.006 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 22:33:32.007 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 22:33:32.007 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 22:33:32.008 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 22:33:32.008 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 22:33:32.008 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 22:33:32.008 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 22:33:32.010 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 22:33:32.010 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 22:33:32.010 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 22:33:32.010 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 22:33:32.010 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:33:32.010 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 22:33:44.486 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Starting OrkestraV2ApiApplicationTests using Java 21.0.10 with PID 38216 (started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 22:33:44.486 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - The following 1 profile is active: "test"
-2026-03-30 22:33:44.516 [main] DEBUG o.s.w.c.s.GenericWebApplicationContext - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438
-2026-03-30 22:33:47.438 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 22:33:48.783 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 22:33:48.788 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 22:33:48.788 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 22:33:48.788 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 22:33:48.789 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 22:33:48.789 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 22:33:48.789 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 22:33:48.790 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 22:33:48.790 [main] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 22:33:48.790 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 22:33:48.791 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 22:33:48.791 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 22:33:48.791 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 22:33:48.791 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 22:33:48.792 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 22:33:48.792 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:33:48.793 [main] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 22:33:48.801 [main] DEBUG org.hibernate.SQL - 
-    create sequence applications_seq start with 1 increment by 1
-2026-03-30 22:33:48.804 [main] DEBUG org.hibernate.SQL - 
-    create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 22:33:48.804 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 22:33:48.805 [main] DEBUG org.hibernate.SQL - 
-    create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 22:33:48.806 [main] DEBUG org.hibernate.SQL - 
-    create sequence flows_seq start with 1 increment by 1
-2026-03-30 22:33:48.806 [main] DEBUG org.hibernate.SQL - 
-    create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 22:33:48.806 [main] DEBUG org.hibernate.SQL - 
-    create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 22:33:48.807 [main] DEBUG org.hibernate.SQL - 
-    create sequence test_data_seq start with 1 increment by 1
-2026-03-30 22:33:48.811 [main] DEBUG org.hibernate.SQL - 
-    create table applications (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        token_validation_last_update_date timestamp(6),
-        updated_at timestamp(6) not null,
-        application_description varchar(255) not null,
-        application_name varchar(255) not null,
-        gitlab_project_id varchar(255) not null,
-        personal_access_token varchar(255) not null,
-        project_name varchar(255),
-        project_url varchar(255),
-        token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')),
-        primary key (id)
-    )
-2026-03-30 22:33:48.823 [main] DEBUG org.hibernate.SQL - 
-    create table artifacts (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        artifact_name varchar(255) not null,
-        run_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:48.825 [main] DEBUG org.hibernate.SQL - 
-    create table flow_executions (
-        is_replay boolean,
-        iteration integer,
-        replay_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_group_id bigint,
-        flow_id bigint not null,
-        start_time timestamp(6),
-        id uuid not null,
-        original_flow_execution_id uuid,
-        category varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        runtime_variables json,
-        primary key (id)
-    )
-2026-03-30 22:33:48.828 [main] DEBUG org.hibernate.SQL - 
-    create table flow_groups (
-        current_iteration integer not null,
-        revolutions integer not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        flow_group_name varchar(255) not null,
-        flows json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:48.830 [main] DEBUG org.hibernate.SQL - 
-    create table flow_steps (
-        application_id bigint not null,
-        created_at timestamp(6) not null,
-        id bigint not null,
-        updated_at timestamp(6) not null,
-        branch varchar(255) not null,
-        description varchar(255),
-        scheduler_type varchar(255),
-        test_stage varchar(255) not null,
-        test_tag varchar(255) not null,
-        timer_days varchar(255),
-        timer_hours varchar(255),
-        timer_minutes varchar(255),
-        squash_step_ids json,
-        test_data_ids json,
-        primary key (id)
-    )
-2026-03-30 22:33:48.831 [main] DEBUG org.hibernate.SQL - 
-    create table flows (
-        created_at timestamp(6) not null,
-        id bigint not null,
-        squash_test_case_id bigint not null,
-        updated_at timestamp(6) not null,
-        automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')),
-        squash_test_case varchar(255) not null,
-        flow_step_ids json not null,
-        primary key (id)
-    )
-2026-03-30 22:33:48.834 [main] DEBUG org.hibernate.SQL - 
-    create table pipeline_executions (
-        is_replay boolean not null,
-        created_at timestamp(6) not null,
-        end_time timestamp(6),
-        flow_id bigint not null,
-        flow_step_id bigint not null,
-        id bigint not null,
-        job_id bigint,
-        pipeline_id bigint,
-        resume_time timestamp(6),
-        start_time timestamp(6),
-        flow_execution_id uuid not null,
-        job_url varchar(255),
-        pipeline_url varchar(255),
-        status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')),
-        configured_test_data json,
-        runtime_test_data json,
-        primary key (id)
-    )
-2026-03-30 22:33:48.837 [main] DEBUG org.hibernate.SQL - 
-    create table queued_flow_executions (
-        iteration integer,
-        priority integer,
-        retry_count integer,
-        revolutions integer,
-        created_at timestamp(6) not null,
-        flow_group_id bigint,
-        flow_id bigint not null,
-        id bigint not null,
-        flow_execution_id uuid not null,
-        category varchar(255),
-        primary key (id)
-    )
-2026-03-30 22:33:48.839 [main] DEBUG org.hibernate.SQL - 
-    create table test_data (
-        application_id bigint,
-        created_at timestamp(6) not null,
-        data_id bigint not null,
-        updated_at timestamp(6) not null,
-        application_name varchar(255),
-        category varchar(255) not null,
-        description varchar(255),
-        variables json not null,
-        primary key (data_id)
-    )
-2026-03-30 22:33:48.840 [main] DEBUG org.hibernate.SQL - 
-    create index idx_queued_created_at 
-       on queued_flow_executions (created_at)
-2026-03-30 22:33:48.841 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_executions 
-       add constraint FKr71stky8abwyfobvpeefjc7fv 
-       foreign key (flow_group_id) 
-       references flow_groups
-2026-03-30 22:33:48.854 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists flow_steps 
-       add constraint FKp00aj00r8cvyydod3holpe5oh 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:33:48.856 [main] DEBUG org.hibernate.SQL - 
-    alter table if exists test_data 
-       add constraint FK3iretb06mhjh2gksyhkkj4cfx 
-       foreign key (application_id) 
-       references applications
-2026-03-30 22:33:52.437 [main] DEBUG o.s.w.s.s.s.WebSocketHandlerMapping - Patterns [/ws/flow-logs/{flowExecutionUUID}] in 'webSocketHandlerMapping'
-2026-03-30 22:33:52.973 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 22:33:53.179 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 64 mappings in 'requestMappingHandlerMapping'
-2026-03-30 22:33:53.338 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
-2026-03-30 22:33:53.416 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
-2026-03-30 22:33:53.506 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
-2026-03-30 22:33:54.383 [main] INFO  c.u.o.OrkestraV2ApiApplicationTests - Started OrkestraV2ApiApplicationTests in 10.283 seconds (process running for 11.061)
-2026-03-30 22:33:54.475 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 22:33:54.526 [main] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=?
-2026-03-30 22:33:54.526 [scheduling-1] DEBUG org.hibernate.SQL - 
-    select
-        pe1_0.id,
-        pe1_0.configured_test_data,
-        pe1_0.created_at,
-        pe1_0.end_time,
-        pe1_0.flow_execution_id,
-        pe1_0.flow_id,
-        pe1_0.flow_step_id,
-        pe1_0.is_replay,
-        pe1_0.job_id,
-        pe1_0.job_url,
-        pe1_0.pipeline_id,
-        pe1_0.pipeline_url,
-        pe1_0.resume_time,
-        pe1_0.runtime_test_data,
-        pe1_0.start_time,
-        pe1_0.status 
-    from
-        pipeline_executions pe1_0 
-    where
-        pe1_0.status=? 
-        and pe1_0.resume_time<?
-2026-03-30 22:33:54.558 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 22:33:54.560 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 22:33:54.571 [main] DEBUG org.hibernate.SQL - 
-    select
-        qfe1_0.id,
-        qfe1_0.category,
-        qfe1_0.created_at,
-        qfe1_0.flow_execution_id,
-        qfe1_0.flow_group_id,
-        qfe1_0.flow_id,
-        qfe1_0.iteration,
-        qfe1_0.priority,
-        qfe1_0.retry_count,
-        qfe1_0.revolutions 
-    from
-        queued_flow_executions qfe1_0
-2026-03-30 22:33:54.572 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 22:33:54.575 [main] DEBUG org.hibernate.SQL - 
-    select
-        fe1_0.id,
-        fe1_0.category,
-        fe1_0.created_at,
-        fe1_0.end_time,
-        fe1_0.flow_group_id,
-        fe1_0.flow_id,
-        fe1_0.is_replay,
-        fe1_0.iteration,
-        fe1_0.original_flow_execution_id,
-        fe1_0.replay_count,
-        fe1_0.revolutions,
-        fe1_0.runtime_variables,
-        fe1_0.start_time,
-        fe1_0.status 
-    from
-        flow_executions fe1_0 
-    where
-        fe1_0.status=?
-2026-03-30 22:33:54.576 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 22:33:54.576 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 22:33:55.033 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:55.039 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:55.040 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:55.041 [main] INFO  c.ubs.orkestra.util.OutputEnvParser - Successfully parsed 2 variables from output.env
-2026-03-30 22:33:55.080 [SpringApplicationShutdownHook] DEBUG o.s.w.c.s.GenericWebApplicationContext - Closing org.springframework.web.context.support.GenericWebApplicationContext@3b08f438, started on Mon Mar 30 22:33:44 IST 2026
-2026-03-30 22:33:55.094 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists applications cascade 
-2026-03-30 22:33:55.095 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists artifacts cascade 
-2026-03-30 22:33:55.096 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_executions cascade 
-2026-03-30 22:33:55.097 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_groups cascade 
-2026-03-30 22:33:55.097 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flow_steps cascade 
-2026-03-30 22:33:55.097 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists flows cascade 
-2026-03-30 22:33:55.097 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists pipeline_executions cascade 
-2026-03-30 22:33:55.098 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists queued_flow_executions cascade 
-2026-03-30 22:33:55.098 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop table if exists test_data cascade 
-2026-03-30 22:33:55.098 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists applications_seq
-2026-03-30 22:33:55.098 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists artifacts_id_seq
-2026-03-30 22:33:55.099 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_groups_id_seq
-2026-03-30 22:33:55.099 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flow_steps_seq
-2026-03-30 22:33:55.099 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists flows_seq
-2026-03-30 22:33:55.099 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists pipeline_executions_seq
-2026-03-30 22:33:55.099 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists queued_flow_executions_seq
-2026-03-30 22:33:55.099 [SpringApplicationShutdownHook] DEBUG org.hibernate.SQL - 
-    drop sequence if exists test_data_seq
-2026-03-30 23:58:22.183 [main] INFO  c.u.o.OrkestraV2ApiApplication - Starting OrkestraV2ApiApplication using Java 21.0.10 with PID 23968 (D:\dev\flow-forge-v1-groups-fixes\target\classes started by Mishr in D:\dev\flow-forge-v1-groups-fixes)
-2026-03-30 23:58:22.185 [main] INFO  c.u.o.OrkestraV2ApiApplication - The following 1 profile is active: "local"
-2026-03-30 23:58:24.438 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-30 23:58:25.219 [main] DEBUG org.hibernate.SQL - create table applications (id bigint not null, application_description varchar(255) not null, application_name varchar(255) not null, created_at timestamp(6) not null, gitlab_project_id varchar(255) not null, personal_access_token varchar(255) not null, project_name varchar(255), project_url varchar(255), token_status varchar(255) not null check (token_status in ('ACTIVE','EXPIRED','INVALID')), token_validation_last_update_date timestamp(6), updated_at timestamp(6) not null, primary key (id))
-2026-03-30 23:58:25.225 [main] DEBUG org.hibernate.SQL - create table artifacts (id bigint not null, artifact_name varchar(255) not null, created_at timestamp(6) not null, run_ids json not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 23:58:25.228 [main] DEBUG org.hibernate.SQL - create table flow_executions (id uuid not null, category varchar(255), created_at timestamp(6) not null, end_time timestamp(6), flow_id bigint not null, is_replay boolean, iteration integer, original_flow_execution_id uuid, replay_count integer, revolutions integer, runtime_variables json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), flow_group_id bigint, primary key (id))
-2026-03-30 23:58:25.228 [main] DEBUG org.hibernate.SQL - create table flow_groups (id bigint not null, created_at timestamp(6) not null, current_iteration integer not null, flow_group_name varchar(255) not null, flows json not null, revolutions integer not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 23:58:25.228 [main] DEBUG org.hibernate.SQL - create table flow_steps (id bigint not null, branch varchar(255) not null, created_at timestamp(6) not null, description varchar(255), timer_days varchar(255), timer_hours varchar(255), timer_minutes varchar(255), scheduler_type varchar(255), squash_step_ids json, test_data_ids json, test_stage varchar(255) not null, test_tag varchar(255) not null, updated_at timestamp(6) not null, application_id bigint not null, primary key (id))
-2026-03-30 23:58:25.231 [main] DEBUG org.hibernate.SQL - create table flows (id bigint not null, automation_status varchar(20) check (automation_status in ('AUTOMATED','PARTIAL','NOT_AUTOMATED')), created_at timestamp(6) not null, flow_step_ids json not null, squash_test_case varchar(255) not null, squash_test_case_id bigint not null, updated_at timestamp(6) not null, primary key (id))
-2026-03-30 23:58:25.231 [main] DEBUG org.hibernate.SQL - create table pipeline_executions (id bigint not null, configured_test_data json, created_at timestamp(6) not null, end_time timestamp(6), flow_execution_id uuid not null, flow_id bigint not null, flow_step_id bigint not null, is_replay boolean not null, job_id bigint, job_url varchar(255), pipeline_id bigint, pipeline_url varchar(255), resume_time timestamp(6), runtime_test_data json, start_time timestamp(6), status varchar(255) check (status in ('PENDING','RUNNING','PASSED','FAILED','CANCELLED','SCHEDULED','IN_PROGRESS')), primary key (id))
-2026-03-30 23:58:25.233 [main] DEBUG org.hibernate.SQL - create table queued_flow_executions (id bigint not null, category varchar(255), created_at timestamp(6) not null, flow_execution_id uuid not null, flow_group_id bigint, flow_id bigint not null, iteration integer, priority integer, retry_count integer, revolutions integer, primary key (id))
-2026-03-30 23:58:25.233 [main] DEBUG org.hibernate.SQL - create table test_data (data_id bigint not null, application_name varchar(255), category varchar(255) not null, created_at timestamp(6) not null, description varchar(255), updated_at timestamp(6) not null, variables json not null, application_id bigint, primary key (data_id))
-2026-03-30 23:58:25.235 [main] DEBUG org.hibernate.SQL - create index idx_queued_created_at on queued_flow_executions (created_at)
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence applications_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence artifacts_id_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence flow_groups_id_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence flow_steps_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence flows_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence pipeline_executions_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence queued_flow_executions_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - create sequence test_data_seq start with 1 increment by 1
-2026-03-30 23:58:25.236 [main] DEBUG org.hibernate.SQL - alter table if exists flow_executions add constraint FKr71stky8abwyfobvpeefjc7fv foreign key (flow_group_id) references flow_groups
-2026-03-30 23:58:25.245 [main] DEBUG org.hibernate.SQL - alter table if exists flow_steps add constraint FKp00aj00r8cvyydod3holpe5oh foreign key (application_id) references applications
-2026-03-30 23:58:25.245 [main] DEBUG org.hibernate.SQL - alter table if exists test_data add constraint FK3iretb06mhjh2gksyhkkj4cfx foreign key (application_id) references applications
-2026-03-30 23:58:27.085 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-03-30 23:58:27.774 [main] INFO  c.u.o.OrkestraV2ApiApplication - Started OrkestraV2ApiApplication in 6.018 seconds (process running for 6.309)
-2026-03-30 23:58:27.833 [main] INFO  c.u.o.s.PipelineStatusPollingService - === STARTUP RECOVERY: Checking for in-flight pipeline executions ===
-2026-03-30 23:58:27.858 [main] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=?
-2026-03-30 23:58:27.858 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 23:58:27.867 [main] INFO  c.u.o.s.PipelineStatusPollingService - No in-flight pipeline executions found. Service restart was clean.
-2026-03-30 23:58:27.868 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue ===
-2026-03-30 23:58:27.869 [main] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0
-2026-03-30 23:58:27.869 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no queued flows in DB queue
-2026-03-30 23:58:27.876 [main] DEBUG org.hibernate.SQL - select fe1_0.id,fe1_0.category,fe1_0.created_at,fe1_0.end_time,fe1_0.flow_group_id,fe1_0.flow_id,fe1_0.is_replay,fe1_0.iteration,fe1_0.original_flow_execution_id,fe1_0.replay_count,fe1_0.revolutions,fe1_0.runtime_variables,fe1_0.start_time,fe1_0.status from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 23:58:27.876 [main] INFO  c.u.o.s.FlowExecutionQueueService - Startup recovery: no orphaned RUNNING flow executions found
-2026-03-30 23:58:27.878 [main] DEBUG org.hibernate.SQL - select count(fe1_0.id) from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 23:58:27.885 [main] INFO  c.u.o.s.FlowExecutionQueueService - === STARTUP RECOVERY: Flow Execution Queue COMPLETE ===
-2026-03-30 23:58:37.788 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 23:58:37.793 [scheduling-1] DEBUG org.hibernate.SQL - select fe1_0.id,fe1_0.category,fe1_0.created_at,fe1_0.end_time,fe1_0.flow_group_id,fe1_0.flow_id,fe1_0.is_replay,fe1_0.iteration,fe1_0.original_flow_execution_id,fe1_0.replay_count,fe1_0.revolutions,fe1_0.runtime_variables,fe1_0.start_time,fe1_0.status from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 23:58:37.793 [scheduling-1] DEBUG org.hibernate.SQL - select count(fe1_0.id) from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 23:58:37.793 [scheduling-1] DEBUG org.hibernate.SQL - select fe1_0.id,fe1_0.category,fe1_0.created_at,fe1_0.end_time,fe1_0.flow_group_id,fe1_0.flow_id,fe1_0.is_replay,fe1_0.iteration,fe1_0.original_flow_execution_id,fe1_0.replay_count,fe1_0.revolutions,fe1_0.runtime_variables,fe1_0.start_time,fe1_0.status from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 23:58:57.776 [scheduling-1] DEBUG org.hibernate.SQL - select pe1_0.id,pe1_0.configured_test_data,pe1_0.created_at,pe1_0.end_time,pe1_0.flow_execution_id,pe1_0.flow_id,pe1_0.flow_step_id,pe1_0.is_replay,pe1_0.job_id,pe1_0.job_url,pe1_0.pipeline_id,pe1_0.pipeline_url,pe1_0.resume_time,pe1_0.runtime_test_data,pe1_0.start_time,pe1_0.status from pipeline_executions pe1_0 where pe1_0.status=? and pe1_0.resume_time<?
-2026-03-30 23:59:07.801 [scheduling-1] DEBUG org.hibernate.SQL - select qfe1_0.id,qfe1_0.category,qfe1_0.created_at,qfe1_0.flow_execution_id,qfe1_0.flow_group_id,qfe1_0.flow_id,qfe1_0.iteration,qfe1_0.priority,qfe1_0.retry_count,qfe1_0.revolutions from queued_flow_executions qfe1_0 order by qfe1_0.priority desc,qfe1_0.created_at offset ? rows fetch first ? rows only
-2026-03-30 23:59:07.849 [scheduling-1] DEBUG org.hibernate.SQL - select fe1_0.id,fe1_0.category,fe1_0.created_at,fe1_0.end_time,fe1_0.flow_group_id,fe1_0.flow_id,fe1_0.is_replay,fe1_0.iteration,fe1_0.original_flow_execution_id,fe1_0.replay_count,fe1_0.revolutions,fe1_0.runtime_variables,fe1_0.start_time,fe1_0.status from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 23:59:07.851 [scheduling-1] DEBUG org.hibernate.SQL - select count(fe1_0.id) from flow_executions fe1_0 where fe1_0.status=?
-2026-03-30 23:59:07.853 [scheduling-1] DEBUG org.hibernate.SQL - select fe1_0.id,fe1_0.category,fe1_0.created_at,fe1_0.end_time,fe1_0.flow_group_id,fe1_0.flow_id,fe1_0.is_replay,fe1_0.iteration,fe1_0.original_flow_execution_id,fe1_0.replay_count,fe1_0.revolutions,fe1_0.runtime_variables,fe1_0.start_time,fe1_0.status from flow_executions fe1_0 where fe1_0.status=?

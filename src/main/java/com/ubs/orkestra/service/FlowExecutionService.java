@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -73,16 +72,6 @@ public class FlowExecutionService {
 
     @Autowired
     private FlowExecutionQueueService flowExecutionQueueService;
-
-    @Autowired
-    @Lazy
-    private PipelineStatusPollingService pipelineStatusPollingService;
-
-    @org.springframework.beans.factory.annotation.Value("${scheduling.pipeline-status.polling-interval:30000}")
-    private long scheduledPollingIntervalMs;
-
-    @org.springframework.beans.factory.annotation.Value("${flow-execution.polling-interval:5000}")
-    private long flowExecutionPollingIntervalMs;
 
     @org.springframework.beans.factory.annotation.Value("${flow-execution.max-concurrent-flows:50}")
     private int maxConcurrentFlows;
@@ -467,9 +456,6 @@ public class FlowExecutionService {
 
                 logger.info("MOCK: First pipeline triggered successfully: {} for step {}", mockPipelineId, step.getId());
 
-                // Register for polling — mock completion is detected by elapsed-time check in PipelineStatusPollingService
-                pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
-
             } else {
                 // Real GitLab API call
                 GitLabApiClient.GitLabPipelineResponse response = null;
@@ -495,10 +481,8 @@ public class FlowExecutionService {
                     pipelineExecution.setPipelineUrl(response.getWebUrl());
                     pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
 
-                    logger.info("First pipeline triggered successfully: {} for step {}", response.getId(), step.getId());
-
-                    // Register for polling — PipelineStatusPollingService drives advancement when done
-                    pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+                    logger.info("First pipeline triggered successfully: {} for step {}. Webhook will handle completion.",
+                               response.getId(), step.getId());
 
                 } else {
                     logger.error("Failed to trigger first pipeline - null response from GitLab API");
@@ -518,27 +502,16 @@ public class FlowExecutionService {
         return pipelineExecution;
     }
 
-    // DEPRECATED: Replaced by PipelineStatusPollingService scheduled polling
-    // Kept for backward compatibility but not actively used
-    @Deprecated
-    @Async("pipelinePollingTaskExecutor")
-    public void pollPipelineCompletionAsync(PipelineExecution pipelineExecution, Application application, String gitlabBaseUrl, FlowStep step) {
-        logger.warn("DEPRECATED: Using old pollPipelineCompletionAsync method. Should use PipelineStatusPollingService instead.");
-        
-        // Delegate to new polling service
-        pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
-    }
-
     /**
-     * Fire-and-poll architecture: this method no longer drives the step-by-step loop.
-     * Step-0 is already triggered by {@link #createFlowExecution} and registered for polling.
+     * Fire-and-webhook architecture: pipelines are triggered and completion is handled via GitLab WebHooks.
+     * Step-0 is triggered by {@link #createFlowExecution}.
      * Subsequent steps are driven by {@link #advanceFlowToNextStep}, which is called by
-     * {@link PipelineStatusPollingService#triggerFlowContinuation} whenever a pipeline completes.
+     * the webhook endpoint whenever a pipeline completes.
      *
      * <p>This method's only remaining jobs are:
      * <ul>
      *   <li>Starting PENDING flows (called from FlowExecutionQueueService when capacity opens)</li>
-     *   <li>Re-registering in-flight pipelines for polling after a service restart (recovery)</li>
+     *   <li>Handling recovery scenarios on service restart</li>
      * </ul>
      */
     @Async("flowExecutionTaskExecutor")
@@ -566,14 +539,12 @@ public class FlowExecutionService {
                 return CompletableFuture.completedFuture(convertToDto(flowExecution));
             }
 
-            // RUNNING flow: find any pipelines that are RUNNING and ensure they are registered
-            // for polling. Covers the restart-recovery case where polling context was lost.
+            // RUNNING flow: check for any in-flight pipelines that may need recovery
+            // This handles the restart-recovery case where webhook may have been missed
             pipelineExecutionRepository.findByFlowExecutionIdOrderByCreatedAt(flowExecutionId).stream()
                 .filter(pe -> pe.getStatus() == ExecutionStatus.RUNNING)
-                .forEach(pe -> {
-                    logger.info("executeFlowAsync: re-registering in-flight pipeline {} for polling (recovery)", pe.getId());
-                    pipelineStatusPollingService.registerPipelineForPolling(pe);
-                });
+                .forEach(pe -> logger.info("executeFlowAsync: found in-flight pipeline {} for flow execution {}", 
+                                          pe.getId(), flowExecutionId));
 
             return CompletableFuture.completedFuture(convertToDto(flowExecution));
         } catch (Exception e) {
@@ -758,9 +729,12 @@ public class FlowExecutionService {
     }
 
     /**
-     * Triggers the GitLab pipeline for a flow step and registers it for polling.
-     * This is the "fire" half of the fire-and-poll architecture.
+     * Triggers the GitLab pipeline for a flow step and registers it for webhook-based completion tracking.
+     * This is the "fire" half of the fire-and-webhook architecture.
      * Thread held only for the duration of the trigger API call (~1-5 s).
+     * 
+     * The FLOW_EXECUTION_ID is injected as a GitLab pipeline variable so it can be
+     * returned in the webhook payload to identify which flow execution to update.
      */
     private void triggerAndRegisterStep(FlowExecution flowExecution, FlowStep step, Map<String, String> pipelineVars) {
         logger.info("triggerAndRegisterStep: flow={} step={}", flowExecution.getId(), step.getId());
@@ -773,12 +747,15 @@ public class FlowExecutionService {
             return;
         }
 
+        // Merge variables: pipeline vars + system vars + FLOW_EXECUTION_ID for webhook correlation
         Map<String, String> mergedVars = new HashMap<>(pipelineVars);
         if (step.getTestTag() != null && !step.getTestTag().trim().isEmpty()) {
             mergedVars.put("testTag", step.getTestTag());
         }
         mergedVars.put("EXECUTION_UUID", flowExecution.getId().toString());
         mergedVars.put("APP_NAME", step.getApplication().getApplicationName());
+        // Inject FlowExecutionId as a GitLab variable - this will be returned in the webhook
+        mergedVars.put("FLOW_EXECUTION_ID", flowExecution.getId().toString());
 
         pe.setStatus(ExecutionStatus.RUNNING);
         pe.setStartTime(LocalDateTime.now());
@@ -789,7 +766,6 @@ public class FlowExecutionService {
             pe.setPipelineId(mockId);
             pe.setPipelineUrl("https://gitlab.com/" + step.getApplication().getGitlabProjectId() + "/-/pipelines/" + mockId);
             pe = pipelineExecutionRepository.save(pe);
-            pipelineStatusPollingService.registerPipelineForPolling(pe);
             logger.info("MOCK: pipeline triggered for step {}: id={}", step.getId(), mockId);
         } else {
             try {
@@ -804,8 +780,10 @@ public class FlowExecutionService {
                     pe.setPipelineId(response.getId());
                     pe.setPipelineUrl(response.getWebUrl());
                     pe = pipelineExecutionRepository.save(pe);
-                    pipelineStatusPollingService.registerPipelineForPolling(pe);
-                    logger.info("Pipeline triggered for step {}: id={}", step.getId(), response.getId());
+                    // Note: No longer registering for polling - webhook will handle completion
+                    // The webhook endpoint will receive FLOW_EXECUTION_ID and call advanceFlowToNextStep
+                    logger.info("Pipeline triggered for step {}: id={}. Webhook will handle completion.", 
+                               step.getId(), response.getId());
                 } else {
                     logger.error("triggerAndRegisterStep: null response for step {}", step.getId());
                     pe.setStatus(ExecutionStatus.FAILED);
@@ -1115,11 +1093,8 @@ public class FlowExecutionService {
                 pipelineExecution.setPipelineId(mockPipelineId);
                 pipelineExecution.setPipelineUrl(mockPipelineUrl);
                 pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
-                
-                logger.info("MOCK: REPLAY Pipeline triggered successfully: {} for step {}", mockPipelineId, step.getId());
 
-                // Register for polling — mock completion handled by PipelineStatusPollingService
-                pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+                logger.info("MOCK: REPLAY Pipeline triggered successfully: {} for step {}", mockPipelineId, step.getId());
 
             } else {
                 // Real GitLab API call
@@ -1147,10 +1122,8 @@ public class FlowExecutionService {
                     pipelineExecution.setPipelineUrl(response.getWebUrl());
                     pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
 
-                    logger.info("REPLAY Pipeline triggered successfully: {} for step {}", response.getId(), step.getId());
-
-                    // Register for polling — advancement driven by PipelineStatusPollingService
-                    pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+                    logger.info("REPLAY Pipeline triggered successfully: {} for step {}. Webhook will handle completion.",
+                               response.getId(), step.getId());
                 } else {
                     logger.error("Failed to trigger REPLAY pipeline - null response from GitLab API");
                     pipelineExecution.setStatus(ExecutionStatus.FAILED);
@@ -1225,11 +1198,8 @@ public class FlowExecutionService {
                 pipelineExecution.setPipelineId(mockPipelineId);
                 pipelineExecution.setPipelineUrl(mockPipelineUrl);
                 pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
-                
-                logger.info("MOCK: Pipeline triggered successfully: {} for step {}", mockPipelineId, step.getId());
 
-                // Register for polling — mock completion is detected by elapsed-time check
-                pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+                logger.info("MOCK: Pipeline triggered successfully: {} for step {}", mockPipelineId, step.getId());
 
             } else {
                 // Real GitLab API call
@@ -1257,10 +1227,8 @@ public class FlowExecutionService {
                     pipelineExecution.setPipelineUrl(response.getWebUrl());
                     pipelineExecution = pipelineExecutionRepository.save(pipelineExecution);
 
-                    logger.info("Pipeline triggered successfully: {} for step {}", response.getId(), step.getId());
-
-                    // Register for polling — PipelineStatusPollingService drives advancement on completion
-                    pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+                    logger.info("Pipeline triggered successfully: {} for step {}. Webhook will handle completion.",
+                               response.getId(), step.getId());
                 } else {
                     logger.error("Failed to trigger pipeline - null response from GitLab API");
                     pipelineExecution.setStatus(ExecutionStatus.FAILED);
@@ -1430,28 +1398,22 @@ public class FlowExecutionService {
 
     /**
      * Wait for a pipeline that is already running to complete
+     * DEPRECATED: WebHook-based completion is now the primary mechanism.
      */
-    // DEPRECATED: Replaced by PipelineStatusPollingService.waitForPipelineCompletion
-    // Kept for backward compatibility but not actively used
     @Deprecated
     private PipelineExecution waitForPipelineCompletion(PipelineExecution pipelineExecution, Application application, FlowStep step) {
-        logger.warn("DEPRECATED: Using old waitForPipelineCompletion method. Should use PipelineStatusPollingService instead.");
-        
-        // Delegate to new polling service
-        pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
-        return pipelineStatusPollingService.waitForPipelineCompletion(pipelineExecution, 3600000);
+        logger.warn("DEPRECATED: Using old waitForPipelineCompletion method. WebHook-based completion is now used.");
+        return pipelineExecution;
     }
 
-    // DEPRECATED: Replaced by PipelineStatusPollingService scheduled polling
-    // Kept for backward compatibility but not actively used
+    /**
+     * DEPRECATED: WebHook-based completion is now the primary mechanism.
+     */
     @Deprecated
     @Async("pipelinePollingTaskExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void pollPipelineCompletion(PipelineExecution pipelineExecution, Application application, String gitlabBaseUrl, FlowStep step) {
-        logger.warn("DEPRECATED: Using old pollPipelineCompletion method. Should use PipelineStatusPollingService instead.");
-        
-        // Delegate to new polling service
-        pipelineStatusPollingService.registerPipelineForPolling(pipelineExecution);
+        logger.warn("DEPRECATED: Using old pollPipelineCompletion method. WebHook-based completion is now used.");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)

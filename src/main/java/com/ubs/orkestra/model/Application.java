@@ -47,6 +47,9 @@ public class Application {
     @Column(name = "token_validation_last_update_date")
     private LocalDateTime tokenValidationLastUpdateDate;
 
+    @Column(name = "webhook_id")
+    private Long webhookId;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -150,5 +153,13 @@ public class Application {
 
     public void setTokenValidationLastUpdateDate(LocalDateTime tokenValidationLastUpdateDate) {
         this.tokenValidationLastUpdateDate = tokenValidationLastUpdateDate;
+    }
+
+    public Long getWebhookId() {
+        return webhookId;
+    }
+
+    public void setWebhookId(Long webhookId) {
+        this.webhookId = webhookId;
     }
 }

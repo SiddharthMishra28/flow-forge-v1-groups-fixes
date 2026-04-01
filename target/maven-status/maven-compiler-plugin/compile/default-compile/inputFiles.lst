@@ -4,6 +4,7 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowGroupDt
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\analytics\FailureAnalysisDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\FlowGroup.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\TestDataController.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\config\GitLabWebHookConfig.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\SyncStatusDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\PipelineExecution.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\CombinedFlowDto.java
@@ -34,12 +35,14 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\Flow.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\FlowStepRepository.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\TokenValidationScheduler.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowGroupCreateDto.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\PipelineWebHookController.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\SyncController.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\config\CorsConfig.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\controller\FlowController.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\exception\GlobalExceptionHandler.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\ApplicationDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\ValidationRequestDto.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\PipelineWebHookService.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\websocket\FlowLogWebSocketHandler.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\service\FlowExecutionService.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\FlowExecutionRepository.java
@@ -91,6 +94,7 @@ D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\analytics\E
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowGroupUpdateDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\model\FlowStep.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\config\WebSocketConfig.java
+D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\GitLabWebHookPayload.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\FlowExecutionRequestDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\dto\TimerDto.java
 D:\dev\flow-forge-v1-groups-fixes\src\main\java\com\ubs\orkestra\repository\FlowRepository.java

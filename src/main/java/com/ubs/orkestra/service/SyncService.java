@@ -295,7 +295,6 @@ public class SyncService {
             logger.info("Pipeline executions skipped: {}", skippedPipelines);
             logger.info("Orphaned pipeline executions (flow edited): {}", orphanedPipelines);
             logger.info("Recovered orphaned pipelines via URL: {}", recoveredPipelines);
-            logger.info("Active pipelines being polled: {}", pipelineStatusPollingService.getActivePollCount());
 
             syncStatus.setMessage(String.format(
                 "Sync completed. Processed %d flow executions, updated %d pipelines, failed %d, skipped %d, orphaned %d, recovered %d",
@@ -552,16 +551,16 @@ public class SyncService {
                                   pipeline.getPipelineId(), previousStatus, newStatus);
                     }
                 } else {
-                    // Pipeline still running - register for polling
+                    // Pipeline still running - this shouldn't happen with webhook-based completion
+                    // Mark as FAILED since webhook should have handled it
+                    logger.warn("Pipeline {} still running in GitLab but webhook was not received. Marking as FAILED.",
+                               pipeline.getPipelineId());
                     if (pipeline.getStatus() != ExecutionStatus.RUNNING) {
                         pipeline.setStatus(ExecutionStatus.RUNNING);
                         result.wasUpdated = true;
                     }
-                    
-                    // Register for active polling
-                    pipelineStatusPollingService.registerPipelineForPolling(pipeline);
-                    logger.info("Pipeline {} still running, registered for polling", 
-                              pipeline.getPipelineId());
+                    pipeline.setStatus(ExecutionStatus.FAILED);
+                    pipeline.setEndTime(LocalDateTime.now());
                 }
 
                 if (result.wasUpdated) {

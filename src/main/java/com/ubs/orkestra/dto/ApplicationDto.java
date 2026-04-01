@@ -49,6 +49,9 @@ public class ApplicationDto {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Timestamp when the record was last updated")
     private LocalDateTime updatedAt;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "GitLab webhook ID (auto-registered)")
+    private Long webhookId;
+
     // Constructors
     public ApplicationDto() {}
 
@@ -144,5 +147,13 @@ public class ApplicationDto {
 
     public void setTokenValidationLastUpdateDate(LocalDateTime tokenValidationLastUpdateDate) {
         this.tokenValidationLastUpdateDate = tokenValidationLastUpdateDate;
+    }
+
+    public Long getWebhookId() {
+        return webhookId;
+    }
+
+    public void setWebhookId(Long webhookId) {
+        this.webhookId = webhookId;
     }
 }

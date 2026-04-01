@@ -65,4 +65,7 @@ public interface PipelineExecutionRepository extends JpaRepository<PipelineExecu
     
     // Method to find scheduled executions ready to resume
     List<PipelineExecution> findByStatusAndResumeTimeBefore(ExecutionStatus status, LocalDateTime resumeTime);
+
+    // Method to find pipeline execution by GitLab pipeline ID
+    List<PipelineExecution> findByPipelineId(Long pipelineId);
 }

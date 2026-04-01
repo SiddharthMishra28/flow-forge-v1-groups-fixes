@@ -758,4 +758,336 @@ public class GitLabApiClient {
             this.webUrl = webUrl;
         }
     }
+
+    /**
+     * Create a project webhook in GitLab
+     */
+    public Mono<GitLabWebHookResponse> createWebhook(String gitlabBaseUrl, String projectId,
+                                                     String accessToken, String webhookUrl, String secretToken) {
+        String url = String.format("%s/api/v4/projects/%s/hooks", gitlabBaseUrl, projectId);
+
+        logger.info("Creating webhook for project {} with URL {}", projectId, webhookUrl);
+
+        GitLabWebHookRequest request = new GitLabWebHookRequest(webhookUrl, secretToken);
+
+        return webClient.post()
+                .uri(url)
+                .header("PRIVATE-TOKEN", accessToken)
+                .header("Content-Type", "application/json")
+                .bodyValue(request)
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                         response -> response.bodyToMono(String.class)
+                                 .doOnNext(body -> logger.error("GitLab API error response: {}", body))
+                                 .then(Mono.error(new RuntimeException("GitLab API error: " + response.statusCode()))))
+                .bodyToMono(GitLabWebHookResponse.class)
+                .timeout(Duration.ofSeconds(30))
+                .retryWhen(transientRetry("createWebhook"))
+                .doOnSuccess(response -> logger.info("Webhook created successfully with ID: {}", response.getId()))
+                .doOnError(error -> logger.error("Failed to create webhook: {}", error.getMessage()));
+    }
+
+    /**
+     * Get all webhooks for a project
+     */
+    public Mono<GitLabWebHookResponse[]> getWebhooks(String gitlabBaseUrl, String projectId, String accessToken) {
+        String url = String.format("%s/api/v4/projects/%s/hooks", gitlabBaseUrl, projectId);
+
+        logger.debug("Getting webhooks for project {}", projectId);
+
+        return webClient.get()
+                .uri(url)
+                .header("PRIVATE-TOKEN", accessToken)
+                .retrieve()
+                .bodyToMono(GitLabWebHookResponse[].class)
+                .timeout(Duration.ofSeconds(15))
+                .retryWhen(transientRetry("getWebhooks"))
+                .doOnError(error -> logger.error("Failed to get webhooks: {}", error.getMessage()));
+    }
+
+    /**
+     * Update a project webhook
+     */
+    public Mono<GitLabWebHookResponse> updateWebhook(String gitlabBaseUrl, String projectId,
+                                                     Long hookId, String accessToken, String webhookUrl, String secretToken) {
+        String url = String.format("%s/api/v4/projects/%s/hooks/%d", gitlabBaseUrl, projectId, hookId);
+
+        logger.info("Updating webhook {} for project {} with URL {}", hookId, projectId, webhookUrl);
+
+        GitLabWebHookRequest request = new GitLabWebHookRequest(webhookUrl, secretToken);
+
+        return webClient.put()
+                .uri(url)
+                .header("PRIVATE-TOKEN", accessToken)
+                .header("Content-Type", "application/json")
+                .bodyValue(request)
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                         response -> response.bodyToMono(String.class)
+                                 .doOnNext(body -> logger.error("GitLab API error response: {}", body))
+                                 .then(Mono.error(new RuntimeException("GitLab API error: " + response.statusCode()))))
+                .bodyToMono(GitLabWebHookResponse.class)
+                .timeout(Duration.ofSeconds(30))
+                .retryWhen(transientRetry("updateWebhook"))
+                .doOnSuccess(response -> logger.info("Webhook {} updated successfully", hookId))
+                .doOnError(error -> logger.error("Failed to update webhook: {}", error.getMessage()));
+    }
+
+    /**
+     * Delete a project webhook
+     */
+    public Mono<Void> deleteWebhook(String gitlabBaseUrl, String projectId,
+                                    Long hookId, String accessToken) {
+        String url = String.format("%s/api/v4/projects/%s/hooks/%d", gitlabBaseUrl, projectId, hookId);
+
+        logger.info("Deleting webhook {} for project {}", hookId, projectId);
+
+        return webClient.delete()
+                .uri(url)
+                .header("PRIVATE-TOKEN", accessToken)
+                .retrieve()
+                .toBodilessEntity()
+                .then()
+                .timeout(Duration.ofSeconds(30))
+                .retryWhen(transientRetry("deleteWebhook"))
+                .doOnSuccess(voidValue -> logger.info("Webhook {} deleted successfully", hookId))
+                .doOnError(error -> logger.error("Failed to delete webhook: {}", error.getMessage()));
+    }
+
+    /**
+     * Find a webhook by URL from the list of webhooks
+     */
+    public GitLabWebHookResponse findWebhookByUrl(GitLabWebHookResponse[] webhooks, String webhookUrl) {
+        if (webhooks == null || webhooks.length == 0) {
+            return null;
+        }
+        for (GitLabWebHookResponse webhook : webhooks) {
+            if (webhook.getUrl() != null && webhook.getUrl().equals(webhookUrl)) {
+                return webhook;
+            }
+        }
+        return null;
+    }
+
+    // ==================== WebHook DTOs ====================
+
+    /**
+     * Request body for creating/updating a webhook
+     */
+    public static class GitLabWebHookRequest {
+        private String url;
+        private String token;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("push_events")
+        private boolean pushEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("issues_events")
+        private boolean issuesEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("confidential_issues_events")
+        private boolean confidentialIssuesEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("merge_requests_events")
+        private boolean mergeRequestsEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("tag_push_events")
+        private boolean tagPushEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("note_events")
+        private boolean noteEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("job_events")
+        private boolean jobEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("pipeline_events")
+        private boolean pipelineEvents = true;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("pipeline_success_events")
+        private boolean pipelineSuccessEvents = true;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("pipeline_failure_events")
+        private boolean pipelineFailureEvents = true;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("confidential_note_events")
+        private boolean confidentialNoteEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("deployment_events")
+        private boolean deploymentEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("releases_events")
+        private boolean releasesEvents = false;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("enable_ssl_verification")
+        private boolean enableSslVerification = true;
+
+        public GitLabWebHookRequest() {}
+
+        public GitLabWebHookRequest(String url, String token) {
+            this.url = url;
+            this.token = token;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+    }
+
+    /**
+     * Response body for webhook operations
+     */
+    public static class GitLabWebHookResponse {
+        private Long id;
+        private String url;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("project_id")
+        private Long projectId;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("created_at")
+        private String createdAt;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("push_events")
+        private boolean pushEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("issues_events")
+        private boolean issuesEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("confidential_issues_events")
+        private boolean confidentialIssuesEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("merge_requests_events")
+        private boolean mergeRequestsEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("tag_push_events")
+        private boolean tagPushEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("note_events")
+        private boolean noteEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("job_events")
+        private boolean jobEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("pipeline_events")
+        private boolean pipelineEvents;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("enable_ssl_verification")
+        private boolean enableSslVerification;
+
+        public GitLabWebHookResponse() {}
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Long getProjectId() {
+            return projectId;
+        }
+
+        public void setProjectId(Long projectId) {
+            this.projectId = projectId;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public boolean isPushEvents() {
+            return pushEvents;
+        }
+
+        public void setPushEvents(boolean pushEvents) {
+            this.pushEvents = pushEvents;
+        }
+
+        public boolean isIssuesEvents() {
+            return issuesEvents;
+        }
+
+        public void setIssuesEvents(boolean issuesEvents) {
+            this.issuesEvents = issuesEvents;
+        }
+
+        public boolean isConfidentialIssuesEvents() {
+            return confidentialIssuesEvents;
+        }
+
+        public void setConfidentialIssuesEvents(boolean confidentialIssuesEvents) {
+            this.confidentialIssuesEvents = confidentialIssuesEvents;
+        }
+
+        public boolean isMergeRequestsEvents() {
+            return mergeRequestsEvents;
+        }
+
+        public void setMergeRequestsEvents(boolean mergeRequestsEvents) {
+            this.mergeRequestsEvents = mergeRequestsEvents;
+        }
+
+        public boolean isTagPushEvents() {
+            return tagPushEvents;
+        }
+
+        public void setTagPushEvents(boolean tagPushEvents) {
+            this.tagPushEvents = tagPushEvents;
+        }
+
+        public boolean isNoteEvents() {
+            return noteEvents;
+        }
+
+        public void setNoteEvents(boolean noteEvents) {
+            this.noteEvents = noteEvents;
+        }
+
+        public boolean isJobEvents() {
+            return jobEvents;
+        }
+
+        public void setJobEvents(boolean jobEvents) {
+            this.jobEvents = jobEvents;
+        }
+
+        public boolean isPipelineEvents() {
+            return pipelineEvents;
+        }
+
+        public void setPipelineEvents(boolean pipelineEvents) {
+            this.pipelineEvents = pipelineEvents;
+        }
+
+        public boolean isEnableSslVerification() {
+            return enableSslVerification;
+        }
+
+        public void setEnableSslVerification(boolean enableSslVerification) {
+            this.enableSslVerification = enableSslVerification;
+        }
+    }
 }

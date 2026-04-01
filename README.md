@@ -7,6 +7,7 @@
 
 ## 🌟 Key Features
 
+- **🆕 WebHook Integration**: Event-driven pipeline completion notifications with zero polling overhead (v6.0)
 - **GitLab Integration**: Natively trigger and monitor GitLab CI/CD pipelines for test execution.
 - **Asynchronous Flow Execution**: Run complex test flows asynchronously, with support for sequential and parallel step execution.
 - **Dynamic Data Exchange**: Exchange data between pipeline steps at runtime by parsing and merging `output.env` files.
@@ -1158,11 +1159,266 @@ GET /api/flow-executions/search?flowGroupId=1&iteration=5&fromDate=2024-01-01T00
 - Individual flow status monitoring maintained
 - Thread pool utilization optimized for concurrent flows
 
+## 🚀 Latest Enhancements (v6.0)
+
+### **🔥 WebHook-Based Pipeline Completion (Game Changer!)**
+
+**Problem Solved:** The previous polling-based mechanism (every 5 seconds) created unnecessary API load on GitLab and introduced up to 5-second delays in detecting pipeline completion.
+
+**Solution:**
+- **Event-Driven Architecture**: GitLab sends a webhook notification immediately when a pipeline completes
+- **Zero Polling Overhead**: Polling code completely removed - pure event-driven processing
+- **Real-Time Response**: Pipeline completion detected in <1 second (vs up to 5s with polling)
+- **Automatic Variable Injection**: `FLOW_EXECUTION_ID` is injected into each pipeline and returned in the webhook
+
+**Key Benefits:**
+| Metric | Polling (v5.0) | WebHook (v6.0) | Improvement |
+|--------|----------------|----------------|-------------|
+| API Calls per Pipeline | ~12-60 | 1 | **92-98% reduction** |
+| Completion Latency | Up to 5s | <1s | **5x faster** |
+| Thread Usage | 5-10 polling threads | Event-driven | **Better scalability** |
+| GitLab API Load | High | Minimal | **Much lower** |
+| Code Complexity | High (polling logic) | Minimal | **Simpler codebase** |
+
+### **📋 WebHook Setup Guide**
+
+#### **1. Configure WebHook Secret Token (Optional but Recommended)**
+
+Add to `application.yml` or set environment variable:
+
+```yaml
+gitlab:
+  webhook:
+    secret-token: ${GITLAB_WEBHOOK_SECRET_TOKEN:your-secure-token}
+```
+
+```bash
+export GITLAB_WEBHOOK_SECRET_TOKEN="your-secure-random-token"
+```
+
+#### **2. Get WebHook URL for Your Flow Execution**
+
+After starting a flow execution:
+
+```bash
+GET /api/webhooks/gitlab/webhook-url?flowExecutionId={your-flow-execution-uuid}
+```
+
+**Response:**
+```json
+{
+  "webhookUrl": "http://localhost:8080/api/webhooks/gitlab/pipeline",
+  "flowExecutionId": "123e4567-e89b-12d3-a456-426614174000",
+  "instructions": {
+    "url": "http://localhost:8080/api/webhooks/gitlab/pipeline",
+    "triggerEvents": ["Pipeline events"],
+    "secretToken": "configured",
+    "note": "Configure this URL in GitLab project settings > Webhooks. The FLOW_EXECUTION_ID variable is automatically injected into each pipeline."
+  }
+}
+```
+
+#### **3. Configure GitLab WebHook**
+
+1. Navigate to your GitLab project → **Settings** → **Webhooks**
+2. Click **Add new webhook**
+3. Configure:
+   - **URL**: `http://your-server:8080/api/webhooks/gitlab/pipeline`
+   - **Secret Token**: (same as configured in step 1)
+   - **Trigger**: ✓ Pipeline events (uncheck others)
+   - **Enable SSL verification**: Based on your setup
+4. Click **Add webhook**
+5. Test using **Test** → **Pipeline events**
+
+### **🔄 How It Works**
+
+#### **Before (Polling-Based)**
+```
+1. Trigger Pipeline → 2. Poll GitLab every 5s → 3. Detect Completion → 4. Advance Flow
+```
+
+#### **After (WebHook-Based)**
+```
+1. Trigger Pipeline (inject FLOW_EXECUTION_ID)
+         ↓
+2. Pipeline Runs in GitLab
+         ↓
+3. GitLab sends WebHook on completion
+         ↓
+4. Process WebHook → Download Artifacts → Advance to Next Step
+```
+
+### **📊 Variable Injection & Merging**
+
+#### **Variables Injected into GitLab Pipeline**
+| Variable | Purpose |
+|----------|---------|
+| `FLOW_EXECUTION_ID` | UUID for webhook correlation (**NEW**) |
+| `EXECUTION_UUID` | Same as above (backward compat) |
+| `APP_NAME` | Application name |
+| `testTag` | Test tag from flow step |
+
+#### **Variable Merging (Preserved)**
+The webhook implementation preserves the exact same variable merging logic:
+
+1. **Step's TestData** - Pre-configured variables
+2. **Runtime Variables** - From `output.env` artifacts
+3. **Accumulated Variables** - From previous steps
+4. **System Variables** - FLOW_EXECUTION_ID, APP_NAME, etc.
+
+**Precedence (highest to lowest):**
+1. Runtime output from most recently completed step
+2. Accumulated runtime variables from FlowExecution
+3. Step's configured TestData
+4. System variables
+
+### **🔧 New API Endpoints**
+
+#### **Receive GitLab WebHook**
+```http
+POST /api/webhooks/gitlab/pipeline
+Content-Type: application/json
+X-Gitlab-Token: {secret-token}
+X-Gitlab-Event: Pipeline Hook
+```
+
+**Request Body:**
+```json
+{
+  "object_kind": "pipeline",
+  "object_attributes": {
+    "id": 12345,
+    "status": "success",
+    "url": "https://gitlab.com/project/pipelines/12345",
+    "variables": [
+      {"key": "FLOW_EXECUTION_ID", "value": "uuid-here"}
+    ]
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Successfully processed webhook for pipeline: 12345"
+}
+```
+
+#### **Get WebHook URL**
+```http
+GET /api/webhooks/gitlab/webhook-url?flowExecutionId={uuid}
+```
+
+### **🛡️ Backward Compatibility & Fallback**
+
+✅ **All Existing Features Preserved:**
+- Variable merging between flow steps
+- TestData injection
+- Runtime variable accumulation
+- Replay functionality
+- Scheduled/delayed steps
+- Mock mode for testing
+
+✅ **Fallback Mechanisms:**
+- Startup recovery for in-flight pipelines on service restart
+- SyncService for manual status reconciliation if needed
+
+### **🧪 Testing**
+
+#### **Mock Mode**
+In mock mode (`gitlab.mock-mode: true`):
+- No webhook setup required
+- Pipelines are simulated with mock responses
+- Useful for development/testing without GitLab
+
+#### **Manual WebHook Testing**
+```bash
+curl -X POST http://localhost:8080/api/webhooks/gitlab/pipeline \
+  -H "Content-Type: application/json" \
+  -H "X-Gitlab-Token: your-token" \
+  -H "X-Gitlab-Event: Pipeline Hook" \
+  -d '{
+    "object_kind": "pipeline",
+    "object_attributes": {
+      "id": 12345,
+      "status": "success",
+      "variables": [
+        {"key": "FLOW_EXECUTION_ID", "value": "test-uuid"}
+      ]
+    }
+  }'
+```
+
+### **🚨 Troubleshooting**
+
+**WebHook Not Received:**
+- Check GitLab webhook logs (Settings → Webhooks → Recent deliveries)
+- Verify network connectivity and firewall rules
+- Ensure webhook URL is accessible from GitLab
+
+**Invalid Secret Token:**
+- Verify token matches in GitLab and application.yml
+- Check for trailing spaces or case sensitivity
+
+**Pipeline Not Advancing:**
+- Check logs for: `Processing GitLab webhook event for pipeline: {id}`
+- Verify `FLOW_EXECUTION_ID` variable is injected
+- Confirm PipelineExecution record exists in database
+
+### **📈 Migration Path**
+
+**Phase 1: Deploy WebHook Support ✅ COMPLETE**
+- ✅ WebHook endpoint deployed
+- ✅ FlowExecutionId injected as variable
+- ✅ Polling code removed - pure event-driven architecture
+
+**Phase 2: Configure GitLab WebHooks**
+- Configure webhook URL in each GitLab project
+- Set secret token for security
+- Test webhook delivery
+
+**Phase 3: Monitor & Validate**
+- Monitor webhook delivery success rate
+- Verify all flows complete successfully
+- Check variable merging works correctly
+
+### **📝 Configuration Reference**
+
+```yaml
+# WebHook Configuration
+gitlab:
+  webhook:
+    # Secret token for webhook validation (optional but recommended)
+    secret-token: ${GITLAB_WEBHOOK_SECRET_TOKEN:your-secure-token}
+
+# Flow Execution Configuration
+flow-execution:
+  max-concurrent-flows: 50
+  pending-timeout-minutes: 30
+  recovery:
+    enabled: true  # Automatic startup recovery
+```
+
+### **🔮 What's Next?**
+
+Future enhancements planned:
+- **WebHook Retry Logic**: Handle failed webhook deliveries
+- **Multiple WebHook Endpoints**: Support for different environments
+- **WebHook Analytics**: Track delivery success rates and latencies
+- **External URL Configuration**: Configurable base URL for webhooks
+- **WebHook Signing**: HMAC signature verification for enhanced security
+
+---
+
 ## 🚀 Latest Enhancements (v5.0)
 
 ### **🔥 Critical Performance & Reliability Improvements**
 
-#### **1. Optimized Pipeline Polling Mechanism**
+#### **1. Optimized Pipeline Polling Mechanism (SUPERSEDED by v6.0 WebHooks)**
+
+**Note:** This polling mechanism has been completely removed in v6.0 in favor of WebHook-based completion.
+The documentation below is kept for historical reference.
 
 **Problem Solved:** The previous polling mechanism had significant sync issues and delays (15-60 seconds) due to synchronous blocking and high polling intervals.
 

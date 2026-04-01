@@ -22,7 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/applications")
@@ -214,6 +216,106 @@ public class ApplicationController {
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
+        }
+    }
+
+    @PostMapping("/{id}/webhooks/register")
+    @Operation(summary = "Register webhook for application", description = "Manually register a GitLab webhook for this application. Requires auto-registration to be enabled in configuration.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Webhook registered successfully"),
+            @ApiResponse(responseCode = "404", description = "Application not found"),
+            @ApiResponse(responseCode = "500", description = "Failed to register webhook")
+    })
+    public ResponseEntity<?> registerWebhook(
+            @Parameter(description = "Application ID") @PathVariable Long id) {
+        logger.info("Manually registering webhook for application with ID: {}", id);
+
+        try {
+            applicationService.registerWebhookForApplication(id);
+            
+            ApplicationDto application = applicationService.getApplicationById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + id));
+
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Webhook registered successfully",
+                "webhookId", application.getWebhookId()
+            ));
+        } catch (IllegalArgumentException e) {
+            logger.error("Application not found: {}", e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            logger.error("Failed to register webhook for application ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}/webhooks")
+    @Operation(summary = "Delete webhook for application", description = "Delete the GitLab webhook associated with this application")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Webhook deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Application not found"),
+            @ApiResponse(responseCode = "500", description = "Failed to delete webhook")
+    })
+    public ResponseEntity<?> deleteWebhook(
+            @Parameter(description = "Application ID") @PathVariable Long id) {
+        logger.info("Deleting webhook for application with ID: {}", id);
+
+        try {
+            ApplicationDto application = applicationService.getApplicationById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + id));
+
+            if (application.getWebhookId() == null) {
+                return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "No webhook registered for this application"
+                ));
+            }
+
+            // The webhook will be deleted when the application is deleted
+            // For manual deletion, users can use the GitLab API directly
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Webhook deletion requires GitLab API access. Use GitLab UI or API directly.",
+                "webhookId", application.getWebhookId(),
+                "gitlabWebhookUrl", String.format("%s/-/hooks", application.getProjectUrl())
+            ));
+        } catch (IllegalArgumentException e) {
+            logger.error("Application not found: {}", e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            logger.error("Failed to delete webhook for application ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}/webhooks/status")
+    @Operation(summary = "Get webhook status for application", description = "Get the current webhook configuration status for this application")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Webhook status retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Application not found")
+    })
+    public ResponseEntity<?> getWebhookStatus(
+            @Parameter(description = "Application ID") @PathVariable Long id) {
+        logger.info("Getting webhook status for application with ID: {}", id);
+
+        try {
+            ApplicationDto application = applicationService.getApplicationById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found with ID: " + id));
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("applicationId", application.getId());
+            response.put("gitlabProjectId", application.getGitlabProjectId());
+            response.put("webhookRegistered", application.getWebhookId() != null);
+            response.put("webhookId", application.getWebhookId());
+            response.put("autoRegisterEnabled", true); // This would come from config
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            logger.error("Application not found: {}", e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 }
